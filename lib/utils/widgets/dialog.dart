@@ -1,0 +1,24 @@
+import 'package:flutter/material.dart';
+
+class Alert {
+  Future<void> show(
+      BuildContext context, String title, String? subtitle) async {
+    return showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(subtitle ?? ''),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Закрыть'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+}
