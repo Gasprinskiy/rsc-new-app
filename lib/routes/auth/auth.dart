@@ -70,12 +70,12 @@ class _AuthRouteState extends State<AuthRoute> {
     });
 
     // check connection
-    ConnectivityResult connectivityResult =
-        await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.none) {
-      showErrorStoast(fToast, AppStrings.noInternetConnection);
-      return;
-    }
+    // ConnectivityResult connectivityResult =
+    //     await (Connectivity().checkConnectivity());
+    // if (connectivityResult == ConnectivityResult.none) {
+    //   showErrorStoast(fToast, AppStrings.noInternetConnection);
+    //   return;
+    // }
     //
 
     // make sign in request
@@ -100,12 +100,17 @@ class _AuthRouteState extends State<AuthRoute> {
             isEmailConfirmed: true,
             isEmailConfirmSciped: false);
 
-        SalaryInfo salaryInfo = SalaryInfo(
-          salary: signInResult.salaryInfo.salary,
-          percentFromSales: signInResult.salaryInfo.percentFromSales,
-          plan: signInResult.salaryInfo.plan,
-          ignorePlan: signInResult.salaryInfo.ignorePlan,
+        User user = User(
+          personalInfo: personalInfo,
         );
+
+        if (signInResult.salaryInfo != null) {
+          user.salaryInfo = SalaryInfo(
+              salary: signInResult.salaryInfo!.salary,
+              percentFromSales: signInResult.salaryInfo!.percentFromSales,
+              plan: signInResult.salaryInfo!.plan,
+              ignorePlan: signInResult.salaryInfo!.ignorePlan);
+        }
 
         List<PercentChangeConditions> percentChangeConditions = [];
         if (signInResult.percentChangeConditions != null) {
@@ -116,10 +121,13 @@ class _AuthRouteState extends State<AuthRoute> {
                 salaryBonus: element.salaryBonus));
           }
         }
-        await userStorage.putUserInfo(User(
-            personalInfo: personalInfo,
-            salaryInfo: salaryInfo,
-            percentChangeConditions: percentChangeConditions));
+
+        if (percentChangeConditions.isNotEmpty) {
+          user.percentChangeConditions = percentChangeConditions;
+        }
+
+        await userStorage.putUserInfo(user);
+        await box.close();
         //
 
         // nagigate to home page

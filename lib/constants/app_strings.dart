@@ -34,6 +34,8 @@ class AppStrings {
   static const String invalidPassword = 'Не валидный пароль';
   static const String login = 'Войти';
 
+  static const String salary = 'Оклад';
+
   static const String areYouSure = 'Вы уверены?';
   static const String emailConfirmSkipDescription =
       'Пропуск подтвержение эл. почты лишает вас возможности синхронизации даных с облаком';

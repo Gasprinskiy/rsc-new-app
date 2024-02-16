@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
@@ -63,7 +64,20 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
     super.dispose();
   }
 
-  void reqeuseNewCode() {
+  Future<void> confirmEmail() async {
+    try {
+      await UserApi().confirmEmail(_userId, confirmCodeController.text);
+      nivagateToMainPage();
+    } on DioException catch (err) {
+      showErrorStoast(fToast, err.message.toString());
+    }
+  }
+
+  void nivagateToMainPage() {
+    Navigator.pushNamed(context, '/main');
+  }
+
+  void reqeustNewCode() {
     setState(() {
       _isNewVerificationCodeRequested = true;
     });
@@ -173,7 +187,7 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
                                 onPressed: () => {
                                       if (_isNewVerificationCodeRequested ==
                                           false)
-                                        {reqeuseNewCode()}
+                                        {fToast.init(context), reqeustNewCode()}
                                     }, // TO:DO make new code request
                                 child: _isNewVerificationCodeRequested
                                     ? const CircularProgressIndicator(
@@ -207,7 +221,7 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
                           onPressed: () => {
                             if (_formKey.currentState?.validate() == true &&
                                 !_isLoading)
-                              {}
+                              {fToast.init(context), confirmEmail()}
                           },
                           child: _isLoading
                               ? const CircularProgressIndicator(

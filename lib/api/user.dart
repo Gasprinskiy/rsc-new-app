@@ -1,5 +1,9 @@
+// import 'dart:html';
+
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_flutter/api/entity/user.dart';
+import 'package:test_flutter/api/token_worker/token_worker.dart';
 import 'package:test_flutter/api/worker/worker.dart';
 
 class UserApi {
@@ -20,6 +24,7 @@ class UserApi {
   Future<SignInResult> signin(SignInParams params) async {
     Response<dynamic> response = await worker.post(
         '/user/sign_in', {'email': params.email, 'password': params.password});
+    await TokenWorker().setToken(response.data['access_token']);
     return signInResultFromJson(response.data);
   }
 
@@ -29,5 +34,11 @@ class UserApi {
     return SignUpResult(
         userId: response.data['id'],
         date: DateTime.parse(response.data['date']));
+  }
+
+  Future<void> confirmEmail(int userId, String code) async {
+    Response<dynamic> response = await worker.post(
+        '/user/confirm_email', {'user_id': userId, 'verification_code': code});
+    await TokenWorker().setToken(response.data['access_token']);
   }
 }

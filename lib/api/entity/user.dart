@@ -22,49 +22,50 @@ class SignUpResult {
 
 class SignInResult {
   UserPersonalInfo personalInfo;
-  UserSalaryInfo salaryInfo;
+  UserSalaryInfo? salaryInfo;
   List<UserPercentChangeConditions>? percentChangeConditions;
-  String accesToken;
 
-  SignInResult(
-      {required this.personalInfo,
-      required this.salaryInfo,
-      this.percentChangeConditions,
-      required this.accesToken});
+  SignInResult({
+    required this.personalInfo,
+    this.salaryInfo,
+    this.percentChangeConditions,
+  });
 }
 
 SignInResult signInResultFromJson(dynamic data) {
-  List<dynamic>? responseChangeConditions =
-      data['salary_info']['percent_change_conditions'];
-
   UserPersonalInfo personalInfo = UserPersonalInfo(
     email: data['email'],
     name: data['user_name'],
     isEmailConfirmed: true,
   );
 
-  UserSalaryInfo salaryInfo = UserSalaryInfo(
-      salary: data['salary_info']['salary'].toDouble(),
-      percentFromSales: data['salary_info']['percent_from_sales'].toDouble(),
-      plan: data['salary_info']['plan'].toDouble(),
-      ignorePlan: data['salary_info']['ignore_plan']);
+  SignInResult result = SignInResult(
+    personalInfo: personalInfo,
+  );
 
-  List<UserPercentChangeConditions> percentChangeConditions = [];
-  if (responseChangeConditions != null) {
-    for (var element in responseChangeConditions) {
-      UserPercentChangeConditions condition = UserPercentChangeConditions(
-          percentGoal: element.percent_goal.toDouble(),
-          percentChange: element.percent_change.toDouble(),
-          salaryBonus: element.salary_bonus.toDouble());
-      percentChangeConditions.add(condition);
+  if (data['salary_info'] != null) {
+    result.salaryInfo = UserSalaryInfo(
+        salary: data['salary_info']['salary'].toDouble(),
+        percentFromSales: data['salary_info']['percent_from_sales'].toDouble(),
+        plan: data['salary_info']['plan'].toDouble(),
+        ignorePlan: data['salary_info']['ignore_plan']);
+
+    if (data['salary_info']['percent_change_conditions']) {
+      List<UserPercentChangeConditions> percentChangeConditions = [];
+      List<dynamic> responseChangeConditions =
+          data['salary_info']['percent_change_conditions'];
+      for (var element in responseChangeConditions) {
+        UserPercentChangeConditions condition = UserPercentChangeConditions(
+            percentGoal: element.percent_goal.toDouble(),
+            percentChange: element.percent_change.toDouble(),
+            salaryBonus: element.salary_bonus.toDouble());
+        percentChangeConditions.add(condition);
+      }
+      result.percentChangeConditions = percentChangeConditions;
     }
   }
 
-  return SignInResult(
-      personalInfo: personalInfo,
-      salaryInfo: salaryInfo,
-      percentChangeConditions: percentChangeConditions,
-      accesToken: data['access_token']);
+  return result;
 }
 
 class UserPersonalInfo {
@@ -101,4 +102,10 @@ class UserSalaryInfo {
       required this.percentFromSales,
       this.plan,
       this.ignorePlan});
+}
+
+class ConfirmEmailResult {
+  String accesToken;
+
+  ConfirmEmailResult({required this.accesToken});
 }

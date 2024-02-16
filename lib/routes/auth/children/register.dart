@@ -95,17 +95,17 @@ class _RegisterRouteState extends State<RegisterRoute> {
     //
 
     if (_skipEmailConfrimation == false) {
-      // check connection
-      ConnectivityResult connectivityResult =
-          await (Connectivity().checkConnectivity());
-      if (connectivityResult == ConnectivityResult.none) {
-        showErrorStoast(fToast, AppStrings.noInternetConnection);
-        setState(() {
-          _isLoading = false;
-        });
-        return;
-      }
-      //
+      // // check connection
+      // ConnectivityResult connectivityResult =
+      //     await (Connectivity().checkConnectivity());
+      // if (connectivityResult == ConnectivityResult.none) {
+      //   showErrorStoast(fToast, AppStrings.noInternetConnection);
+      //   setState(() {
+      //     _isLoading = false;
+      //   });
+      //   return;
+      // }
+      // //
 
       // make sign in request
       SignUpParams signUpParams = SignUpParams(
@@ -122,33 +122,45 @@ class _RegisterRouteState extends State<RegisterRoute> {
           await userStorage.setEmailConfirmation(EmailConfirmation(
               userId: signUpResult.userId, date: signUpResult.date));
           //
-        } on HiveError catch (err) {
-          print('err: ${err.message}');
-          showErrorStoast(fToast, err.message);
+          try {
+            await userStorage.putUserInfo(User(
+                personalInfo: PersonalInfo(
+                    name: nameController.text,
+                    email: emailController.text,
+                    isEmailConfirmSciped: _skipEmailConfrimation,
+                    isEmailConfirmed: false)));
+            navigateToConfirmEmail();
+          } on HiveError catch (_) {
+            showErrorStoast(fToast, AppStrings.errOnWritingData);
+            setState(() {
+              _isLoading = false;
+            });
+            return;
+          }
+        } on HiveError catch (_) {
+          showErrorStoast(fToast, AppStrings.errOnWritingData);
           setState(() {
             _isLoading = false;
           });
           return;
         }
       }
-    }
-
-    try {
-      await userStorage.putUserInfo(User(
-          personalInfo: PersonalInfo(
-              name: nameController.text,
-              email: emailController.text,
-              isEmailConfirmSciped: _skipEmailConfrimation,
-              isEmailConfirmed: false)));
-      if (!_skipEmailConfrimation) {
+    } else {
+      try {
+        await userStorage.putUserInfo(User(
+            personalInfo: PersonalInfo(
+                name: nameController.text,
+                email: emailController.text,
+                isEmailConfirmSciped: _skipEmailConfrimation,
+                isEmailConfirmed: false)));
         navigateToConfirmEmail();
+      } on HiveError catch (_) {
+        showErrorStoast(fToast, AppStrings.errOnWritingData);
+        setState(() {
+          _isLoading = false;
+        });
+        return;
       }
-    } on HiveError catch (err) {
-      showErrorStoast(fToast, err.message);
-      setState(() {
-        _isLoading = false;
-      });
-      return;
     }
 
     setState(() {

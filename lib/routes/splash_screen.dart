@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
     UserStorage userStorage = UserStorage(storage: appStorage);
 
     try {
-      await userStorage.removeUserInfo();
+      // await userStorage.removeUserInfo();
       User? user = await userStorage.getUserInfo();
       if (user != null) {
         bool hasSalaryInfo = user.salaryInfo != null;
