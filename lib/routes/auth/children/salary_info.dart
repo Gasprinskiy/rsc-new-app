@@ -1,6 +1,5 @@
 import 'package:currency_textfield/currency_textfield.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:test_flutter/constants/app_strings.dart';
 import 'package:test_flutter/constants/app_text_form_field.dart';
 import 'package:test_flutter/constants/app_theme.dart';

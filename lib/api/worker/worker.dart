@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_flutter/api/helpers/error_handler.dart';
 import 'package:test_flutter/api/token_worker/token_worker.dart';
 
