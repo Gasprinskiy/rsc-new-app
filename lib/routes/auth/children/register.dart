@@ -88,7 +88,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
     });
 
     // open storage
-    Box<dynamic> box = await Hive.openBox(AppStrings.appStorageKey);
+    Box<dynamic> box = await Hive.openBox(StorageKeys.appStorageKey);
     Storage appStorage = Storage(storageInstance: box);
     UserStorage userStorage = UserStorage(storage: appStorage);
     //
@@ -130,14 +130,14 @@ class _RegisterRouteState extends State<RegisterRoute> {
                     isEmailConfirmed: false)));
             navigateToConfirmEmail();
           } on HiveError catch (_) {
-            showErrorStoast(fToast, AppStrings.errOnWritingData);
+            showErrorStoast(fToast, ErrorStrings.errOnWritingData);
             setState(() {
               _isLoading = false;
             });
             return;
           }
         } on HiveError catch (_) {
-          showErrorStoast(fToast, AppStrings.errOnWritingData);
+          showErrorStoast(fToast, ErrorStrings.errOnWritingData);
           setState(() {
             _isLoading = false;
           });
@@ -154,7 +154,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
                 isEmailConfirmed: false)));
         navigateToConfirmEmail();
       } on HiveError catch (_) {
-        showErrorStoast(fToast, AppStrings.errOnWritingData);
+        showErrorStoast(fToast, ErrorStrings.errOnWritingData);
         setState(() {
           _isLoading = false;
         });
@@ -185,17 +185,18 @@ class _RegisterRouteState extends State<RegisterRoute> {
 
   AlertDialog confirmEmailSkipDialog(BuildContext context) {
     return AlertDialog(
-      title: const Text(AppStrings.areYouSure),
-      content: const Text(AppStrings.emailConfirmSkipDescription),
+      title: const Text(CommonStrings.areYouSure),
+      content:
+          const Text(AuthAndRegisterPageStrings.emailConfirmSkipDescription),
       actions: [
         TextButton(
           onPressed: () => {Navigator.of(context).pop()},
-          child: const Text(AppStrings.cancel),
+          child: const Text(CommonStrings.cancel),
         ),
         TextButton(
           onPressed: () =>
               {_skipEmailConfrimation = true, Navigator.of(context).pop()},
-          child: const Text(AppStrings.cancel),
+          child: const Text(CommonStrings.cancel),
         ),
       ],
     );
@@ -207,9 +208,11 @@ class _RegisterRouteState extends State<RegisterRoute> {
         body: ListView(padding: EdgeInsets.zero, children: [
       const DecorationBox(
         children: [
-          Text(AppStrings.regiser, style: AppTheme.titleLarge),
+          Text(AuthAndRegisterPageStrings.registration,
+              style: AppTheme.titleLarge),
           SizedBox(height: 10),
-          Text(AppStrings.createAccount, style: AppTheme.bodySmall),
+          Text(AuthAndRegisterPageStrings.createAccount,
+              style: AppTheme.bodySmall),
         ],
       ),
       Form(
@@ -222,11 +225,13 @@ class _RegisterRouteState extends State<RegisterRoute> {
             children: [
               AppTextFormField(
                 controller: nameController,
-                labelText: AppStrings.name,
+                labelText: AuthAndRegisterPageStrings.name,
                 keyboardType: TextInputType.name,
                 textInputAction: TextInputAction.next,
                 validator: (value) {
-                  return value!.isEmpty ? AppStrings.pleaseEnterYourName : null;
+                  return value!.isEmpty
+                      ? CommonStrings.fieldCannotBeEmpty
+                      : null;
                 },
               ),
               AppTextFormField(
@@ -253,7 +258,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
                     keyboardType: TextInputType.visiblePassword,
                     validator: (value) {
                       return value!.isEmpty
-                          ? AppStrings.pleaseEnterPassword
+                          ? CommonStrings.fieldCannotBeEmpty
                           : value != confirmPasswordController.text
                               ? AppStrings.passwordDoesNotMatch
                               : null;
@@ -324,7 +329,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
-                                    title: const Text(AppStrings.areYouSure),
+                                    title: const Text(CommonStrings.areYouSure),
                                     content: const Text(
                                         AppStrings.emailConfirmSkipDescription),
                                     actions: [
@@ -335,7 +340,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
                                             _skipEmailConfrimation = false;
                                           })
                                         },
-                                        child: const Text(AppStrings.cancel),
+                                        child: const Text(CommonStrings.cancel),
                                       ),
                                       TextButton(
                                         onPressed: () => {
@@ -344,7 +349,8 @@ class _RegisterRouteState extends State<RegisterRoute> {
                                             _skipEmailConfrimation = true;
                                           })
                                         },
-                                        child: const Text(AppStrings.confirm),
+                                        child:
+                                            const Text(CommonStrings.confirm),
                                       ),
                                     ],
                                   );

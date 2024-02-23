@@ -67,14 +67,14 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
   Future<void> confirmEmail() async {
     try {
       await UserApi().confirmEmail(_userId, confirmCodeController.text);
-      nivagateToMainPage();
+      nivagateToSalaryInfo();
     } on DioException catch (err) {
       showErrorStoast(fToast, err.message.toString());
     }
   }
 
-  void nivagateToMainPage() {
-    Navigator.pushNamed(context, '/main');
+  void nivagateToSalaryInfo() {
+    Navigator.pushNamed(context, '/auth/register/salary-info');
   }
 
   void reqeustNewCode() {

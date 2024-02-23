@@ -4,6 +4,8 @@ import 'package:test_flutter/routes/auth/auth.dart';
 import 'package:test_flutter/routes/auth/children/confirm_email.dart';
 import 'package:test_flutter/routes/auth/children/register.dart';
 import 'package:test_flutter/routes/auth/children/salary_info.dart';
+import 'package:test_flutter/routes/local_auth/create.dart';
+import 'package:test_flutter/routes/local_auth/enter.dart';
 import 'package:test_flutter/routes/main/main.dart';
 import 'package:test_flutter/routes/splash_screen.dart';
 import 'package:test_flutter/storage/worker/init.dart';
@@ -29,11 +31,13 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         '/': (context) => const SplashScreen(),
-        '/main': (context) => const MainRoute(),
         '/auth': (context) => const AuthRoute(),
         '/auth/register': (context) => const RegisterRoute(),
         '/auth/register/confirm-email': (context) => const ConfirmEmailRoute(),
-        '/auth/register/salary-info': (context) => const SalaryInfoRoute()
+        '/auth/register/salary-info': (context) => const SalaryInfoRoute(),
+        '/create_local_auth': (context) => const CreateLocalAuthRoute(),
+        '/local_auth': (context) => const LocalAuthRoute(),
+        '/main': (context) => const MainRoute(),
       },
     );
   }

@@ -58,14 +58,14 @@ class PercentChangeConditions {
   @HiveField(0)
   double percentGoal;
   @HiveField(1)
-  double? percentChange;
+  double percentChange;
   @HiveField(2)
-  double salaryBonus;
+  double? salaryBonus;
 
   PercentChangeConditions(
       {required this.percentGoal,
-      this.percentChange,
-      required this.salaryBonus});
+      required this.percentChange,
+      this.salaryBonus});
 }
 
 @HiveType(typeId: 4)

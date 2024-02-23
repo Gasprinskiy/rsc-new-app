@@ -146,8 +146,8 @@ class PercentChangeConditionsAdapter
     };
     return PercentChangeConditions(
       percentGoal: fields[0] as double,
-      percentChange: fields[1] as double?,
-      salaryBonus: fields[2] as double,
+      percentChange: fields[1] as double,
+      salaryBonus: fields[2] as double?,
     );
   }
 

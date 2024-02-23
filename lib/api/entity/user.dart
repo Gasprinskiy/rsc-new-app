@@ -82,13 +82,13 @@ class UserPersonalInfo {
 
 class UserPercentChangeConditions {
   double percentGoal;
-  double? percentChange;
-  double salaryBonus;
+  double percentChange;
+  double? salaryBonus;
 
   UserPercentChangeConditions(
       {required this.percentGoal,
-      this.percentChange,
-      required this.salaryBonus});
+      required this.percentChange,
+      this.salaryBonus});
 }
 
 class UserSalaryInfo {
