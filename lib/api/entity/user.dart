@@ -68,6 +68,40 @@ SignInResult signInResultFromJson(dynamic data) {
   return result;
 }
 
+class CreateSalaryInfoPayload {
+  UserSalaryInfo salaryInfo;
+  List<UserPercentChangeConditions>? percentChangeConditions;
+
+  CreateSalaryInfoPayload({
+    required this.salaryInfo,
+    this.percentChangeConditions,
+  });
+
+  Map<String, Object?> toJson() {
+    List<Map> conditions = [];
+    if (percentChangeConditions != null) {
+      percentChangeConditions?.forEach((element) {
+        Map condition = {
+          'percent_goal': element.percentGoal,
+          'percent_change': element.percentChange,
+          'salary_bonus': element.salaryBonus
+        };
+        conditions.add(condition);
+      });
+    }
+
+    return {
+      'info': {
+        'salary': salaryInfo.salary,
+        'percent_from_sales': salaryInfo.percentFromSales,
+        'plan': salaryInfo.plan,
+        'ignore_plan': salaryInfo.ignorePlan,
+      },
+      'percent_change_conditions': conditions.isNotEmpty ? conditions : null,
+    };
+  }
+}
+
 class UserPersonalInfo {
   String name;
   String email;

@@ -25,6 +25,7 @@ Dio initDio() {
               requestOptions: error.requestOptions,
               message: createErrorMessage('no-server-connection'))
         },
+      print('err: $error'),
       handler.next(DioException(
           requestOptions: error.requestOptions,
           message: createErrorMessage(error.response!.data['message'])))

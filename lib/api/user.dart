@@ -1,6 +1,7 @@
 // import 'dart:html';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:test_flutter/api/entity/user.dart';
 import 'package:test_flutter/api/token_worker/token_worker.dart';
 import 'package:test_flutter/api/worker/worker.dart';
@@ -39,5 +40,10 @@ class UserApi {
     Response<dynamic> response = await worker.post(
         '/user/confirm_email', {'user_id': userId, 'verification_code': code});
     await TokenWorker().setToken(response.data['access_token']);
+  }
+
+  Future<void> createSalaryInfo(CreateSalaryInfoPayload payload) async {
+    Map<String, Object?> jsonPayload = payload.toJson();
+    await worker.post('/user/create_salary_info', jsonPayload);
   }
 }

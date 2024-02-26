@@ -1,10 +1,18 @@
 import 'package:currency_textfield/currency_textfield.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hive/hive.dart';
+import 'package:test_flutter/api/entity/user.dart';
+import 'package:test_flutter/api/user.dart';
 import 'package:test_flutter/constants/app_collors.dart';
 import 'package:test_flutter/constants/app_strings.dart';
 import 'package:test_flutter/constants/app_text_form_field.dart';
 import 'package:test_flutter/constants/app_theme.dart';
+// import 'package:test_flutter/entity/user.dart';
+import 'package:test_flutter/helpers/request_handler.dart';
+import 'package:test_flutter/storage/user.dart';
+import 'package:test_flutter/storage/worker/worker.dart';
 import 'package:test_flutter/utils/widgets/decoration_box.dart';
 import 'package:test_flutter/storage/worker/adapters/user_adapter.dart';
 
@@ -20,6 +28,7 @@ class _SalaryInfoRouteState extends State<SalaryInfoRoute> {
   final _percentChangeConditionsFormKey = GlobalKey<FormState>();
   bool _isVariablePercent = false;
   bool _ignorePlan = false;
+  bool _isLoading = false;
 
   FToast fToast = FToast();
 
@@ -32,7 +41,6 @@ class _SalaryInfoRouteState extends State<SalaryInfoRoute> {
   late final CurrencyTextFieldController bountyController;
 
   final List<PercentChangeConditions> _addedConditions = [];
-  List<PercentChangeConditions> _savedConditions = [];
 
   void disposeControllers() {
     salaryController.dispose();
@@ -220,6 +228,106 @@ class _SalaryInfoRouteState extends State<SalaryInfoRoute> {
         });
   }
 
+  Future<void> saveSalaryInfo() async {
+    fToast.init(context);
+    if (_formKey.currentState?.validate() == true && !_isLoading) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      // open storage
+      Box<dynamic> box = await Hive.openBox(StorageKeys.appStorageKey);
+      Storage appStorage = Storage(storageInstance: box);
+      UserStorage userStorage = UserStorage(storage: appStorage);
+      //
+
+      User? user;
+
+      try {
+        user = await userStorage.getUserInfo();
+      } on HiveError catch (_) {
+        showErrorStoast(fToast, ErrorStrings.errOnWritingData);
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+      if (user != null) {
+        bool hasPercentConditions = _addedConditions.isNotEmpty;
+
+        user.salaryInfo = SalaryInfo(
+            salary: salaryController.doubleValue,
+            percentFromSales: percentChangeController.text.isNotEmpty
+                ? percentChangeController.doubleValue
+                : 0,
+            plan: hasPercentConditions ? planController.doubleValue : null);
+
+        if (hasPercentConditions && _isVariablePercent) {
+          user.percentChangeConditions = _addedConditions;
+        }
+        if (_isVariablePercent && !hasPercentConditions) {
+          showErrorStoast(fToast, AppStrings.percentChangeConditionsEmpty);
+          setState(() {
+            _isLoading = false;
+          });
+          return;
+        }
+
+        try {
+          await userStorage.putUserInfo(user);
+        } on HiveError catch (_) {
+          showErrorStoast(fToast, ErrorStrings.errOnWritingData);
+          setState(() {
+            _isLoading = false;
+          });
+          return;
+        }
+
+        if (!user.personalInfo.isEmailConfirmSciped) {
+          CreateSalaryInfoPayload payload = CreateSalaryInfoPayload(
+              salaryInfo: UserSalaryInfo(
+            salary: salaryController.doubleValue,
+            percentFromSales: percentChangeController.text.isNotEmpty
+                ? percentChangeController.doubleValue
+                : 0,
+            plan: hasPercentConditions ? planController.doubleValue : null,
+            ignorePlan: _ignorePlan,
+          ));
+
+          if (hasPercentConditions) {
+            List<UserPercentChangeConditions> conditions = [];
+            for (var item in _addedConditions) {
+              conditions.add(UserPercentChangeConditions(
+                percentChange: item.percentChange,
+                percentGoal: item.percentGoal,
+                salaryBonus: item.salaryBonus,
+              ));
+            }
+            payload.percentChangeConditions = conditions;
+          }
+
+          try {
+            await UserApi().createSalaryInfo(payload);
+          } on DioException catch (err) {
+            showErrorStoast(fToast, err.message.toString());
+            setState(() {
+              _isLoading = false;
+            });
+            return;
+          }
+        }
+        navigateToCreateLocalAuthRoute();
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void navigateToCreateLocalAuthRoute() {
+    Navigator.pushNamed(context, '/create_local_auth');
+  }
+
   @override
   void initState() {
     super.initState();
@@ -347,7 +455,7 @@ class _SalaryInfoRouteState extends State<SalaryInfoRoute> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               ..._addedConditions.map((item) {
-                                int index = _addedConditions.indexOf(item);
+                                int index = _addedConditions.indexOf(item) + 1;
                                 return Card(
                                     margin: const EdgeInsets.only(
                                         top: 10, bottom: 10),
@@ -363,7 +471,7 @@ class _SalaryInfoRouteState extends State<SalaryInfoRoute> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              '${AppStrings.condition} #${index + 1}',
+                                              '${AppStrings.condition} #$index',
                                               style: const TextStyle(
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.w500),
@@ -412,8 +520,12 @@ class _SalaryInfoRouteState extends State<SalaryInfoRoute> {
                       )
                     : const SizedBox(height: 20),
                 FilledButton(
-                  onPressed: () => {_formKey.currentState?.validate()},
-                  child: const Text(AppStrings.save),
+                  onPressed: saveSalaryInfo,
+                  child: _isLoading
+                      ? const CircularProgressIndicator(
+                          color: Colors.white,
+                        )
+                      : const Text(AppStrings.save),
                 )
               ],
             ),
