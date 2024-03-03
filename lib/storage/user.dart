@@ -30,4 +30,12 @@ class UserStorage {
   Future<void> removeEmailConfirmation(EmailConfirmation payload) {
     return storage.remove(AppStrings.confirmationDateStore);
   }
+
+  Future<void> setBiometricsSettings(BiometricsSettings payload) {
+    return storage.put(AppStrings.biometricsSettingsStoreKey, payload);
+  }
+
+  Future<void> getBiometricsSettings() {
+    return storage.get(AppStrings.biometricsSettingsStoreKey);
+  }
 }

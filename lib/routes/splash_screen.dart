@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hive/hive.dart';
 import 'package:test_flutter/constants/app_collors.dart';
 import 'package:test_flutter/constants/app_strings.dart';
@@ -47,7 +48,20 @@ class _SplashScreenState extends State<SplashScreen> {
           return;
         }
 
-        navigateToHome();
+        const secureStorage = FlutterSecureStorage();
+        String? pinCode =
+            await secureStorage.read(key: AppStrings.pincodeStorageKey);
+
+        if (pinCode != null) {
+          navigateLocalAuth();
+          return;
+        }
+        if (pinCode == null) {
+          navigateCreateLocalAuth();
+          return;
+        }
+
+        navigateLocalAuth();
       } else {
         navigateToLogin();
       }
@@ -64,8 +78,12 @@ class _SplashScreenState extends State<SplashScreen> {
     Navigator.pushNamed(context, '/auth/register/salary-info');
   }
 
-  void navigateToHome() {
-    Navigator.pushNamed(context, '/main');
+  void navigateCreateLocalAuth() {
+    Navigator.pushNamed(context, '/create_local_auth');
+  }
+
+  void navigateLocalAuth() {
+    Navigator.pushNamed(context, '/local_auth');
   }
 
   void navigateToLogin() {

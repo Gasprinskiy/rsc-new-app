@@ -152,7 +152,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
                 email: emailController.text,
                 isEmailConfirmSciped: _skipEmailConfrimation,
                 isEmailConfirmed: false)));
-        navigateToConfirmEmail();
+        navigateToSalaryInfo();
       } on HiveError catch (_) {
         showErrorStoast(fToast, ErrorStrings.errOnWritingData);
         setState(() {
@@ -169,6 +169,10 @@ class _RegisterRouteState extends State<RegisterRoute> {
 
   void navigateToConfirmEmail() {
     Navigator.pushNamed(context, '/auth/register/confirm-email');
+  }
+
+  void navigateToSalaryInfo() {
+    Navigator.pushNamed(context, '/auth/register/salary-info');
   }
 
   Color getColor(Set<MaterialState> states) {
@@ -211,8 +215,10 @@ class _RegisterRouteState extends State<RegisterRoute> {
           Text(AuthAndRegisterPageStrings.registration,
               style: AppTheme.titleLarge),
           SizedBox(height: 10),
-          Text(AuthAndRegisterPageStrings.createAccount,
-              style: AppTheme.bodySmall),
+          Text(
+            AuthAndRegisterPageStrings.createAccount,
+            style: AppTheme.bodySmall,
+          ),
         ],
       ),
       Form(

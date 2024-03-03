@@ -77,3 +77,11 @@ class EmailConfirmation {
 
   EmailConfirmation({required this.userId, required this.date});
 }
+
+@HiveType(typeId: 5)
+class BiometricsSettings {
+  @HiveField(0)
+  bool allowed;
+
+  BiometricsSettings({required this.allowed});
+}

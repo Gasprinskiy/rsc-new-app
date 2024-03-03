@@ -4,6 +4,9 @@ class AppStrings {
   static const String appStorageKey = 'app_storage';
   static const String userStorageKey = 'user_storage';
   static const String confirmationDateStore = 'email_confirmation_date_storage';
+  static const String biometricsSettingsStoreKey =
+      'biometrics_settings_storage';
+  static const String pincodeStorageKey = 'pincode_storage';
 
   static const String wellcome = 'Добро пожаловать';
   static const String loginToYouAccount = 'Войдите в свою учетную \nзапись.';
@@ -12,6 +15,10 @@ class AppStrings {
   static const String confirmYourEmail = 'Подтверждение почты';
   static const String confirmationCodeExpiresIn = 'Код истекает через:';
   static const String regiser = 'Регистрация';
+
+  static const String createPinCode = 'Cоздайте пин код для входа';
+  static const String typePinCode = 'Введите пин код для входа';
+  // static const String cofirmPinCode = 'Подтвердите пин код';
 
   static const String confirmationCodeWasSentToYourEmail =
       'На вашу почту был отправлен 4х значный код, введите его';
@@ -33,6 +40,9 @@ class AppStrings {
   static const String passwordDoesNotMatch = 'Пароли не совпадают';
   static const String invalidPassword = 'Не валидный пароль';
   static const String login = 'Войти';
+  static const String authRequired = 'Требуется авторизация';
+  static const String useBiometricsForAuthification =
+      'Использовать беометрию для входа в приложения?';
 
   static const String salary = 'Оклад';
   static const String percentFromSales = 'Процент от продаж';
@@ -59,6 +69,10 @@ class AppStrings {
   static const String confirm = 'Подтвердить';
   static const String cancel = 'Отменить';
   static const String close = 'Закрыть';
+  static const String proceed = 'Продолжить';
+  static const String tiChoYebanulsa = 'Ты че ебанулся?';
+  static const String yes = 'Да';
+  static const String no = 'Нет';
 
   static const String forgotPassword = 'Забыли пароль?';
   static const String or = 'Или';

@@ -18,5 +18,6 @@ class StorageInitializer {
     Hive.registerAdapter(SalaryInfoAdapter());
     Hive.registerAdapter(PercentChangeConditionsAdapter());
     Hive.registerAdapter(EmailConfirmationAdapter());
+    Hive.registerAdapter(BiometricsSettingsAdapter());
   }
 }

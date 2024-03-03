@@ -45,6 +45,10 @@ dependencies:
   flutter_money: ^0.0.3
   currency_textfield: ^4.0.0
   local_auth: ^2.1.8
+  steel_crypt: ^3.0.0+1
+  flutter_secure_storage: ^4.2.1
+  local_auth_android: ^1.0.37
+  # flutter_pin_code_widget: ^0.1.1
 
 dev_dependencies:
   flutter_test:

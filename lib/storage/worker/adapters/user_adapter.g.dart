@@ -210,3 +210,37 @@ class EmailConfirmationAdapter extends TypeAdapter<EmailConfirmation> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+
+class BiometricsSettingsAdapter extends TypeAdapter<BiometricsSettings> {
+  @override
+  final int typeId = 5;
+
+  @override
+  BiometricsSettings read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return BiometricsSettings(
+      allowed: fields[0] as bool,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, BiometricsSettings obj) {
+    writer
+      ..writeByte(1)
+      ..writeByte(0)
+      ..write(obj.allowed);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BiometricsSettingsAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}

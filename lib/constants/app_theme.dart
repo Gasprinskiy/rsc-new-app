@@ -84,6 +84,20 @@ class AppTheme {
     letterSpacing: 0.5,
   );
 
+  static const TextStyle titleLargePrimary = TextStyle(
+    fontWeight: FontWeight.bold,
+    color: AppColors.primary,
+    fontSize: 30,
+    letterSpacing: 0.5,
+  );
+
+  static TextStyle titleLargeGrey = TextStyle(
+    fontWeight: FontWeight.w400,
+    color: Colors.grey[800],
+    fontSize: 26,
+    letterSpacing: 0.5,
+  );
+
   static const TextStyle bodySmall = TextStyle(
     color: Colors.white,
     letterSpacing: 0.5,
