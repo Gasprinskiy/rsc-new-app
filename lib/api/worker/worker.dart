@@ -3,13 +3,15 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:test_flutter/api/helpers/error_handler.dart';
-import 'package:test_flutter/api/token_worker/token_worker.dart';
+import 'package:test_flutter/storage/hive/token.dart';
+
+TokenStorage tokenStorage = TokenStorage();
 
 Dio initDio() {
   Dio dio = Dio(BaseOptions(baseUrl: 'http://10.0.2.2:3000'));
   dio.interceptors.add(InterceptorsWrapper(
     onRequest: (options, handler) => {
-      TokenWorker().getToken().then((value) => {
+      tokenStorage.getToken().then((value) => {
             if (value != null)
               {
                 options.headers['authorization'] = value,

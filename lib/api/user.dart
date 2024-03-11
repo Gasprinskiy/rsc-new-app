@@ -2,10 +2,11 @@
 
 import 'package:dio/dio.dart';
 import 'package:test_flutter/api/entity/user.dart';
-import 'package:test_flutter/api/token_worker/token_worker.dart';
 import 'package:test_flutter/api/worker/worker.dart';
+import 'package:test_flutter/storage/hive/token.dart';
 
 class UserApi {
+  TokenStorage tokenStorage = TokenStorage();
   ApiWorker worker = ApiWorker();
 
   Future<SignUpResult> signup(SignUpParams params) async {
@@ -23,7 +24,7 @@ class UserApi {
   Future<SignInResult> signin(SignInParams params) async {
     Response<dynamic> response = await worker.post(
         '/user/sign_in', {'email': params.email, 'password': params.password});
-    await TokenWorker().setToken(response.data['access_token']);
+    await tokenStorage.setToken(response.data['access_token']);
     return signInResultFromJson(response.data);
   }
 
@@ -38,7 +39,7 @@ class UserApi {
   Future<void> confirmEmail(int userId, String code) async {
     Response<dynamic> response = await worker.post(
         '/user/confirm_email', {'user_id': userId, 'verification_code': code});
-    await TokenWorker().setToken(response.data['access_token']);
+    await tokenStorage.setToken(response.data['access_token']);
   }
 
   Future<void> createSalaryInfo(CreateSalaryInfoPayload payload) async {

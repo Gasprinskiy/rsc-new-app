@@ -1,7 +1,7 @@
 import 'package:test_flutter/constants/app_strings.dart';
 import 'package:test_flutter/storage/hive/worker/worker.dart';
 
-class TokenWorker {
+class TokenStorage {
   final Storage storage = Storage();
 
   Future<void> setToken(String token) async {
