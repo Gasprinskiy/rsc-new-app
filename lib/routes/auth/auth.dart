@@ -8,19 +8,20 @@ import 'package:test_flutter/constants/app_strings.dart';
 import 'package:test_flutter/constants/app_text_form_field.dart';
 import 'package:test_flutter/constants/app_theme.dart';
 import 'package:test_flutter/helpers/request_handler.dart';
-import 'package:test_flutter/storage/user.dart';
-import 'package:test_flutter/storage/worker/adapters/user_adapter.dart';
-import 'package:test_flutter/storage/worker/worker.dart';
+import 'package:test_flutter/state/user.dart';
 import 'package:test_flutter/utils/widgets/decoration_box.dart';
 
 class AuthRoute extends StatefulWidget {
-  const AuthRoute({super.key});
+  final UserState userState;
+  const AuthRoute({super.key, required this.userState});
 
   @override
   State<AuthRoute> createState() => _AuthRouteState();
 }
 
 class _AuthRouteState extends State<AuthRoute> {
+  late UserState userState;
+
   final _formKey = GlobalKey<FormState>();
   FToast fToast = FToast();
   bool _isLoading = false;
@@ -55,6 +56,7 @@ class _AuthRouteState extends State<AuthRoute> {
   void initState() {
     super.initState();
     initializeControllers();
+    userState = widget.userState;
   }
 
   @override
@@ -68,15 +70,6 @@ class _AuthRouteState extends State<AuthRoute> {
       _isLoading = true;
     });
 
-    // check connection
-    // ConnectivityResult connectivityResult =
-    //     await (Connectivity().checkConnectivity());
-    // if (connectivityResult == ConnectivityResult.none) {
-    //   showErrorStoast(fToast, AppStrings.noInternetConnection);
-    //   return;
-    // }
-    //
-
     // make sign in request
     SignInParams signInParams = SignInParams(
         email: emailController.text, password: passwordController.text);
@@ -85,50 +78,12 @@ class _AuthRouteState extends State<AuthRoute> {
     //
 
     if (signInResult != null) {
+      print('signInResult: ${signInResult.salaryInfo?.salary}');
       try {
-        // open storage
-        Box<dynamic> box = await Hive.openBox(AppStrings.appStorageKey);
-        Storage appStorage = Storage(storageInstance: box);
-        UserStorage userStorage = UserStorage(storage: appStorage);
+        // save user data
+        await userState.initUserStateFromSignInResult(signInResult);
         //
-
-        // put user data into storage
-        PersonalInfo personalInfo = PersonalInfo(
-            name: signInResult.personalInfo.name,
-            email: signInResult.personalInfo.email,
-            isEmailConfirmed: true,
-            isEmailConfirmSciped: false);
-
-        User user = User(
-          personalInfo: personalInfo,
-        );
-
-        if (signInResult.salaryInfo != null) {
-          user.salaryInfo = SalaryInfo(
-              salary: signInResult.salaryInfo!.salary,
-              percentFromSales: signInResult.salaryInfo!.percentFromSales,
-              plan: signInResult.salaryInfo!.plan,
-              ignorePlan: signInResult.salaryInfo!.ignorePlan);
-        }
-
-        List<PercentChangeConditions> percentChangeConditions = [];
-        if (signInResult.percentChangeConditions != null) {
-          for (var element in signInResult.percentChangeConditions!) {
-            percentChangeConditions.add(PercentChangeConditions(
-                percentGoal: element.percentGoal,
-                percentChange: element.percentChange,
-                salaryBonus: element.salaryBonus));
-          }
-        }
-
-        if (percentChangeConditions.isNotEmpty) {
-          user.percentChangeConditions = percentChangeConditions;
-        }
-
-        await userStorage.putUserInfo(user);
-        await box.close();
-        //
-
+        print('wtf');
         // nagigate to home page
         navigateToSplashScreen();
         //

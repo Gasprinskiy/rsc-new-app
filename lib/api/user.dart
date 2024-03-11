@@ -1,7 +1,6 @@
 // import 'dart:html';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:test_flutter/api/entity/user.dart';
 import 'package:test_flutter/api/token_worker/token_worker.dart';
 import 'package:test_flutter/api/worker/worker.dart';

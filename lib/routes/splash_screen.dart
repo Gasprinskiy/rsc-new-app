@@ -1,38 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:hive/hive.dart';
 import 'package:test_flutter/constants/app_collors.dart';
-import 'package:test_flutter/constants/app_strings.dart';
-import 'package:test_flutter/storage/user.dart';
-import 'package:test_flutter/storage/worker/adapters/user_adapter.dart';
-import 'package:test_flutter/storage/worker/worker.dart';
+import 'package:test_flutter/state/user.dart';
+import 'package:test_flutter/storage/hive/worker/adapters/user_adapter.dart';
+import 'package:test_flutter/storage/secure/pin_code.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  final UserState userState;
+  const SplashScreen({super.key, required this.userState});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  late UserState userState;
+  final PinCodeStorage pinCodeStorage = PinCodeStorage();
+
   @override
   void initState() {
     super.initState();
+    userState = widget.userState;
     checkUserDataAndNavigate();
   }
 
   Future<void> checkUserDataAndNavigate() async {
     // Navigator.pushNamed(context, '/auth/register/confirm-email');
     // return;
-
-    Box<dynamic> box = await Hive.openBox(AppStrings.appStorageKey);
-
-    Storage appStorage = Storage(storageInstance: box);
-    UserStorage userStorage = UserStorage(storage: appStorage);
-
     try {
-      // await userStorage.removeUserInfo();
-      User? user = await userStorage.getUserInfo();
+      //
+      // await userState.removeUserState(); // remove
+      //
+      if (!userState.isInited) {
+        await userState.initUserState();
+      }
+      User? user = userState.user;
+      print(user?.salaryInfo);
       if (user != null) {
         bool hasSalaryInfo = user.salaryInfo != null;
         bool userEmailConfirmed = user.personalInfo.isEmailConfirmed;
@@ -48,9 +50,9 @@ class _SplashScreenState extends State<SplashScreen> {
           return;
         }
 
-        const secureStorage = FlutterSecureStorage();
-        String? pinCode =
-            await secureStorage.read(key: AppStrings.pincodeStorageKey);
+        // const secureStorage = FlutterSecureStorage(); // remove
+        // await secureStorage.deleteAll(); // remove
+        String? pinCode = await pinCodeStorage.getPinCode();
 
         if (pinCode != null) {
           navigateLocalAuth();

@@ -36,13 +36,13 @@ SignInResult signInResultFromJson(dynamic data) {
   UserPersonalInfo personalInfo = UserPersonalInfo(
     email: data['email'],
     name: data['user_name'],
-    isEmailConfirmed: true,
+    isEmailConfirmed: data['is_email_confirmed'],
   );
 
   SignInResult result = SignInResult(
     personalInfo: personalInfo,
   );
-
+  print('salaryInfo : ${data['salary_info']}');
   if (data['salary_info'] != null) {
     result.salaryInfo = UserSalaryInfo(
         salary: data['salary_info']['salary'].toDouble(),
@@ -50,7 +50,7 @@ SignInResult signInResultFromJson(dynamic data) {
         plan: data['salary_info']['plan'].toDouble(),
         ignorePlan: data['salary_info']['ignore_plan']);
 
-    if (data['salary_info']['percent_change_conditions']) {
+    if (data['salary_info']['percent_change_conditions'] != null) {
       List<UserPercentChangeConditions> percentChangeConditions = [];
       List<dynamic> responseChangeConditions =
           data['salary_info']['percent_change_conditions'];

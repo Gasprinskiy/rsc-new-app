@@ -3,26 +3,27 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:hive/hive.dart';
 import 'package:test_flutter/api/entity/user.dart';
 import 'package:test_flutter/api/user.dart';
 import 'package:test_flutter/constants/app_collors.dart';
 import 'package:test_flutter/constants/app_strings.dart';
 import 'package:test_flutter/constants/app_text_form_field.dart';
 import 'package:test_flutter/helpers/request_handler.dart';
-import 'package:test_flutter/storage/user.dart';
-import 'package:test_flutter/storage/worker/adapters/user_adapter.dart';
-import 'package:test_flutter/storage/worker/worker.dart';
+import 'package:test_flutter/state/user.dart';
+import 'package:test_flutter/storage/hive/worker/adapters/user_adapter.dart';
 import 'package:test_flutter/utils/widgets/decoration_box.dart';
 
 class ConfirmEmailRoute extends StatefulWidget {
-  const ConfirmEmailRoute({super.key});
+  final UserState userState;
+  const ConfirmEmailRoute({super.key, required this.userState});
 
   @override
   State<ConfirmEmailRoute> createState() => _ConfirmEmailRouteeState();
 }
 
 class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
+  late UserState userState;
+
   final _formKey = GlobalKey<FormState>();
   FToast fToast = FToast();
   final bool _isLoading = false;
@@ -56,6 +57,7 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
     super.initState();
     setVerificationInfo();
     initializeControllers();
+    userState = widget.userState;
   }
 
   @override
@@ -67,6 +69,7 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
   Future<void> confirmEmail() async {
     try {
       await UserApi().confirmEmail(_userId, confirmCodeController.text);
+      await userState.removeEmailConfirmationInfo();
       nivagateToSalaryInfo();
     } on DioException catch (err) {
       showErrorStoast(fToast, err.message.toString());
@@ -109,24 +112,11 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
   }
 
   void setVerificationInfo() {
-    getVerificationInfo().then((EmailConfirmation? value) => {
-          if (value != null)
-            {
-              _userId = value.userId,
-              startActivationTimer(value.date)
-                  .then((_) => {_timerStarted = true})
-            }
-        });
-  }
-
-  Future<EmailConfirmation?> getVerificationInfo() async {
-    Box<dynamic> box = await Hive.openBox(AppStrings.appStorageKey);
-
-    Storage appStorage = Storage(storageInstance: box);
-    UserStorage userStorage = UserStorage(storage: appStorage);
-
-    EmailConfirmation? data = await userStorage.getEmailConfirmationData();
-    return data;
+    EmailConfirmation? info = userState.verificationInfo;
+    if (info != null) {
+      _userId = info.userId;
+      startActivationTimer(info.date).then((_) => {_timerStarted = true});
+    }
   }
 
   Future<void> startActivationTimer(DateTime creationDate) async {

@@ -9,19 +9,21 @@ import 'package:test_flutter/constants/app_strings.dart';
 import 'package:test_flutter/constants/app_text_form_field.dart';
 import 'package:test_flutter/constants/app_theme.dart';
 import 'package:test_flutter/helpers/request_handler.dart';
-import 'package:test_flutter/storage/user.dart';
-import 'package:test_flutter/storage/worker/adapters/user_adapter.dart';
-import 'package:test_flutter/storage/worker/worker.dart';
+import 'package:test_flutter/state/user.dart';
+import 'package:test_flutter/storage/hive/worker/adapters/user_adapter.dart';
 import 'package:test_flutter/utils/widgets/decoration_box.dart';
 
 class RegisterRoute extends StatefulWidget {
-  const RegisterRoute({super.key});
+  final UserState userState;
+  const RegisterRoute({super.key, required this.userState});
 
   @override
   State<RegisterRoute> createState() => _RegisterRouteState();
 }
 
 class _RegisterRouteState extends State<RegisterRoute> {
+  late UserState userState;
+
   final _formKey = GlobalKey<FormState>();
   FToast fToast = FToast();
   bool _isLoading = false;
@@ -74,6 +76,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
   void initState() {
     super.initState();
     initializeControllers();
+    userState = widget.userState;
   }
 
   @override
@@ -87,25 +90,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
       _isLoading = true;
     });
 
-    // open storage
-    Box<dynamic> box = await Hive.openBox(StorageKeys.appStorageKey);
-    Storage appStorage = Storage(storageInstance: box);
-    UserStorage userStorage = UserStorage(storage: appStorage);
-    //
-
     if (_skipEmailConfrimation == false) {
-      // // check connection
-      // ConnectivityResult connectivityResult =
-      //     await (Connectivity().checkConnectivity());
-      // if (connectivityResult == ConnectivityResult.none) {
-      //   showErrorStoast(fToast, AppStrings.noInternetConnection);
-      //   setState(() {
-      //     _isLoading = false;
-      //   });
-      //   return;
-      // }
-      // //
-
       // make sign in request
       SignUpParams signUpParams = SignUpParams(
           name: nameController.text,
@@ -118,11 +103,11 @@ class _RegisterRouteState extends State<RegisterRoute> {
       if (signUpResult != null) {
         try {
           // write email confirmation info
-          await userStorage.setEmailConfirmation(EmailConfirmation(
+          await userState.setEmailConfirmationInfo(EmailConfirmation(
               userId: signUpResult.userId, date: signUpResult.date));
           //
           try {
-            await userStorage.putUserInfo(User(
+            await userState.updateUserState(User(
                 personalInfo: PersonalInfo(
                     name: nameController.text,
                     email: emailController.text,
@@ -146,7 +131,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
       }
     } else {
       try {
-        await userStorage.putUserInfo(User(
+        await userState.updateUserState(User(
             personalInfo: PersonalInfo(
                 name: nameController.text,
                 email: emailController.text,

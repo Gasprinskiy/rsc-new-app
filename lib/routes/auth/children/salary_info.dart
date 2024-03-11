@@ -9,21 +9,22 @@ import 'package:test_flutter/constants/app_collors.dart';
 import 'package:test_flutter/constants/app_strings.dart';
 import 'package:test_flutter/constants/app_text_form_field.dart';
 import 'package:test_flutter/constants/app_theme.dart';
-// import 'package:test_flutter/entity/user.dart';
 import 'package:test_flutter/helpers/request_handler.dart';
-import 'package:test_flutter/storage/user.dart';
-import 'package:test_flutter/storage/worker/worker.dart';
+import 'package:test_flutter/state/user.dart';
 import 'package:test_flutter/utils/widgets/decoration_box.dart';
-import 'package:test_flutter/storage/worker/adapters/user_adapter.dart';
+import 'package:test_flutter/storage/hive/worker/adapters/user_adapter.dart';
 
 class SalaryInfoRoute extends StatefulWidget {
-  const SalaryInfoRoute({super.key});
+  final UserState userState;
+  const SalaryInfoRoute({super.key, required this.userState});
 
   @override
   State<SalaryInfoRoute> createState() => _SalaryInfoRouteState();
 }
 
 class _SalaryInfoRouteState extends State<SalaryInfoRoute> {
+  late UserState userState;
+
   final _formKey = GlobalKey<FormState>();
   final _percentChangeConditionsFormKey = GlobalKey<FormState>();
   bool _isVariablePercent = false;
@@ -235,23 +236,7 @@ class _SalaryInfoRouteState extends State<SalaryInfoRoute> {
         _isLoading = true;
       });
 
-      // open storage
-      Box<dynamic> box = await Hive.openBox(StorageKeys.appStorageKey);
-      Storage appStorage = Storage(storageInstance: box);
-      UserStorage userStorage = UserStorage(storage: appStorage);
-      //
-
-      User? user;
-
-      try {
-        user = await userStorage.getUserInfo();
-      } on HiveError catch (_) {
-        showErrorStoast(fToast, ErrorStrings.errOnWritingData);
-        setState(() {
-          _isLoading = false;
-        });
-        return;
-      }
+      User? user = userState.getUserInstanse();
       if (user != null) {
         bool hasPercentConditions = _addedConditions.isNotEmpty;
 
@@ -274,8 +259,9 @@ class _SalaryInfoRouteState extends State<SalaryInfoRoute> {
         }
 
         try {
-          await userStorage.putUserInfo(user);
-        } on HiveError catch (_) {
+          await userState.updateUserState(user);
+        } on HiveError catch (err) {
+          print('err: $err');
           showErrorStoast(fToast, ErrorStrings.errOnWritingData);
           setState(() {
             _isLoading = false;
@@ -332,6 +318,7 @@ class _SalaryInfoRouteState extends State<SalaryInfoRoute> {
   void initState() {
     super.initState();
     initializeControllers();
+    userState = widget.userState;
   }
 
   @override

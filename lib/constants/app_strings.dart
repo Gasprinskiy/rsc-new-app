@@ -7,6 +7,7 @@ class AppStrings {
   static const String biometricsSettingsStoreKey =
       'biometrics_settings_storage';
   static const String pincodeStorageKey = 'pincode_storage';
+  static const String tokenStorageKey = 'acces_token';
 
   static const String wellcome = 'Добро пожаловать';
   static const String loginToYouAccount = 'Войдите в свою учетную \nзапись.';

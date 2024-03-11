@@ -1,11 +1,9 @@
 import 'package:test_flutter/constants/app_strings.dart';
-import 'package:test_flutter/storage/worker/adapters/user_adapter.dart';
-import 'package:test_flutter/storage/worker/worker.dart';
+import 'package:test_flutter/storage/hive/worker/adapters/user_adapter.dart';
+import 'package:test_flutter/storage/hive/worker/worker.dart';
 
 class UserStorage {
-  final Storage storage;
-
-  UserStorage({required this.storage});
+  final Storage storage = Storage();
 
   Future<void> putUserInfo(User payload) {
     return storage.put(AppStrings.userStorageKey, payload);
@@ -27,7 +25,7 @@ class UserStorage {
     return storage.put(AppStrings.confirmationDateStore, payload);
   }
 
-  Future<void> removeEmailConfirmation(EmailConfirmation payload) {
+  Future<void> removeEmailConfirmation() {
     return storage.remove(AppStrings.confirmationDateStore);
   }
 

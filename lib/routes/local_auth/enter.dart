@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:local_auth_android/local_auth_android.dart';
 import 'package:test_flutter/constants/app_strings.dart';
+import 'package:test_flutter/state/user.dart';
+import 'package:test_flutter/storage/secure/pin_code.dart';
 import 'package:test_flutter/tools/pincrypt.dart';
 import 'package:test_flutter/utils/widgets/pin_code_screen.dart';
 
@@ -21,21 +22,28 @@ const androidAuthMessage = AndroidAuthMessages(
 );
 
 class LocalAuthRoute extends StatefulWidget {
-  const LocalAuthRoute({super.key});
+  final UserState userState;
+  const LocalAuthRoute({super.key, required this.userState});
 
   @override
   State<LocalAuthRoute> createState() => _LocalAuthRouteState();
 }
 
 class _LocalAuthRouteState extends State<LocalAuthRoute> {
+  late UserState userState;
+
+  final PinCodeStorage pinCodeStorage = PinCodeStorage();
   final LocalAuthentication auth = LocalAuthentication();
   String _hashedPin = '';
 
   @override
   void initState() {
     super.initState();
+    userState = widget.userState;
     setHasedPin();
-    _authenticateWithBiometrics();
+    if (userState.biometricsAllowed) {
+      authenticateWithBiometrics();
+    }
   }
 
   @override
@@ -44,7 +52,7 @@ class _LocalAuthRouteState extends State<LocalAuthRoute> {
     super.dispose();
   }
 
-  Future<void> _authenticateWithBiometrics() async {
+  Future<void> authenticateWithBiometrics() async {
     bool authenticated = false;
     try {
       authenticated = await auth.authenticate(
@@ -69,16 +77,11 @@ class _LocalAuthRouteState extends State<LocalAuthRoute> {
   }
 
   void setHasedPin() {
-    getHasedPin().then((value) => {
+    pinCodeStorage.getPinCode().then((value) => {
           setState(() {
             _hashedPin = value ?? '';
           })
         });
-  }
-
-  Future<String?> getHasedPin() async {
-    const secureStorage = FlutterSecureStorage();
-    return secureStorage.read(key: AppStrings.pincodeStorageKey);
   }
 
   bool checkPinCode(List<String> pin) {
@@ -101,7 +104,8 @@ class _LocalAuthRouteState extends State<LocalAuthRoute> {
       submitText: AppStrings.proceed,
       validator: checkPinCode,
       onEnter: onPinEnter,
-      onBiometricsClicked: _authenticateWithBiometrics,
+      onBiometricsClicked:
+          userState.biometricsAllowed ? authenticateWithBiometrics : null,
     );
   }
 }

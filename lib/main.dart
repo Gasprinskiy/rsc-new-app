@@ -8,7 +8,8 @@ import 'package:test_flutter/routes/local_auth/create.dart';
 import 'package:test_flutter/routes/local_auth/enter.dart';
 import 'package:test_flutter/routes/main/main.dart';
 import 'package:test_flutter/routes/splash_screen.dart';
-import 'package:test_flutter/storage/worker/init.dart';
+import 'package:test_flutter/state/user.dart';
+import 'package:test_flutter/storage/hive/worker/init.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    UserState userState = UserState();
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -30,13 +32,16 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       routes: {
-        '/': (context) => const SplashScreen(),
-        '/auth': (context) => const AuthRoute(),
-        '/auth/register': (context) => const RegisterRoute(),
-        '/auth/register/confirm-email': (context) => const ConfirmEmailRoute(),
-        '/auth/register/salary-info': (context) => const SalaryInfoRoute(),
-        '/create_local_auth': (context) => const CreateLocalAuthRoute(),
-        '/local_auth': (context) => const LocalAuthRoute(),
+        '/': (context) => SplashScreen(userState: userState),
+        '/auth': (context) => AuthRoute(userState: userState),
+        '/auth/register': (context) => RegisterRoute(userState: userState),
+        '/auth/register/confirm-email': (context) =>
+            ConfirmEmailRoute(userState: userState),
+        '/auth/register/salary-info': (context) =>
+            SalaryInfoRoute(userState: userState),
+        '/create_local_auth': (context) =>
+            CreateLocalAuthRoute(userState: userState),
+        '/local_auth': (context) => LocalAuthRoute(userState: userState),
         '/main': (context) => const MainRoute(),
       },
     );
