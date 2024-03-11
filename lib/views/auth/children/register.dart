@@ -9,6 +9,7 @@ import 'package:test_flutter/constants/app_strings.dart';
 import 'package:test_flutter/constants/app_text_form_field.dart';
 import 'package:test_flutter/constants/app_theme.dart';
 import 'package:test_flutter/helpers/request_handler.dart';
+import 'package:test_flutter/helpers/toasts.dart';
 import 'package:test_flutter/state/user.dart';
 import 'package:test_flutter/storage/hive/worker/adapters/user_adapter.dart';
 import 'package:test_flutter/utils/widgets/decoration_box.dart';
@@ -115,14 +116,14 @@ class _RegisterRouteState extends State<RegisterRoute> {
                     isEmailConfirmed: false)));
             navigateToConfirmEmail();
           } on HiveError catch (_) {
-            showErrorStoast(fToast, ErrorStrings.errOnWritingData);
+            showErrorToast(fToast, ErrorStrings.errOnWritingData);
             setState(() {
               _isLoading = false;
             });
             return;
           }
         } on HiveError catch (_) {
-          showErrorStoast(fToast, ErrorStrings.errOnWritingData);
+          showErrorToast(fToast, ErrorStrings.errOnWritingData);
           setState(() {
             _isLoading = false;
           });
@@ -139,7 +140,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
                 isEmailConfirmed: false)));
         navigateToSalaryInfo();
       } on HiveError catch (_) {
-        showErrorStoast(fToast, ErrorStrings.errOnWritingData);
+        showErrorToast(fToast, ErrorStrings.errOnWritingData);
         setState(() {
           _isLoading = false;
         });

@@ -9,6 +9,7 @@ import 'package:test_flutter/constants/app_collors.dart';
 import 'package:test_flutter/constants/app_strings.dart';
 import 'package:test_flutter/constants/app_text_form_field.dart';
 import 'package:test_flutter/helpers/request_handler.dart';
+import 'package:test_flutter/helpers/toasts.dart';
 import 'package:test_flutter/state/user.dart';
 import 'package:test_flutter/storage/hive/worker/adapters/user_adapter.dart';
 import 'package:test_flutter/utils/widgets/decoration_box.dart';
@@ -72,7 +73,7 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
       await userState.removeEmailConfirmationInfo();
       nivagateToSalaryInfo();
     } on DioException catch (err) {
-      showErrorStoast(fToast, err.message.toString());
+      showErrorToast(fToast, err.message.toString());
     }
   }
 

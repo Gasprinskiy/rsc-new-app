@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:test_flutter/constants/app_collors.dart';
-import 'package:test_flutter/routes/auth/auth.dart';
-import 'package:test_flutter/routes/auth/children/confirm_email.dart';
-import 'package:test_flutter/routes/auth/children/register.dart';
-import 'package:test_flutter/routes/auth/children/salary_info.dart';
-import 'package:test_flutter/routes/local_auth/create.dart';
-import 'package:test_flutter/routes/local_auth/enter.dart';
-import 'package:test_flutter/routes/main/main.dart';
-import 'package:test_flutter/routes/splash_screen.dart';
+import 'package:test_flutter/views/auth/auth.dart';
+import 'package:test_flutter/views/auth/children/confirm_email.dart';
+import 'package:test_flutter/views/auth/children/register.dart';
+import 'package:test_flutter/views/auth/children/salary_info.dart';
+import 'package:test_flutter/views/local_auth/create.dart';
+import 'package:test_flutter/views/local_auth/enter.dart';
+import 'package:test_flutter/views/main/main.dart';
+import 'package:test_flutter/views/splash_screen.dart';
 import 'package:test_flutter/state/user.dart';
 import 'package:test_flutter/storage/hive/worker/init.dart';
 

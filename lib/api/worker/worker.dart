@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:test_flutter/api/helpers/error_handler.dart';
+import 'package:test_flutter/api/tools/error_handler.dart';
 import 'package:test_flutter/storage/hive/token.dart';
 
 TokenStorage tokenStorage = TokenStorage();

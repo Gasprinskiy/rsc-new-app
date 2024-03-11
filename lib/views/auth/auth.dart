@@ -8,6 +8,7 @@ import 'package:test_flutter/constants/app_strings.dart';
 import 'package:test_flutter/constants/app_text_form_field.dart';
 import 'package:test_flutter/constants/app_theme.dart';
 import 'package:test_flutter/helpers/request_handler.dart';
+import 'package:test_flutter/helpers/toasts.dart';
 import 'package:test_flutter/state/user.dart';
 import 'package:test_flutter/utils/widgets/decoration_box.dart';
 
@@ -78,17 +79,15 @@ class _AuthRouteState extends State<AuthRoute> {
     //
 
     if (signInResult != null) {
-      print('signInResult: ${signInResult.salaryInfo?.salary}');
       try {
         // save user data
         await userState.initUserStateFromSignInResult(signInResult);
         //
-        print('wtf');
         // nagigate to home page
         navigateToSplashScreen();
         //
       } on HiveError catch (_) {
-        showErrorStoast(fToast, AppStrings.errOnWritingData);
+        showErrorToast(fToast, AppStrings.errOnWritingData);
       }
     }
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:test_flutter/routes/main/children/accounting.dart';
-import 'package:test_flutter/routes/main/children/home.dart';
-import 'package:test_flutter/routes/main/children/user.dart';
+import 'package:test_flutter/views/main/children/accounting.dart';
+import 'package:test_flutter/views/main/children/home.dart';
+import 'package:test_flutter/views/main/children/user.dart';
 
 class MainRoute extends StatefulWidget {
   const MainRoute({super.key});

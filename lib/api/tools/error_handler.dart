@@ -1,4 +1,3 @@
-
 Map<String, String> errMap = {
   'wrong-password': 'Не верный пароль',
   'wrong-email': 'Не верный адрес эл. почты',
@@ -9,7 +8,6 @@ Map<String, String> errMap = {
 };
 
 String createErrorMessage(String message) {
-  print('msg: $message');
   switch (message) {
     case 'wrong-password':
       return 'Не верный пароль';
