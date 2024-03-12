@@ -12,7 +12,7 @@ import 'package:test_flutter/constants/app_theme.dart';
 import 'package:test_flutter/helpers/toasts.dart';
 import 'package:test_flutter/state/user.dart';
 import 'package:test_flutter/utils/widgets/decoration_box.dart';
-import 'package:test_flutter/storage/hive/worker/adapters/user_adapter.dart';
+import 'package:test_flutter/storage/hive/worker/adapters/adapters.dart';
 
 class SalaryInfoRoute extends StatefulWidget {
   final UserState userState;
@@ -311,7 +311,8 @@ class _SalaryInfoRouteState extends State<SalaryInfoRoute> {
   }
 
   void navigateToCreateLocalAuthRoute() {
-    Navigator.pushNamed(context, '/create_local_auth');
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        '/create_local_auth', (Route<dynamic> route) => false);
   }
 
   @override

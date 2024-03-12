@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class User extends StatefulWidget {
-  const User({super.key});
+class UserRoute extends StatefulWidget {
+  const UserRoute({super.key});
 
   @override
-  State<User> createState() => _UserState();
+  State<UserRoute> createState() => _UserState();
 }
 
-class _UserState extends State<User> {
+class _UserState extends State<UserRoute> {
   String state = 'Some user info';
 
   @override

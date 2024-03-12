@@ -28,9 +28,9 @@ class UserApi {
     return signInResultFromJson(response.data);
   }
 
-  Future<SignUpResult> requestNewEmailVerificationCode(int id) async {
-    Response<dynamic> response =
-        await worker.post('/user/send_email_verification_code', {'id': id});
+  Future<SignUpResult> requestNewEmailVerificationCode(String email) async {
+    Response<dynamic> response = await worker
+        .post('/user/send_email_verification_code', {'email': email});
     return SignUpResult(
         userId: response.data['id'],
         date: DateTime.parse(response.data['date']));

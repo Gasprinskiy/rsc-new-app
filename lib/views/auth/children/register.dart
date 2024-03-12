@@ -11,7 +11,7 @@ import 'package:test_flutter/constants/app_theme.dart';
 import 'package:test_flutter/helpers/request_handler.dart';
 import 'package:test_flutter/helpers/toasts.dart';
 import 'package:test_flutter/state/user.dart';
-import 'package:test_flutter/storage/hive/worker/adapters/user_adapter.dart';
+import 'package:test_flutter/storage/hive/worker/adapters/adapters.dart';
 import 'package:test_flutter/utils/widgets/decoration_box.dart';
 
 class RegisterRoute extends StatefulWidget {
@@ -154,11 +154,13 @@ class _RegisterRouteState extends State<RegisterRoute> {
   }
 
   void navigateToConfirmEmail() {
-    Navigator.pushNamed(context, '/auth/register/confirm-email');
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        '/auth/register/confirm-email', (Route<dynamic> route) => false);
   }
 
   void navigateToSalaryInfo() {
-    Navigator.pushNamed(context, '/auth/register/salary-info');
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        '/auth/register/salary-info', (Route<dynamic> route) => false);
   }
 
   Color getColor(Set<MaterialState> states) {

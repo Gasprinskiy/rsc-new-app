@@ -11,7 +11,7 @@ import 'package:test_flutter/constants/app_text_form_field.dart';
 import 'package:test_flutter/helpers/request_handler.dart';
 import 'package:test_flutter/helpers/toasts.dart';
 import 'package:test_flutter/state/user.dart';
-import 'package:test_flutter/storage/hive/worker/adapters/user_adapter.dart';
+import 'package:test_flutter/storage/hive/worker/adapters/adapters.dart';
 import 'package:test_flutter/utils/widgets/decoration_box.dart';
 
 class ConfirmEmailRoute extends StatefulWidget {
@@ -56,9 +56,9 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
   @override
   initState() {
     super.initState();
+    userState = widget.userState;
     setVerificationInfo();
     initializeControllers();
-    userState = widget.userState;
   }
 
   @override
@@ -71,6 +71,11 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
     try {
       await UserApi().confirmEmail(_userId, confirmCodeController.text);
       await userState.removeEmailConfirmationInfo();
+      User? user = userState.getUserInstanse();
+      if (user != null) {
+        user.personalInfo.isEmailConfirmed = true;
+        await userState.updateUserState(user);
+      }
       nivagateToSalaryInfo();
     } on DioException catch (err) {
       showErrorToast(fToast, err.message.toString());
@@ -78,24 +83,28 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
   }
 
   void nivagateToSalaryInfo() {
-    Navigator.pushNamed(context, '/auth/register/salary-info');
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        '/auth/register/salary-info', (Route<dynamic> route) => false);
   }
 
-  void reqeustNewCode() {
+  void requestNewCode() {
     setState(() {
       _isNewVerificationCodeRequested = true;
     });
-
+    String email = userState.user!.personalInfo.email;
     handleRequestError(
-            () => UserApi().requestNewEmailVerificationCode(_userId), fToast)
-        .then((SignUpResult? value) => {
+            () => UserApi().requestNewEmailVerificationCode(email), fToast)
+        .then((SignUpResult? value) async => {
               if (value != null)
                 {
+                  await userState.setEmailConfirmationInfo(EmailConfirmation(
+                      userId: value.userId, date: value.date)),
                   startActivationTimer(value.date).then((_) => {
                         setState(() {
                           Future.delayed(const Duration(seconds: 1))
                               .then((_) => {
                                     setState(() {
+                                      _userId = value.userId;
                                       _isVerificationCodeExpited = false;
                                       _isNewVerificationCodeRequested = false;
                                     })
@@ -117,6 +126,28 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
     if (info != null) {
       _userId = info.userId;
       startActivationTimer(info.date).then((_) => {_timerStarted = true});
+    } else {
+      String email = userState.user!.personalInfo.email;
+      handleRequestError(
+              () => UserApi().requestNewEmailVerificationCode(email), fToast)
+          .then((value) async => {
+                if (value != null)
+                  {
+                    await userState.setEmailConfirmationInfo(EmailConfirmation(
+                        userId: value.userId, date: value.date)),
+                    startActivationTimer(value.date).then((_) => {
+                          setState(() {
+                            Future.delayed(const Duration(seconds: 2))
+                                .then((_) => {
+                                      setState(() {
+                                        _userId = value.userId;
+                                        _timerStarted = true;
+                                      })
+                                    });
+                          })
+                        })
+                  }
+              });
     }
   }
 
@@ -132,9 +163,17 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
         setState(() {
           _isVerificationCodeExpited = true;
         });
+        userState.removeEmailConfirmationInfo();
         t.cancel();
       }
     });
+  }
+
+  String get _secondsLeftFormat {
+    if (_secondsLeft < 10) {
+      return '0$_secondsLeft';
+    }
+    return '$_secondsLeft';
   }
 
   @override
@@ -152,7 +191,23 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
                       )),
                   SizedBox(height: 10),
                   Text(AppStrings.confirmationCodeWasSentToYourEmail,
-                      style: TextStyle(fontSize: 15, color: Colors.white))
+                      style: TextStyle(fontSize: 15, color: Colors.white)),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.info,
+                        color: Colors.orange,
+                        size: 30,
+                      ),
+                      SizedBox(width: 10),
+                      Flexible(
+                          child: Text(AppStrings.confirmationCodeCouldBeInSpam,
+                              style: TextStyle(
+                                color: Colors.orange,
+                              )))
+                    ],
+                  )
                 ],
               ),
               Form(
@@ -178,8 +233,8 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
                                 onPressed: () => {
                                       if (_isNewVerificationCodeRequested ==
                                           false)
-                                        {fToast.init(context), reqeustNewCode()}
-                                    }, // TO:DO make new code request
+                                        {fToast.init(context), requestNewCode()}
+                                    },
                                 child: _isNewVerificationCodeRequested
                                     ? const CircularProgressIndicator(
                                         color: AppColors.primary,
@@ -198,7 +253,7 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
                                     textAlign: TextAlign.center,
                                   ),
                                   Text(
-                                    '$_minuterLeft:$_secondsLeft',
+                                    '$_minuterLeft:$_secondsLeftFormat',
                                     textWidthBasis: TextWidthBasis.longestLine,
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(

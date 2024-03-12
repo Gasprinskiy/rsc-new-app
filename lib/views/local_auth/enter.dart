@@ -89,7 +89,8 @@ class _LocalAuthRouteState extends State<LocalAuthRoute> {
   }
 
   void navigateToHomePage() {
-    Navigator.pushNamed(context, '/main');
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil('/main', (Route<dynamic> route) => false);
   }
 
   void onPinEnter(_) {

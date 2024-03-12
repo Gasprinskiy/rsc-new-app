@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
         '/create_local_auth': (context) =>
             CreateLocalAuthRoute(userState: userState),
         '/local_auth': (context) => LocalAuthRoute(userState: userState),
-        '/main': (context) => const MainRoute(),
+        '/main': (context) => MainRoute(userState: userState),
       },
     );
   }

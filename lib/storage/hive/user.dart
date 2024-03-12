@@ -1,5 +1,5 @@
 import 'package:test_flutter/constants/app_strings.dart';
-import 'package:test_flutter/storage/hive/worker/adapters/user_adapter.dart';
+import 'package:test_flutter/storage/hive/worker/adapters/adapters.dart';
 import 'package:test_flutter/storage/hive/worker/worker.dart';
 
 class UserStorage {

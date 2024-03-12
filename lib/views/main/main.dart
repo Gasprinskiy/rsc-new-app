@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:test_flutter/state/user.dart';
+import 'package:test_flutter/storage/hive/worker/adapters/adapters.dart';
 import 'package:test_flutter/views/main/children/accounting.dart';
 import 'package:test_flutter/views/main/children/home.dart';
 import 'package:test_flutter/views/main/children/user.dart';
 
 class MainRoute extends StatefulWidget {
-  const MainRoute({super.key});
+  final UserState userState;
+  const MainRoute({super.key, required this.userState});
 
   @override
   State<MainRoute> createState() => _MainRouteState();
@@ -12,17 +15,24 @@ class MainRoute extends StatefulWidget {
 
 class _MainRouteState extends State<MainRoute> {
   int _selectedViewIndex = 0;
+  late UserState userState;
 
   static const List<Widget> viewOptions = [
     Home(),
     Accounting(),
-    User(),
+    UserRoute(),
   ];
 
   void _onBottomBarItemTapped(int index) {
     setState(() {
       _selectedViewIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    userState = widget.userState;
   }
 
   @override

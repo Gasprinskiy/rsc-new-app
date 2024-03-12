@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:test_flutter/api/entity/user.dart';
 import 'package:test_flutter/storage/hive/user.dart';
-import 'package:test_flutter/storage/hive/worker/adapters/user_adapter.dart';
+import 'package:test_flutter/storage/hive/worker/adapters/adapters.dart';
 
 class UserState {
   UserStorage userStorage = UserStorage();

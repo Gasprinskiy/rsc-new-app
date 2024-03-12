@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_flutter/constants/app_collors.dart';
 import 'package:test_flutter/state/user.dart';
-import 'package:test_flutter/storage/hive/worker/adapters/user_adapter.dart';
+import 'package:test_flutter/storage/hive/worker/adapters/adapters.dart';
 import 'package:test_flutter/storage/secure/pin_code.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -34,7 +34,6 @@ class _SplashScreenState extends State<SplashScreen> {
         await userState.initUserState();
       }
       User? user = userState.user;
-      print(user?.salaryInfo);
       if (user != null) {
         bool hasSalaryInfo = user.salaryInfo != null;
         bool userEmailConfirmed = user.personalInfo.isEmailConfirmed;
@@ -73,23 +72,28 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void navigateToEmailConfirmForm() {
-    Navigator.pushNamed(context, '/auth/register/confirm-email');
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        '/auth/register/confirm-email', (Route<dynamic> route) => false);
   }
 
   void navigateToSalaryInfoForm() {
-    Navigator.pushNamed(context, '/auth/register/salary-info');
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        '/auth/register/salary-info', (Route<dynamic> route) => false);
   }
 
   void navigateCreateLocalAuth() {
-    Navigator.pushNamed(context, '/create_local_auth');
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        '/create_local_auth', (Route<dynamic> route) => false);
   }
 
   void navigateLocalAuth() {
-    Navigator.pushNamed(context, '/local_auth');
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        '/local_auth', (Route<dynamic> route) => false);
   }
 
   void navigateToLogin() {
-    Navigator.pushNamed(context, '/auth');
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil('/auth', (Route<dynamic> route) => false);
   }
 
   @override

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:test_flutter/constants/app_strings.dart';
 import 'package:test_flutter/state/user.dart';
-import 'package:test_flutter/storage/hive/worker/adapters/user_adapter.dart';
+import 'package:test_flutter/storage/hive/worker/adapters/adapters.dart';
 import 'package:test_flutter/storage/secure/pin_code.dart';
 import 'package:test_flutter/tools/pincrypt.dart';
 import 'package:test_flutter/utils/widgets/pin_code_screen.dart';
@@ -78,7 +78,8 @@ class _CreateLocalAuthRouteState extends State<CreateLocalAuthRoute> {
   }
 
   void navigateToHomePage() {
-    Navigator.pushNamed(context, '/main');
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil('/main', (Route<dynamic> route) => false);
   }
 
   @override

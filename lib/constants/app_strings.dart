@@ -3,6 +3,7 @@ class AppStrings {
 
   static const String appStorageKey = 'app_storage';
   static const String userStorageKey = 'user_storage';
+  static const String accountingStorageKey = 'accounting_storage';
   static const String confirmationDateStore = 'email_confirmation_date_storage';
   static const String biometricsSettingsStoreKey =
       'biometrics_settings_storage';
@@ -23,6 +24,8 @@ class AppStrings {
 
   static const String confirmationCodeWasSentToYourEmail =
       'На вашу почту был отправлен 4х значный код, введите его';
+  static const String confirmationCodeCouldBeInSpam =
+      'Письма могут попасть в папку "Cпам"';
   static const String requestNewCode = 'Отправить код заного';
 
   static const String email = 'Адрес электронной почты';
