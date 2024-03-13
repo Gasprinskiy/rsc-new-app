@@ -8,7 +8,7 @@ class AccountingStorage {
   final currentReportKey = '${AppStrings.accountingStorageKey}-current-report';
   final salesKey = '${AppStrings.accountingStorageKey}-sales';
 
-  Future<CurrentReport> getCurrentReport() {
+  Future<CurrentReport?> getCurrentReport() {
     return storage.get(currentReportKey);
   }
 
@@ -16,7 +16,7 @@ class AccountingStorage {
     return storage.put(currentReportKey, payload);
   }
 
-  Future<List<Sale>> getSales() {
+  Future<List<Sale>?> getSales() {
     return storage.get(salesKey);
   }
 

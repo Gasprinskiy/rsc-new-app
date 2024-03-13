@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test_flutter/constants/app_collors.dart';
 import 'package:test_flutter/state/user.dart';
-import 'package:test_flutter/storage/hive/worker/adapters/adapters.dart';
 import 'package:test_flutter/views/main/children/accounting.dart';
 import 'package:test_flutter/views/main/children/home.dart';
 import 'package:test_flutter/views/main/children/user.dart';
@@ -55,7 +55,7 @@ class _MainRouteState extends State<MainRoute> {
           ),
         ],
         currentIndex: _selectedViewIndex,
-        selectedItemColor: Colors.green[300],
+        selectedItemColor: AppColors.primary,
         onTap: _onBottomBarItemTapped,
       ),
     );

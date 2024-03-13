@@ -39,15 +39,22 @@ Dio initDio() {
 class ApiWorker {
   final _dio = initDio();
 
-  Future<Response> get(String path, Map<String, Object>? params) async {
-    return _dio.get('/$path', queryParameters: params);
+  Future<Response> get(String path, Map<String, Object?>? payload, Map<String, Object>? query) async {
+    return _dio.get(path, 
+      queryParameters: query, 
+      data: jsonEncode({'params': payload}),
+      options: Options(headers: {
+        HttpHeaders.contentTypeHeader: "application/json",
+      })
+    );
   }
 
   Future<Response> post(String path, Map<String, Object?> payload) async {
     return _dio.post(path,
-        data: jsonEncode({'params': payload}),
-        options: Options(headers: {
-          HttpHeaders.contentTypeHeader: "application/json",
-        }));
+      data: jsonEncode({'params': payload}),
+      options: Options(headers: {
+        HttpHeaders.contentTypeHeader: "application/json",
+      })
+    );
   }
 }

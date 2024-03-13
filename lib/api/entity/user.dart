@@ -42,7 +42,7 @@ SignInResult signInResultFromJson(dynamic data) {
   SignInResult result = SignInResult(
     personalInfo: personalInfo,
   );
-  print('salaryInfo : ${data['salary_info']}');
+
   if (data['salary_info'] != null) {
     result.salaryInfo = UserSalaryInfo(
         salary: data['salary_info']['salary'].toDouble(),
@@ -123,6 +123,22 @@ class UserPercentChangeConditions {
       {required this.percentGoal,
       required this.percentChange,
       this.salaryBonus});
+
+  Map<String, double?> get apiParams {
+    return {
+      'percent_goal': percentGoal,
+      'percent_change': percentChange,
+      'salary_bonus': salaryBonus
+    };
+  }
+}
+
+UserPercentChangeConditions percentChangeConditionsFromJson(dynamic data) {
+  return UserPercentChangeConditions(
+    percentGoal: data['percent_goal'],
+    percentChange: data['percent_change'],
+    salaryBonus: data['salary_bonus']
+  );
 }
 
 class UserSalaryInfo {
@@ -136,6 +152,24 @@ class UserSalaryInfo {
       required this.percentFromSales,
       this.plan,
       this.ignorePlan});
+
+  Map<String, dynamic> get apiParams {
+    return {
+      'salary': salary,
+      'percent_from_sales': percentFromSales,
+      'ignore_plan': ignorePlan,
+      'plan': plan
+    };
+  }
+}
+
+UserSalaryInfo userSalaryInfoFromJson(dynamic data) {
+  return UserSalaryInfo(
+    salary: data['salary'],
+    percentFromSales: data['percent_from_sales'],
+    ignorePlan: data['ignore_plan'],
+    plan: data['plan']
+  );
 }
 
 class ConfirmEmailResult {
