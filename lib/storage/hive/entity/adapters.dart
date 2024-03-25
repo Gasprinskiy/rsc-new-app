@@ -161,3 +161,63 @@ class CurrentReportInfo extends HiveObject {
 
   CurrentReportInfo({this.sales, this.tips, this.prepayments});
 }
+
+@HiveType(typeId: 11)
+enum SynchronizationDataType {
+  @HiveField(0)
+  sale,
+  @HiveField(1) 
+  tip, 
+  @HiveField(2)
+  prepayment,
+  @HiveField(3)
+  salaryinfo,
+  @HiveField(4)
+  percentchangeconditions
+}
+
+@HiveType(typeId: 12)
+class SynchronizationData extends HiveObject {
+  @HiveField(0)
+  final String id = uid.v1();
+  @HiveField(1)
+  SynchronizationDataType type;
+  @HiveField(2)
+  dynamic data;
+
+  SynchronizationData({required this.type, required this.data});
+}
+
+
+
+@HiveType(typeId: 13)
+class SaleList extends HiveObject {
+  @HiveField(0)
+  List<Sale> data;
+
+  SaleList({required this.data});
+}
+
+@HiveType(typeId: 14)
+class SynchronizationDataList extends HiveObject {
+  @HiveField(0)
+  List<SynchronizationData> data;
+  
+  SynchronizationDataList({required this.data});
+}
+
+@HiveType(typeId: 15)
+class TipList extends HiveObject {
+  @HiveField(0)
+  List<Tip> data;
+
+  TipList({required this.data});
+}
+
+@HiveType(typeId: 16)
+class PrepaymentList extends HiveObject {
+  @HiveField(0)
+  List<Prepayment> data;
+
+  PrepaymentList({required this.data});
+}

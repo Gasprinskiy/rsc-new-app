@@ -125,13 +125,13 @@ class ArchivateReportSalaryParams extends ApiPayload {
   }
 }
 
-class Sale extends ApiPayload {
+class ApiSale extends ApiPayload {
   double total;
   double nonCash;
   double cashTaxes;
   DateTime creationDate;
 
-  Sale({
+  ApiSale({
     required this.total,
     required this.nonCash,
     required this.cashTaxes,
@@ -143,14 +143,14 @@ class Sale extends ApiPayload {
     return {
       'total_sales': total,
       'non_cash': nonCash,
-      'cash_texes': cashTaxes,
-      'creation_date': creationDate
+      'cash_taxes': cashTaxes,
+      'creation_date': creationDate.toIso8601String()
     };
   }
 }
 
-Sale saleFromJson(dynamic data) {
-  return Sale(
+ApiSale saleFromJson(dynamic data) {
+  return ApiSale(
     total: data['total_sales'],
     nonCash: data['non_cash'],
     cashTaxes: data['cash_texes'],
@@ -168,7 +168,7 @@ class CommonAdditionalReportData extends ApiPayload {
   Map<String, dynamic> get apiParams {
     return {
       'value': value,
-      'creation_date': creationDate
+      'creation_date': creationDate.toIso8601String()
     };
   }
 }
@@ -182,7 +182,7 @@ CommonAdditionalReportData commonAditionalDataFromJson(dynamic data) {
 
 
 class ReportInfo {
-  List<Sale> sales;
+  List<ApiSale> sales;
   List<CommonAdditionalReportData>? tips;
   List<CommonAdditionalReportData>? prepayments;
   UserSalaryInfo salaryInfo;

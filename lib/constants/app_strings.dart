@@ -9,6 +9,7 @@ class AppStrings {
       'biometrics_settings_storage';
   static const String pincodeStorageKey = 'pincode_storage';
   static const String tokenStorageKey = 'acces_token';
+  static const String syncStorageKey = 'sync_storage';
 
   static const String wellcome = 'Добро пожаловать';
   static const String loginToYouAccount = 'Войдите в свою учетную \nзапись.';
@@ -86,6 +87,14 @@ class AppStrings {
 
   static const noInternetConnection = 'Нет соединения с интернетом';
   static const errOnWritingData = 'Ошибка при записи данных';
+  static const couldNotSyncData = 'Не удалось синхронизовать данные';
+  static const dataStoredInLocalStorage = 'Данные добавлены';
+  static const dataUpdated = 'Данные обновлены';
+  static const dataStoredAndSyncronized = 'Данные добавлены и синхронизированы';
+  static const dataUpdatedAndSyncronized = 'Данные обновлены и синхронизированы';
+  static const dataSyncronized = 'Данные синхронизированы';
+
+  static const saleStored = 'Продажа добавлена';
 
   // common input error
   static const String fieldCannotBeEmpty = 'Поле не может быть пустым';
@@ -100,6 +109,10 @@ class AppStrings {
 
   static const String percentChangeConditionsEmpty =
       'Не добавлены условия смены процента';
+
+  static String syncDataCount(int synchronized, int all) {
+    return 'Синхронизовано $synchronized из $all';
+  }
 }
 
 class CommonStrings {

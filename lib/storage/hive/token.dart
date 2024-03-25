@@ -2,7 +2,7 @@ import 'package:test_flutter/constants/app_strings.dart';
 import 'package:test_flutter/storage/hive/worker/worker.dart';
 
 class TokenStorage {
-  final Storage storage = Storage();
+  final Storage storage = Storage.getInstance();
 
   Future<void> setToken(String token) async {
     return storage.put(AppStrings.tokenStorageKey, token);

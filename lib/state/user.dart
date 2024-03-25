@@ -1,17 +1,25 @@
 import 'package:hive/hive.dart';
 import 'package:test_flutter/api/entity/user.dart';
+import 'package:test_flutter/storage/hive/synchronization_data.dart';
 import 'package:test_flutter/storage/hive/user.dart';
-import 'package:test_flutter/storage/hive/worker/adapters/adapters.dart';
+import 'package:test_flutter/storage/hive/entity/adapters.dart';
 
 class UserState {
+  static UserState? _instance;
   UserStorage userStorage = UserStorage();
+  SynchronizationDataStorage syncStorage = SynchronizationDataStorage();
 
   User? _userState;
   BiometricsSettings? _userBimetricsSettings;
   EmailConfirmation? _emailConfirmationInfo;
   bool _inited = false;
 
-  UserState();
+  UserState._();
+
+  static UserState getInstance() {
+    _instance ??= UserState._();
+    return _instance!;
+  }
 
   Future<void> initUserState() async {
     _userState = await userStorage.getUserInfo();

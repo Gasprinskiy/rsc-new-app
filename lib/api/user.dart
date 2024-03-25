@@ -7,7 +7,7 @@ import 'package:test_flutter/storage/hive/token.dart';
 
 class UserApi {
   TokenStorage tokenStorage = TokenStorage();
-  ApiWorker worker = ApiWorker();
+  final worker = ApiWorker.getInstance();
 
   Future<SignUpResult> signup(SignUpParams params) async {
     Response<dynamic> response = await worker.post('/user/sign_up', {

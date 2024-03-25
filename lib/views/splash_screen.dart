@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:hive/hive.dart';
 import 'package:test_flutter/constants/app_collors.dart';
+import 'package:test_flutter/constants/app_strings.dart';
 import 'package:test_flutter/state/user.dart';
-import 'package:test_flutter/storage/hive/worker/adapters/adapters.dart';
+import 'package:test_flutter/storage/hive/entity/adapters.dart';
+import 'package:test_flutter/storage/hive/token.dart';
 import 'package:test_flutter/storage/secure/pin_code.dart';
 
 class SplashScreen extends StatefulWidget {
-  final UserState userState;
-  const SplashScreen({super.key, required this.userState});
+  const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  late UserState userState;
-  final PinCodeStorage pinCodeStorage = PinCodeStorage();
+  final userState = UserState.getInstance();
+  final PinCodeStorage pinCodeStorage = PinCodeStorage.getInstance();
+  final TokenStorage tokenStorage = TokenStorage();
 
   @override
   void initState() {
     super.initState();
-    userState = widget.userState;
     checkUserDataAndNavigate();
   }
 
@@ -29,6 +32,9 @@ class _SplashScreenState extends State<SplashScreen> {
     try {
       //
       // await userState.removeUserState(); // remove
+      // await tokenStorage.removeToken();
+      // const secureStorage = FlutterSecureStorage(); // remove
+      // await secureStorage.deleteAll(); // remove
       //
       if (!userState.isInited) {
         await userState.initUserState();
@@ -37,9 +43,8 @@ class _SplashScreenState extends State<SplashScreen> {
       if (user != null) {
         bool hasSalaryInfo = user.salaryInfo != null;
         bool userEmailConfirmed = user.personalInfo.isEmailConfirmed;
-        bool userScipedEmailConfirm = user.personalInfo.isEmailConfirmSciped;
 
-        if (!userEmailConfirmed && !userScipedEmailConfirm) {
+        if (!userEmailConfirmed) {
           navigateToEmailConfirmForm();
           return;
         }
@@ -49,8 +54,6 @@ class _SplashScreenState extends State<SplashScreen> {
           return;
         }
 
-        // const secureStorage = FlutterSecureStorage(); // remove
-        // await secureStorage.deleteAll(); // remove
         String? pinCode = await pinCodeStorage.getPinCode();
 
         if (pinCode != null) {

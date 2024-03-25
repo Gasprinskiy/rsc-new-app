@@ -2,22 +2,36 @@ import 'package:hive/hive.dart';
 import 'package:test_flutter/constants/app_strings.dart';
 
 class Storage {
+  static Storage? _instanse;
+
+  Storage._();
+
+  static Storage getInstance() {
+    _instanse ??= Storage._();
+    return _instanse!;
+  }
+
   Future<T> get<T>(String key) async {
-    Box<dynamic> box = await Hive.openBox(AppStrings.appStorageKey);
+    Box<dynamic> box = await _openBox();
     T res = box.get(key);
-    await box.close();
     return res;
   }
 
   Future<void> put<T>(String key, T payload) async {
-    Box<dynamic> box = await Hive.openBox(AppStrings.appStorageKey);
+    Box<dynamic> box = await _openBox();
     await box.put(key, payload);
-    await box.close();
   }
 
   Future<void> remove(String key) async {
-    Box<dynamic> box = await Hive.openBox(AppStrings.appStorageKey);
+    Box<dynamic> box = await _openBox();
     await box.delete(key);
-    await box.close();
+  }
+
+  Future<Box<dynamic>> _openBox() async {
+    if (Hive.isBoxOpen(AppStrings.appStorageKey)) {
+      return Hive.box(AppStrings.appStorageKey);
+    }
+    Box<dynamic> box = await Hive.openBox(AppStrings.appStorageKey);
+    return box;
   }
 }

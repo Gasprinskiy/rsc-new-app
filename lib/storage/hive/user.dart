@@ -1,9 +1,9 @@
 import 'package:test_flutter/constants/app_strings.dart';
-import 'package:test_flutter/storage/hive/worker/adapters/adapters.dart';
+import 'package:test_flutter/storage/hive/entity/adapters.dart';
 import 'package:test_flutter/storage/hive/worker/worker.dart';
 
 class UserStorage {
-  final Storage storage = Storage();
+  final Storage storage = Storage.getInstance();
 
   Future<void> putUserInfo(User payload) {
     return storage.put(AppStrings.userStorageKey, payload);

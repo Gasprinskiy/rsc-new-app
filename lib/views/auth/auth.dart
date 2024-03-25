@@ -11,20 +11,20 @@ import 'package:test_flutter/helpers/request_handler.dart';
 import 'package:test_flutter/helpers/toasts.dart';
 import 'package:test_flutter/state/user.dart';
 import 'package:test_flutter/utils/widgets/decoration_box.dart';
+import 'package:test_flutter/utils/widgets/toast.dart';
 
 class AuthRoute extends StatefulWidget {
-  final UserState userState;
-  const AuthRoute({super.key, required this.userState});
+  
+  const AuthRoute({super.key});
 
   @override
   State<AuthRoute> createState() => _AuthRouteState();
 }
 
 class _AuthRouteState extends State<AuthRoute> {
-  late UserState userState;
-
   final _formKey = GlobalKey<FormState>();
-  FToast fToast = FToast();
+  final toast = AppToast.getInstance();
+  final userState = UserState.getInstance();
   bool _isLoading = false;
 
   final ValueNotifier<bool> passwordNotifier = ValueNotifier(true);
@@ -57,7 +57,6 @@ class _AuthRouteState extends State<AuthRoute> {
   void initState() {
     super.initState();
     initializeControllers();
-    userState = widget.userState;
   }
 
   @override
@@ -75,7 +74,7 @@ class _AuthRouteState extends State<AuthRoute> {
     SignInParams signInParams = SignInParams(
         email: emailController.text, password: passwordController.text);
     SignInResult? signInResult =
-        await handleRequestError(() => UserApi().signin(signInParams), fToast);
+        await handleRequestError(() => UserApi().signin(signInParams));
     //
 
     if (signInResult != null) {
@@ -87,7 +86,7 @@ class _AuthRouteState extends State<AuthRoute> {
         navigateToSplashScreen();
         //
       } on HiveError catch (_) {
-        showErrorToast(fToast, AppStrings.errOnWritingData);
+        toast.showErrorToast(AppStrings.errOnWritingData);
       }
     }
 
@@ -173,9 +172,10 @@ class _AuthRouteState extends State<AuthRoute> {
                 builder: (_, isValid, __) {
                   return FilledButton(
                     onPressed: () => {
-                      if (_formKey.currentState?.validate() == true &&
-                          !_isLoading)
-                        {fToast.init(context), signIn()}
+                      if (_formKey.currentState?.validate() == true && !_isLoading){
+                        toast.init(context), 
+                        signIn()
+                      }
                     },
                     child: _isLoading
                         ? const CircularProgressIndicator(

@@ -1,6 +1,14 @@
 import 'package:test_flutter/core/entity.dart';
 
 class AccointingCalculations {
+  static AccointingCalculations? _instance;
+  AccointingCalculations._();
+
+  static AccointingCalculations getInstance() {
+    _instance ??= AccointingCalculations._();
+    return _instance!;
+  }
+
   double calcTotal(List<double> list) {
     return list.reduce((total, item) => total + item);
   }

@@ -4,7 +4,7 @@ import 'package:test_flutter/core/entity.dart';
 
 void main() {
   // test only complex core methods
-  AccointingCalculations core = AccointingCalculations();
+  AccointingCalculations core = AccointingCalculations.getInstance();
 
   group('Test calcCommonSalary', () {
     test('without sales', () {

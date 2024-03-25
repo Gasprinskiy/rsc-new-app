@@ -8,7 +8,11 @@ import 'package:test_flutter/storage/hive/token.dart';
 TokenStorage tokenStorage = TokenStorage();
 
 Dio initDio() {
-  Dio dio = Dio(BaseOptions(baseUrl: 'http://10.0.2.2:3000'));
+  Dio dio = Dio(BaseOptions(
+    baseUrl: 'http://10.0.2.2:3000',
+    connectTimeout: const Duration(seconds: 10),
+    receiveTimeout: const Duration(seconds: 10)
+  ));
   dio.interceptors.add(InterceptorsWrapper(
     onRequest: (options, handler) => {
       tokenStorage.getToken().then((value) => {
@@ -20,41 +24,52 @@ Dio initDio() {
           })
     },
     onError: (error, handler) => {
-      if (error.response?.statusCode == 302 ||
-          error.response?.statusCode == null)
-        {
-          throw DioException(
-              requestOptions: error.requestOptions,
-              message: createErrorMessage('no-server-connection'))
-        },
-      print('err: $error'),
+ 
       handler.next(DioException(
-          requestOptions: error.requestOptions,
-          message: createErrorMessage(error.response!.data['message'])))
+        requestOptions: error.requestOptions,
+        message: createErrorMessage(
+          (error.response?.statusCode == 302 || error.response?.statusCode == null)
+            ?
+          'no-server-connection'
+            :
+          error.response!.data['message']
+        )
+      )
+    )
     },
   ));
   return dio;
 }
 
+
 class ApiWorker {
+  static ApiWorker? _instance;
   final _dio = initDio();
+  final _reqOptions = Options(
+    headers: {
+      HttpHeaders.contentTypeHeader: "application/json",
+    },
+  );
+
+  ApiWorker._();
+
+  static ApiWorker getInstance() {
+    _instance ??= ApiWorker._();
+    return _instance!;
+  }
 
   Future<Response> get(String path, Map<String, Object?>? payload, Map<String, Object>? query) async {
     return _dio.get(path, 
       queryParameters: query, 
       data: jsonEncode({'params': payload}),
-      options: Options(headers: {
-        HttpHeaders.contentTypeHeader: "application/json",
-      })
+      options: _reqOptions
     );
   }
 
   Future<Response> post(String path, Map<String, Object?> payload) async {
     return _dio.post(path,
       data: jsonEncode({'params': payload}),
-      options: Options(headers: {
-        HttpHeaders.contentTypeHeader: "application/json",
-      })
+      options: _reqOptions
     );
   }
 }

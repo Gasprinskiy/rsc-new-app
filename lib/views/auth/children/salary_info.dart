@@ -12,21 +12,20 @@ import 'package:test_flutter/constants/app_theme.dart';
 import 'package:test_flutter/helpers/toasts.dart';
 import 'package:test_flutter/state/user.dart';
 import 'package:test_flutter/utils/widgets/decoration_box.dart';
-import 'package:test_flutter/storage/hive/worker/adapters/adapters.dart';
+import 'package:test_flutter/storage/hive/entity/adapters.dart';
 
 class SalaryInfoRoute extends StatefulWidget {
-  final UserState userState;
-  const SalaryInfoRoute({super.key, required this.userState});
+  
+  const SalaryInfoRoute({super.key});
 
   @override
   State<SalaryInfoRoute> createState() => _SalaryInfoRouteState();
 }
 
 class _SalaryInfoRouteState extends State<SalaryInfoRoute> {
-  late UserState userState;
-
   final _formKey = GlobalKey<FormState>();
   final _percentChangeConditionsFormKey = GlobalKey<FormState>();
+  final userState = UserState.getInstance();
   bool _isVariablePercent = false;
   bool _ignorePlan = false;
   bool _isLoading = false;
@@ -319,7 +318,6 @@ class _SalaryInfoRouteState extends State<SalaryInfoRoute> {
   void initState() {
     super.initState();
     initializeControllers();
-    userState = widget.userState;
   }
 
   @override

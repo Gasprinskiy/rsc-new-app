@@ -6,16 +6,16 @@ import 'package:test_flutter/views/main/children/home.dart';
 import 'package:test_flutter/views/main/children/user.dart';
 
 class MainRoute extends StatefulWidget {
-  final UserState userState;
-  const MainRoute({super.key, required this.userState});
+  
+  const MainRoute({super.key});
 
   @override
   State<MainRoute> createState() => _MainRouteState();
 }
 
 class _MainRouteState extends State<MainRoute> {
-  int _selectedViewIndex = 0;
-  late UserState userState;
+  int _selectedViewIndex = 2;
+  final userState = UserState.getInstance();
 
   static const List<Widget> viewOptions = [
     Home(),
@@ -32,7 +32,6 @@ class _MainRouteState extends State<MainRoute> {
   @override
   void initState() {
     super.initState();
-    userState = widget.userState;
   }
 
   @override

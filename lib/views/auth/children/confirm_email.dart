@@ -11,22 +11,22 @@ import 'package:test_flutter/constants/app_text_form_field.dart';
 import 'package:test_flutter/helpers/request_handler.dart';
 import 'package:test_flutter/helpers/toasts.dart';
 import 'package:test_flutter/state/user.dart';
-import 'package:test_flutter/storage/hive/worker/adapters/adapters.dart';
+import 'package:test_flutter/storage/hive/entity/adapters.dart';
 import 'package:test_flutter/utils/widgets/decoration_box.dart';
+import 'package:test_flutter/utils/widgets/toast.dart';
 
 class ConfirmEmailRoute extends StatefulWidget {
-  final UserState userState;
-  const ConfirmEmailRoute({super.key, required this.userState});
+  
+  const ConfirmEmailRoute({super.key});
 
   @override
   State<ConfirmEmailRoute> createState() => _ConfirmEmailRouteeState();
 }
 
 class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
-  late UserState userState;
-
   final _formKey = GlobalKey<FormState>();
-  FToast fToast = FToast();
+  final toast = AppToast.getInstance();
+  final userState = UserState.getInstance();
   final bool _isLoading = false;
 
   num _minuterLeft = 0;
@@ -56,7 +56,6 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
   @override
   initState() {
     super.initState();
-    userState = widget.userState;
     setVerificationInfo();
     initializeControllers();
   }
@@ -78,7 +77,7 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
       }
       nivagateToSalaryInfo();
     } on DioException catch (err) {
-      showErrorToast(fToast, err.message.toString());
+      toast.showErrorToast(err.message.toString());
     }
   }
 
@@ -93,7 +92,7 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
     });
     String email = userState.user!.personalInfo.email;
     handleRequestError(
-            () => UserApi().requestNewEmailVerificationCode(email), fToast)
+            () => UserApi().requestNewEmailVerificationCode(email))
         .then((SignUpResult? value) async => {
               if (value != null)
                 {
@@ -129,7 +128,7 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
     } else {
       String email = userState.user!.personalInfo.email;
       handleRequestError(
-              () => UserApi().requestNewEmailVerificationCode(email), fToast)
+              () => UserApi().requestNewEmailVerificationCode(email))
           .then((value) async => {
                 if (value != null)
                   {
@@ -231,10 +230,11 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
                         _isVerificationCodeExpited
                             ? TextButton(
                                 onPressed: () => {
-                                      if (_isNewVerificationCodeRequested ==
-                                          false)
-                                        {fToast.init(context), requestNewCode()}
-                                    },
+                                  if (_isNewVerificationCodeRequested == false) {
+                                    toast.init(context), 
+                                    requestNewCode()
+                                  }
+                                },
                                 child: _isNewVerificationCodeRequested
                                     ? const CircularProgressIndicator(
                                         color: AppColors.primary,
@@ -265,9 +265,10 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
                         const SizedBox(height: 20),
                         FilledButton(
                           onPressed: () => {
-                            if (_formKey.currentState?.validate() == true &&
-                                !_isLoading)
-                              {fToast.init(context), confirmEmail()}
+                            if (_formKey.currentState?.validate() == true && !_isLoading){
+                              toast.init(context), 
+                              confirmEmail()
+                            }
                           },
                           child: _isLoading
                               ? const CircularProgressIndicator(

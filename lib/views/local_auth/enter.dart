@@ -22,24 +22,22 @@ const androidAuthMessage = AndroidAuthMessages(
 );
 
 class LocalAuthRoute extends StatefulWidget {
-  final UserState userState;
-  const LocalAuthRoute({super.key, required this.userState});
+  
+  const LocalAuthRoute({super.key});
 
   @override
   State<LocalAuthRoute> createState() => _LocalAuthRouteState();
 }
 
 class _LocalAuthRouteState extends State<LocalAuthRoute> {
-  late UserState userState;
-
-  final PinCodeStorage pinCodeStorage = PinCodeStorage();
+  final userState = UserState.getInstance();
+  final PinCodeStorage pinCodeStorage = PinCodeStorage.getInstance();
   final LocalAuthentication auth = LocalAuthentication();
   String _hashedPin = '';
 
   @override
   void initState() {
     super.initState();
-    userState = widget.userState;
     setHasedPin();
     if (userState.biometricsAllowed) {
       authenticateWithBiometrics();

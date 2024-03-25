@@ -453,3 +453,232 @@ class CurrentReportInfoAdapter extends TypeAdapter<CurrentReportInfo> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+
+class SynchronizationDataAdapter extends TypeAdapter<SynchronizationData> {
+  @override
+  final int typeId = 12;
+
+  @override
+  SynchronizationData read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return SynchronizationData(
+      type: fields[0] as SynchronizationDataType,
+      data: fields[1] as dynamic,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, SynchronizationData obj) {
+    writer
+      ..writeByte(2)
+      ..writeByte(0)
+      ..write(obj.type)
+      ..writeByte(1)
+      ..write(obj.data);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SynchronizationDataAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class SaleListAdapter extends TypeAdapter<SaleList> {
+  @override
+  final int typeId = 13;
+
+  @override
+  SaleList read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return SaleList(
+      data: (fields[0] as List).cast<Sale>(),
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, SaleList obj) {
+    writer
+      ..writeByte(1)
+      ..writeByte(0)
+      ..write(obj.data);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SaleListAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class SynchronizationDataListAdapter
+    extends TypeAdapter<SynchronizationDataList> {
+  @override
+  final int typeId = 14;
+
+  @override
+  SynchronizationDataList read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return SynchronizationDataList(
+      data: (fields[0] as List).cast<SynchronizationData>(),
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, SynchronizationDataList obj) {
+    writer
+      ..writeByte(1)
+      ..writeByte(0)
+      ..write(obj.data);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SynchronizationDataListAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class TipListAdapter extends TypeAdapter<TipList> {
+  @override
+  final int typeId = 15;
+
+  @override
+  TipList read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return TipList(
+      data: (fields[0] as List).cast<Tip>(),
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, TipList obj) {
+    writer
+      ..writeByte(1)
+      ..writeByte(0)
+      ..write(obj.data);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TipListAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class PrepaymentListAdapter extends TypeAdapter<PrepaymentList> {
+  @override
+  final int typeId = 16;
+
+  @override
+  PrepaymentList read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return PrepaymentList(
+      data: (fields[0] as List).cast<Prepayment>(),
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, PrepaymentList obj) {
+    writer
+      ..writeByte(1)
+      ..writeByte(0)
+      ..write(obj.data);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PrepaymentListAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class SynchronizationDataTypeAdapter
+    extends TypeAdapter<SynchronizationDataType> {
+  @override
+  final int typeId = 11;
+
+  @override
+  SynchronizationDataType read(BinaryReader reader) {
+    switch (reader.readByte()) {
+      case 0:
+        return SynchronizationDataType.sale;
+      case 1:
+        return SynchronizationDataType.tip;
+      case 2:
+        return SynchronizationDataType.prepayment;
+      case 3:
+        return SynchronizationDataType.salaryinfo;
+      case 4:
+        return SynchronizationDataType.percentchangeconditions;
+      default:
+        return SynchronizationDataType.sale;
+    }
+  }
+
+  @override
+  void write(BinaryWriter writer, SynchronizationDataType obj) {
+    switch (obj) {
+      case SynchronizationDataType.sale:
+        writer.writeByte(0);
+        break;
+      case SynchronizationDataType.tip:
+        writer.writeByte(1);
+        break;
+      case SynchronizationDataType.prepayment:
+        writer.writeByte(2);
+        break;
+      case SynchronizationDataType.salaryinfo:
+        writer.writeByte(3);
+        break;
+      case SynchronizationDataType.percentchangeconditions:
+        writer.writeByte(4);
+        break;
+    }
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SynchronizationDataTypeAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}

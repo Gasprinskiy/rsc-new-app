@@ -2,23 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:test_flutter/constants/app_strings.dart';
 import 'package:test_flutter/state/user.dart';
-import 'package:test_flutter/storage/hive/worker/adapters/adapters.dart';
+import 'package:test_flutter/storage/hive/entity/adapters.dart';
 import 'package:test_flutter/storage/secure/pin_code.dart';
 import 'package:test_flutter/tools/pincrypt.dart';
 import 'package:test_flutter/utils/widgets/pin_code_screen.dart';
 
 class CreateLocalAuthRoute extends StatefulWidget {
-  final UserState userState;
-  const CreateLocalAuthRoute({super.key, required this.userState});
+  
+  const CreateLocalAuthRoute({super.key});
 
   @override
   State<CreateLocalAuthRoute> createState() => _CreateLocalAuthRouteState();
 }
 
 class _CreateLocalAuthRouteState extends State<CreateLocalAuthRoute> {
-  late UserState userState;
-
-  final PinCodeStorage pinCodeStorage = PinCodeStorage();
+  final userState = UserState.getInstance();
+  final PinCodeStorage pinCodeStorage = PinCodeStorage.getInstance();
   final LocalAuthentication auth = LocalAuthentication();
 
   Future<bool> checkDeviceFingerprintAuth() async {
@@ -85,7 +84,6 @@ class _CreateLocalAuthRouteState extends State<CreateLocalAuthRoute> {
   @override
   void initState() {
     super.initState();
-    userState = widget.userState;
   }
 
   @override

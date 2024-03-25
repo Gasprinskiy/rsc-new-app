@@ -11,22 +11,22 @@ import 'package:test_flutter/constants/app_theme.dart';
 import 'package:test_flutter/helpers/request_handler.dart';
 import 'package:test_flutter/helpers/toasts.dart';
 import 'package:test_flutter/state/user.dart';
-import 'package:test_flutter/storage/hive/worker/adapters/adapters.dart';
+import 'package:test_flutter/storage/hive/entity/adapters.dart';
 import 'package:test_flutter/utils/widgets/decoration_box.dart';
+import 'package:test_flutter/utils/widgets/toast.dart';
 
 class RegisterRoute extends StatefulWidget {
-  final UserState userState;
-  const RegisterRoute({super.key, required this.userState});
+  
+  const RegisterRoute({super.key});
 
   @override
   State<RegisterRoute> createState() => _RegisterRouteState();
 }
 
 class _RegisterRouteState extends State<RegisterRoute> {
-  late UserState userState;
-
   final _formKey = GlobalKey<FormState>();
-  FToast fToast = FToast();
+  final toast = AppToast.getInstance();
+  final userState = UserState.getInstance();
   bool _isLoading = false;
   bool _skipEmailConfrimation = false;
 
@@ -77,7 +77,6 @@ class _RegisterRouteState extends State<RegisterRoute> {
   void initState() {
     super.initState();
     initializeControllers();
-    userState = widget.userState;
   }
 
   @override
@@ -94,13 +93,14 @@ class _RegisterRouteState extends State<RegisterRoute> {
     if (_skipEmailConfrimation == false) {
       // make sign in request
       SignUpParams signUpParams = SignUpParams(
-          name: nameController.text,
-          email: emailController.text,
-          password: passwordController.text);
+        name: nameController.text,
+        email: emailController.text,
+        password: passwordController.text
+      );
       SignUpResult? signUpResult = await handleRequestError(
-          () => UserApi().signup(signUpParams), fToast);
+        () => UserApi().signup(signUpParams)
+      );
       //
-
       if (signUpResult != null) {
         try {
           // write email confirmation info
@@ -116,14 +116,14 @@ class _RegisterRouteState extends State<RegisterRoute> {
                     isEmailConfirmed: false)));
             navigateToConfirmEmail();
           } on HiveError catch (_) {
-            showErrorToast(fToast, ErrorStrings.errOnWritingData);
+            toast.showErrorToast(ErrorStrings.errOnWritingData);
             setState(() {
               _isLoading = false;
             });
             return;
           }
         } on HiveError catch (_) {
-          showErrorToast(fToast, ErrorStrings.errOnWritingData);
+          toast.showErrorToast(ErrorStrings.errOnWritingData);
           setState(() {
             _isLoading = false;
           });
@@ -140,7 +140,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
                 isEmailConfirmed: false)));
         navigateToSalaryInfo();
       } on HiveError catch (_) {
-        showErrorToast(fToast, ErrorStrings.errOnWritingData);
+        toast.showErrorToast(ErrorStrings.errOnWritingData);
         setState(() {
           _isLoading = false;
         });
@@ -307,65 +307,16 @@ class _RegisterRouteState extends State<RegisterRoute> {
                   );
                 },
               ),
-              CheckboxListTile(
-                  contentPadding: const EdgeInsets.all(5),
-                  value: _skipEmailConfrimation,
-                  title: const Text(
-                    AppStrings.skipEmailConfrimation,
-                    style: TextStyle(fontSize: 15.0),
-                  ),
-                  checkColor: Colors.white,
-                  activeColor: AppColors.primary,
-                  onChanged: (_) => {
-                        if (_skipEmailConfrimation == false)
-                          {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text(CommonStrings.areYouSure),
-                                    content: const Text(
-                                        AppStrings.emailConfirmSkipDescription),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => {
-                                          Navigator.of(context).pop(),
-                                          setState(() {
-                                            _skipEmailConfrimation = false;
-                                          })
-                                        },
-                                        child: const Text(CommonStrings.cancel),
-                                      ),
-                                      TextButton(
-                                        onPressed: () => {
-                                          Navigator.of(context).pop(),
-                                          setState(() {
-                                            _skipEmailConfrimation = true;
-                                          })
-                                        },
-                                        child:
-                                            const Text(CommonStrings.confirm),
-                                      ),
-                                    ],
-                                  );
-                                }),
-                          }
-                        else
-                          {
-                            setState(() {
-                              _skipEmailConfrimation = false;
-                            })
-                          }
-                      }),
               const SizedBox(height: 20),
               ValueListenableBuilder(
                 valueListenable: fieldValidNotifier,
                 builder: (_, isValid, __) {
                   return FilledButton(
                     onPressed: () => {
-                      if (_formKey.currentState?.validate() == true &&
-                          !_isLoading)
-                        {fToast.init(context), signUp()}
+                      if (_formKey.currentState?.validate() == true && !_isLoading){
+                        toast.init(context), 
+                        signUp()
+                      }
                     },
                     child: _isLoading
                         ? const CircularProgressIndicator(

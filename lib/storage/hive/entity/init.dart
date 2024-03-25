@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:test_flutter/storage/hive/worker/adapters/adapters.dart';
+import 'package:test_flutter/storage/hive/entity/adapters.dart';
 
 class StorageInitializer {
   Future<void> initStorage() async {
@@ -23,5 +23,11 @@ class StorageInitializer {
     Hive.registerAdapter(SaleAdapter());
     Hive.registerAdapter(TipAdapter());
     Hive.registerAdapter(PrepaymentAdapter());
+    Hive.registerAdapter(SynchronizationDataAdapter());
+    Hive.registerAdapter(SaleListAdapter());
+    Hive.registerAdapter(SynchronizationDataTypeAdapter());
+    Hive.registerAdapter(SynchronizationDataListAdapter());
+    Hive.registerAdapter(TipListAdapter());
+    Hive.registerAdapter(PrepaymentListAdapter());
   }
 }
