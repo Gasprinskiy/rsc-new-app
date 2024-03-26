@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:hive/hive.dart';
 import 'package:test_flutter/constants/app_collors.dart';
-import 'package:test_flutter/constants/app_strings.dart';
 import 'package:test_flutter/state/user.dart';
 import 'package:test_flutter/storage/hive/entity/adapters.dart';
 import 'package:test_flutter/storage/hive/token.dart';
@@ -18,7 +15,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   final userState = UserState.getInstance();
   final PinCodeStorage pinCodeStorage = PinCodeStorage.getInstance();
-  final TokenStorage tokenStorage = TokenStorage();
+  final TokenStorage tokenStorage = TokenStorage.getInstance();
 
   @override
   void initState() {

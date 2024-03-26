@@ -4,11 +4,19 @@ import 'package:test_flutter/storage/hive/entity/adapters.dart';
 import 'package:test_flutter/storage/hive/worker/worker.dart';
 
 class SynchronizationDataStorage {
-  final Storage storage = Storage.getInstance();
+  static SynchronizationDataStorage? _instanse;
+  final _storage = Storage.getInstance();
+
+  SynchronizationDataStorage._();
+
+  static SynchronizationDataStorage getInstance() {
+    _instanse ??= SynchronizationDataStorage._();
+    return _instanse!;
+  }
 
   Future<List<SynchronizationData>?> getSynchronizationData() async {
     // await storage.remove(AppStrings.syncStorageKey);
-    SynchronizationDataList? result = await storage.get(AppStrings.syncStorageKey);
+    SynchronizationDataList? result = await _storage.get(AppStrings.syncStorageKey);
     return result?.data;
   }
 
@@ -16,9 +24,9 @@ class SynchronizationDataStorage {
     List<SynchronizationData>? data = await getSynchronizationData();
     if (data != null) {
       data.add(payload);
-      return storage.put(AppStrings.syncStorageKey, SynchronizationDataList(data: data));
+      return _storage.put(AppStrings.syncStorageKey, SynchronizationDataList(data: data));
     } else {
-      return storage.put(AppStrings.syncStorageKey, SynchronizationDataList(data: [payload]));
+      return _storage.put(AppStrings.syncStorageKey, SynchronizationDataList(data: [payload]));
     }
   }
 
@@ -28,7 +36,7 @@ class SynchronizationDataStorage {
       int index = await _findIndexById(data, payload.id);
       if (index >= 0) {
         data[index] = payload;
-        await storage.put(AppStrings.syncStorageKey, SynchronizationDataList(data: data));
+        await _storage.put(AppStrings.syncStorageKey, SynchronizationDataList(data: data));
       }
     }
   }
@@ -39,7 +47,7 @@ class SynchronizationDataStorage {
       int index = await _findIndexById(data, id);
       if (index >= 0) {
         data.removeAt(index);
-        await storage.put(AppStrings.syncStorageKey, SynchronizationDataList(data: data));
+        await _storage.put(AppStrings.syncStorageKey, SynchronizationDataList(data: data));
       } 
     }
   }

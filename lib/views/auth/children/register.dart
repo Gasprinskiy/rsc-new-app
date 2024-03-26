@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
 import 'package:test_flutter/api/entity/user.dart';
 import 'package:test_flutter/api/user.dart';
@@ -9,7 +8,6 @@ import 'package:test_flutter/constants/app_strings.dart';
 import 'package:test_flutter/constants/app_text_form_field.dart';
 import 'package:test_flutter/constants/app_theme.dart';
 import 'package:test_flutter/helpers/request_handler.dart';
-import 'package:test_flutter/helpers/toasts.dart';
 import 'package:test_flutter/state/user.dart';
 import 'package:test_flutter/storage/hive/entity/adapters.dart';
 import 'package:test_flutter/utils/widgets/decoration_box.dart';
@@ -27,6 +25,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
   final _formKey = GlobalKey<FormState>();
   final toast = AppToast.getInstance();
   final userState = UserState.getInstance();
+  final userApi = UserApi.getInstance();
   bool _isLoading = false;
   bool _skipEmailConfrimation = false;
 
@@ -98,7 +97,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
         password: passwordController.text
       );
       SignUpResult? signUpResult = await handleRequestError(
-        () => UserApi().signup(signUpParams)
+        () => userApi.signup(signUpParams)
       );
       //
       if (signUpResult != null) {

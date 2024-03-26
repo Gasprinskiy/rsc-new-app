@@ -6,8 +6,8 @@ import 'package:test_flutter/storage/hive/entity/adapters.dart';
 
 class UserState {
   static UserState? _instance;
-  UserStorage userStorage = UserStorage();
-  SynchronizationDataStorage syncStorage = SynchronizationDataStorage();
+  final userStorage = UserStorage.getInstance();
+  final syncStorage = SynchronizationDataStorage.getInstance();
 
   User? _userState;
   BiometricsSettings? _userBimetricsSettings;

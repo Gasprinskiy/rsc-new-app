@@ -3,33 +3,41 @@ import 'package:test_flutter/storage/hive/entity/adapters.dart';
 import 'package:test_flutter/storage/hive/worker/worker.dart';
 
 class AccountingStorage {
-  final Storage storage = Storage.getInstance();
+  static AccountingStorage? _instanse;
+  final _storage = Storage.getInstance();
 
   final currentReportKey = '${AppStrings.accountingStorageKey}-current-report';
   final salesKey = '${AppStrings.accountingStorageKey}-sales';
   final tipsKey = '${AppStrings.accountingStorageKey}-tips';
   final prepaymentsKey = '${AppStrings.accountingStorageKey}-prepayments';
 
+  AccountingStorage._();
+
+  static AccountingStorage getInstance() {
+    _instanse ??= AccountingStorage._();
+    return _instanse!;
+  }
+
   Future<CurrentReport?> getCurrentReport() {
-    return storage.get(currentReportKey);
+    return _storage.get(currentReportKey);
   }
 
   Future<void> putCurrentReport(CurrentReport payload) {
-    return storage.put(currentReportKey, payload);
+    return _storage.put(currentReportKey, payload);
   }
 
   Future<List<Sale>?> getSales() async {
-    SaleList? list = await storage.get(salesKey);
+    SaleList? list = await _storage.get(salesKey);
     return list?.data;
   }
 
   Future<List<Tip>?> getTips() async {
-    TipList? list = await storage.get(tipsKey);
+    TipList? list = await _storage.get(tipsKey);
     return list?.data;
   }
 
   Future<List<Prepayment>?> getPrepayments() async {
-    PrepaymentList? list = await storage.get(prepaymentsKey);
+    PrepaymentList? list = await _storage.get(prepaymentsKey);
     return list?.data;
   }
 
@@ -45,7 +53,7 @@ class AccountingStorage {
       payload,
       () => getSales()
     );
-    await storage.put(salesKey, SaleList(data: newData));
+    await _storage.put(salesKey, SaleList(data: newData));
   }
 
   Future<void> updateSale(Sale payload) async {
@@ -55,7 +63,7 @@ class AccountingStorage {
       (List<Sale> list) => list.indexWhere((item) => item.id == payload.id)
     );
     if (sales != null) {
-      await storage.put(salesKey, SaleList(data: sales));
+      await _storage.put(salesKey, SaleList(data: sales));
     }
   }
 
@@ -71,7 +79,7 @@ class AccountingStorage {
       payload,
       () => getTips()
     );
-    await storage.put(tipsKey, TipList(data: newData));
+    await _storage.put(tipsKey, TipList(data: newData));
   }
 
   Future<void> updateTip(Tip payload) async {
@@ -81,7 +89,7 @@ class AccountingStorage {
       (List<Tip> list) => list.indexWhere((item) => item.id == payload.id)
     );
     if (tips != null) {
-      await storage.put(tipsKey, TipList(data: tips));
+      await _storage.put(tipsKey, TipList(data: tips));
     }
   }
 
@@ -97,7 +105,7 @@ class AccountingStorage {
       payload,
       () => getPrepayments()
     );
-    await storage.put(prepaymentsKey, PrepaymentList(data: newData));
+    await _storage.put(prepaymentsKey, PrepaymentList(data: newData));
   }
 
   Future<void> updatePrepayment(Prepayment payload) async {
@@ -107,7 +115,7 @@ class AccountingStorage {
       (List<Prepayment> list) => list.indexWhere((item) => item.id == payload.id)
     );
     if (prepayments != null) {
-      await storage.put(prepaymentsKey, PrepaymentList(data: prepayments));
+      await _storage.put(prepaymentsKey, PrepaymentList(data: prepayments));
     }
   }
 

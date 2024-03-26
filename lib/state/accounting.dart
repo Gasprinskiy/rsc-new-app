@@ -43,11 +43,11 @@ class SyncResult<T> {
 
 class AccoutingState {
   static AccoutingState? _instance;
+
   final api = AccountingApi.getInstance();
   final appToast = AppToast.getInstance();
-
-  AccountingStorage storage = AccountingStorage();
-  SynchronizationDataStorage syncStorage = SynchronizationDataStorage();
+  final storage = AccountingStorage.getInstance();
+  SynchronizationDataStorage syncStorage = SynchronizationDataStorage.getInstance();
 
   int? _currentAccountingId = 13;
 
@@ -138,6 +138,7 @@ class AccoutingState {
     if (list != null) {
       List<SynchronizationData> dataToRemove = [];
       for (var element in list) {
+        await Future.delayed(const Duration(seconds: 2));
         SyncRequestStatus status = SyncRequestStatus.success;
         if (element.type == SynchronizationDataType.sale) {
           status = await syncSale(element);

@@ -26,6 +26,7 @@ class _SalaryInfoRouteState extends State<SalaryInfoRoute> {
   final _formKey = GlobalKey<FormState>();
   final _percentChangeConditionsFormKey = GlobalKey<FormState>();
   final userState = UserState.getInstance();
+  final userApi = UserApi.getInstance();
   bool _isVariablePercent = false;
   bool _ignorePlan = false;
   bool _isLoading = false;
@@ -292,7 +293,7 @@ class _SalaryInfoRouteState extends State<SalaryInfoRoute> {
           }
 
           try {
-            await UserApi().createSalaryInfo(payload);
+            await userApi.createSalaryInfo(payload);
           } on DioException catch (err) {
             showErrorToast(fToast, err.message.toString());
             setState(() {

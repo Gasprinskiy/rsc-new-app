@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
 import 'package:test_flutter/api/entity/user.dart';
 import 'package:test_flutter/api/user.dart';
@@ -8,7 +7,6 @@ import 'package:test_flutter/constants/app_strings.dart';
 import 'package:test_flutter/constants/app_text_form_field.dart';
 import 'package:test_flutter/constants/app_theme.dart';
 import 'package:test_flutter/helpers/request_handler.dart';
-import 'package:test_flutter/helpers/toasts.dart';
 import 'package:test_flutter/state/user.dart';
 import 'package:test_flutter/utils/widgets/decoration_box.dart';
 import 'package:test_flutter/utils/widgets/toast.dart';
@@ -25,6 +23,7 @@ class _AuthRouteState extends State<AuthRoute> {
   final _formKey = GlobalKey<FormState>();
   final toast = AppToast.getInstance();
   final userState = UserState.getInstance();
+  final userApi = UserApi.getInstance();
   bool _isLoading = false;
 
   final ValueNotifier<bool> passwordNotifier = ValueNotifier(true);
@@ -74,7 +73,7 @@ class _AuthRouteState extends State<AuthRoute> {
     SignInParams signInParams = SignInParams(
         email: emailController.text, password: passwordController.text);
     SignInResult? signInResult =
-        await handleRequestError(() => UserApi().signin(signInParams));
+        await handleRequestError(() => userApi.signin(signInParams));
     //
 
     if (signInResult != null) {

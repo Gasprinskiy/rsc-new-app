@@ -3,37 +3,45 @@ import 'package:test_flutter/storage/hive/entity/adapters.dart';
 import 'package:test_flutter/storage/hive/worker/worker.dart';
 
 class UserStorage {
-  final Storage storage = Storage.getInstance();
+  static UserStorage? _instanse;
+  final _storage = Storage.getInstance();
+
+  UserStorage._();
+
+  static UserStorage getInstance() {
+    _instanse ??= UserStorage._();
+    return _instanse!;
+  }
 
   Future<void> putUserInfo(User payload) {
-    return storage.put(AppStrings.userStorageKey, payload);
+    return _storage.put(AppStrings.userStorageKey, payload);
   }
 
   Future<User?> getUserInfo() {
-    return storage.get(AppStrings.userStorageKey);
+    return _storage.get(AppStrings.userStorageKey);
   }
 
   Future<void> removeUserInfo() {
-    return storage.remove(AppStrings.userStorageKey);
+    return _storage.remove(AppStrings.userStorageKey);
   }
 
   Future<EmailConfirmation?> getEmailConfirmationData() {
-    return storage.get(AppStrings.confirmationDateStore);
+    return _storage.get(AppStrings.confirmationDateStore);
   }
 
   Future<void> setEmailConfirmation(EmailConfirmation payload) {
-    return storage.put(AppStrings.confirmationDateStore, payload);
+    return _storage.put(AppStrings.confirmationDateStore, payload);
   }
 
   Future<void> removeEmailConfirmation() {
-    return storage.remove(AppStrings.confirmationDateStore);
+    return _storage.remove(AppStrings.confirmationDateStore);
   }
 
   Future<void> setBiometricsSettings(BiometricsSettings payload) {
-    return storage.put(AppStrings.biometricsSettingsStoreKey, payload);
+    return _storage.put(AppStrings.biometricsSettingsStoreKey, payload);
   }
 
   Future<void> getBiometricsSettings() {
-    return storage.get(AppStrings.biometricsSettingsStoreKey);
+    return _storage.get(AppStrings.biometricsSettingsStoreKey);
   }
 }

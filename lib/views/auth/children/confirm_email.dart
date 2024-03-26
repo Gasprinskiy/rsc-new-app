@@ -2,14 +2,12 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:test_flutter/api/entity/user.dart';
 import 'package:test_flutter/api/user.dart';
 import 'package:test_flutter/constants/app_collors.dart';
 import 'package:test_flutter/constants/app_strings.dart';
 import 'package:test_flutter/constants/app_text_form_field.dart';
 import 'package:test_flutter/helpers/request_handler.dart';
-import 'package:test_flutter/helpers/toasts.dart';
 import 'package:test_flutter/state/user.dart';
 import 'package:test_flutter/storage/hive/entity/adapters.dart';
 import 'package:test_flutter/utils/widgets/decoration_box.dart';
@@ -27,6 +25,7 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
   final _formKey = GlobalKey<FormState>();
   final toast = AppToast.getInstance();
   final userState = UserState.getInstance();
+  final userApi = UserApi.getInstance();
   final bool _isLoading = false;
 
   num _minuterLeft = 0;
@@ -68,7 +67,7 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
 
   Future<void> confirmEmail() async {
     try {
-      await UserApi().confirmEmail(_userId, confirmCodeController.text);
+      await userApi.confirmEmail(_userId, confirmCodeController.text);
       await userState.removeEmailConfirmationInfo();
       User? user = userState.getUserInstanse();
       if (user != null) {
@@ -92,7 +91,7 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
     });
     String email = userState.user!.personalInfo.email;
     handleRequestError(
-            () => UserApi().requestNewEmailVerificationCode(email))
+            () => userApi.requestNewEmailVerificationCode(email))
         .then((SignUpResult? value) async => {
               if (value != null)
                 {
@@ -128,7 +127,7 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
     } else {
       String email = userState.user!.personalInfo.email;
       handleRequestError(
-              () => UserApi().requestNewEmailVerificationCode(email))
+              () => userApi.requestNewEmailVerificationCode(email))
           .then((value) async => {
                 if (value != null)
                   {

@@ -14,7 +14,7 @@ class UserRoute extends StatefulWidget {
 class _UserState extends State<UserRoute> {
   final accountingState = AccoutingState.getInstance();
   final appToast = AppToast.getInstance();
-  final syst = SynchronizationDataStorage();
+  final syst = SynchronizationDataStorage.getInstance();
   bool _isSyncInProgress = false;
 
   Sale sale = Sale(

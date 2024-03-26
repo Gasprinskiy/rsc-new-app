@@ -5,11 +5,11 @@ import 'package:dio/dio.dart';
 import 'package:test_flutter/api/tools/error_handler.dart';
 import 'package:test_flutter/storage/hive/token.dart';
 
-TokenStorage tokenStorage = TokenStorage();
+TokenStorage tokenStorage = TokenStorage.getInstance();
 
 Dio initDio() {
   Dio dio = Dio(BaseOptions(
-    baseUrl: 'http://10.0.2.2:3000',
+    baseUrl: 'http://10.0.2.2:8000',
     connectTimeout: const Duration(seconds: 10),
     receiveTimeout: const Duration(seconds: 10)
   ));
