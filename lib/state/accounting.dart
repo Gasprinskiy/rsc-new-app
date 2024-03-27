@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:isolate';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -9,58 +8,140 @@ import 'package:test_flutter/api/acounting.dart';
 import 'package:test_flutter/api/entity/accounting.dart';
 import 'package:test_flutter/constants/app_collors.dart';
 import 'package:test_flutter/constants/app_strings.dart';
+import 'package:test_flutter/core/accounting_calculations.dart';
+import 'package:test_flutter/core/entity.dart';
 import 'package:test_flutter/helpers/toasts.dart';
+import 'package:test_flutter/state/entity/entity.dart';
+import 'package:test_flutter/state/user.dart';
 import 'package:test_flutter/storage/hive/accounting.dart';
 import 'package:test_flutter/storage/hive/synchronization_data.dart';
 import 'package:test_flutter/storage/hive/entity/adapters.dart';
+import 'package:test_flutter/utils/event_bus/event_bus.dart';
 import 'package:test_flutter/utils/widgets/toast.dart';
 
-enum SyncRequestType { update, add }
-enum SyncRequestStatus { success, error }
-class SyncResult<T> {
-  SynchronizationData data;
-  SyncRequestType requestType;
-  SyncRequestStatus status;
-  T? id;
 
-  SyncResult({
-    required this.data, 
-    required this.requestType,
-    required this.status, 
-    this.id
-  });
-
-  Map<String, dynamic> get map {
-    return {
-      'data': data,
-      'requestType': requestType,
-      'status': status,
-      'id': id
-    };
-  }
-}
-
-
-class AccoutingState {
-  static AccoutingState? _instance;
+class AccountingState {
+  static AccountingState? _instance;
 
   final api = AccountingApi.getInstance();
   final appToast = AppToast.getInstance();
   final storage = AccountingStorage.getInstance();
-  SynchronizationDataStorage syncStorage = SynchronizationDataStorage.getInstance();
+  final syncStorage = SynchronizationDataStorage.getInstance();
+  final calcCore = AccointingCalculations.getInstance();
+  final userState = UserState.getInstance();
+  final appBus = AppEventBus.getInstance();
 
-  int? _currentAccountingId = 13;
+  int? _currentAccountingId;
+  DateTime? _currentAccountingCreationDate;
 
-  AccoutingState._();
+  int? get currentAccuntingId => _currentAccountingId;
+  DateTime? get currentAccountingCreationDate => _currentAccountingCreationDate;
 
-  static AccoutingState getInstance() {
-    _instance ??= AccoutingState._();
+  AccountingState._();
+
+  static AccountingState getInstance() {
+    _instance ??= AccountingState._();
     return _instance!;
   }
 
   Future<void> initState() async {
+    // storage.putCurrentReport(CurrentReport(
+    //   cloudId: 13,
+    //   creationDate: DateTime.parse('2024-03-05 08:43:18.128-05')
+    // ));
     CurrentReport? report = await storage.getCurrentReport();
+    print('report ${report?.cloudId}');
     _currentAccountingId = report?.cloudId;
+    _currentAccountingCreationDate = report?.creationDate;
+  }
+
+  Future<bool> hasDataToSync() async {
+    List<SynchronizationData>? list = await syncStorage.getSynchronizationData();
+    return list != null && list.isNotEmpty;
+  }
+  
+  Future<List<RecentAction>?> getRecentActions() async {
+    List<RecentAction> list = [];
+    
+    DateTime now = DateTime.now();
+    DateTime from = now.subtract(const Duration(days: 7));
+
+    // get sales
+    List<Sale>? saleList = await storage.getSalesByDateRange(from, now);
+    List<Sale>? commonSales = await storage.getSales();
+    double? percentFromSales = userState.user?.salaryInfo?.percentFromSales;
+
+    bool calcSales = saleList != null && commonSales != null && percentFromSales != null;
+    if (calcSales) {
+      if (userState.user?.percentChangeConditions != null && userState.user?.salaryInfo?.plan != null) {
+        ReachedConditionResult? reachedConditions = calcCore.findReachedConditions(
+          FindReachedConditionsOptions(
+            sales: commonSales.map((item) => item.total).toList(), 
+            plan: userState.user!.salaryInfo!.plan!, 
+            rules: userState.user!.percentChangeConditions!.map((item) {
+              return PercentChangeRule(
+                percentGoal: item.percentGoal, 
+                percentChange: item.percentChange, 
+                salaryBonus: item.salaryBonus != null ? item.salaryBonus! : 0
+              );
+            }).toList()
+          )
+        );
+        if (reachedConditions != null) {
+          percentFromSales = reachedConditions.changedPercent;
+        }
+      }
+      list.addAll(saleList.map((item) {
+        return RecentAction(
+          type: RecentActionsType.payment, 
+          valueType: RecentActionsValueType.percentFromSale,
+          amount: calcCore.calcPercent(item.total, percentFromSales!), 
+          creationDate: item.creationDate
+        );
+      }));
+    }
+    ///
+    
+    // get tips
+    List<Tip>? tipsList = await storage.getTipsByDateRange(from, now);
+    if (tipsList != null) {
+      list.addAll(tipsList.map((item) {
+        return RecentAction(
+          type: RecentActionsType.payment,
+          valueType: RecentActionsValueType.tip, 
+          amount: item.value, 
+          creationDate: item.creationDate
+        );
+      }));
+    }
+    ///
+    
+    // get prepayments
+    List<Prepayment>? prepaymentsList = await storage.getPrepaymentsByDateRange(from, now);
+    if (prepaymentsList != null) {
+      list.addAll(prepaymentsList.map((item) {
+        return RecentAction(
+          type: RecentActionsType.expense, 
+          valueType: RecentActionsValueType.prepayment, 
+          amount: item.value, 
+          creationDate: item.creationDate
+        );
+      }));
+    }
+
+    if (list.isNotEmpty) {
+      list.sort((a, b) => b.creationDate.compareTo(a.creationDate));
+      return list;
+    }
+    return null;
+  }
+
+  Future<List<Sale>?> getSaleList() {
+    return storage.getSales();
+  }
+
+  Future<List<Prepayment>?> getPrepaymentList() {
+    return storage.getPrepayments();
   }
 
   Future<void> addAndSyncSale(Sale sale) async {
@@ -122,23 +203,13 @@ class AccoutingState {
     );
   }
 
-  Future<void> fuckingFunc(SendPort sendPort) async {
-    final receivePort = ReceivePort();
-    await Future.delayed(const Duration(seconds: 3));
-    sendPort.send(receivePort.sendPort);
-
-    receivePort.listen((dynamic message) async {
-      sendPort.send('done');
-    });
-  }
-
   Future<void> syncAllData() async {
     List<SynchronizationData>? list = await syncStorage.getSynchronizationData();
 
-    if (list != null) {
+    if (list != null && list.isNotEmpty) {
       List<SynchronizationData> dataToRemove = [];
       for (var element in list) {
-        await Future.delayed(const Duration(seconds: 2));
+        await Future.delayed(const Duration(seconds: 1));
         SyncRequestStatus status = SyncRequestStatus.success;
         if (element.type == SynchronizationDataType.sale) {
           status = await syncSale(element);
@@ -179,6 +250,7 @@ class AccoutingState {
           AppStrings.couldNotSyncData
         );
       }
+      appBus.fire(SynchronizationDoneEvent(failedSyncCount: list.length - dataToRemove.length));
     }
   }
 
@@ -335,6 +407,7 @@ class AccoutingState {
           Icons.cloud_off_rounded, 
           '${AppStrings.couldNotSyncData}: $syncErrMessge'
         );
+        appBus.fire(SynchronizationDoneEvent(failedSyncCount: 1));
         return;
       }
 
@@ -345,6 +418,7 @@ class AccoutingState {
           Icons.cloud_off_rounded, 
           AppStrings.couldNotSyncData
         );
+        appBus.fire(SynchronizationDoneEvent(failedSyncCount: 1));
       }
     } on HiveError catch(_) {
       appToast.showErrorToast(AppStrings.errOnWritingData);
@@ -385,6 +459,7 @@ class AccoutingState {
             Icons.cloud_off_rounded, 
             '${AppStrings.couldNotSyncData}: $syncErrMessge'
           );
+          appBus.fire(SynchronizationDoneEvent(failedSyncCount: 1));
         }
       } else {
         appToast.showSuccessToast(AppStrings.dataUpdated);
@@ -393,6 +468,7 @@ class AccoutingState {
           Icons.cloud_off_rounded, 
           AppStrings.couldNotSyncData
         );
+        appBus.fire(SynchronizationDoneEvent(failedSyncCount: 1));
       }
     } on HiveError catch(_) {
       appToast.showErrorToast(AppStrings.errOnWritingData);

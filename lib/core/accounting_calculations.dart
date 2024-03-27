@@ -35,8 +35,10 @@ class AccointingCalculations {
       if (reachedConditions == null) {
         return options.salary;
       }
-      
-      double totalBonuses = calcTotal(reachedConditions.bonuses);
+      double totalBonuses = 0;
+      if (reachedConditions.bonuses.isNotEmpty) {
+        totalBonuses = calcTotal(reachedConditions.bonuses);
+      }
       double percentFromSales = calcPercent(sales - options.plan, reachedConditions.changedPercent);
       return (options.salary + totalBonuses) + percentFromSales;
     } else {
@@ -52,7 +54,10 @@ class AccointingCalculations {
   }
 
   double calcFinalSalary(CalcFinalSalaryOptions options) {
-    double totalPrepayments = calcTotal(options.prepayments);
+    double totalPrepayments = 0;
+    if (options.prepayments.isNotEmpty) {
+      totalPrepayments = calcTotal(options.prepayments);
+    }
     double commonSalary = calcCommonSalary(
       CalcCommonSalaryOptions(
         sales: options.sales,

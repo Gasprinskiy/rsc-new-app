@@ -45,10 +45,10 @@ SignInResult signInResultFromJson(dynamic data) {
 
   if (data['salary_info'] != null) {
     result.salaryInfo = UserSalaryInfo(
-        salary: data['salary_info']['salary'].toDouble(),
-        percentFromSales: data['salary_info']['percent_from_sales'].toDouble(),
-        plan: data['salary_info']['plan'].toDouble(),
-        ignorePlan: data['salary_info']['ignore_plan']);
+        salary: data['salary_info']['info']['salary'].toDouble(),
+        percentFromSales: data['salary_info']['info']['percent_from_sales'].toDouble(),
+        plan: data['salary_info']['info']['plan'].toDouble(),
+        ignorePlan: data['salary_info']['info']['ignore_plan']);
 
     if (data['salary_info']['percent_change_conditions'] != null) {
       List<UserPercentChangeConditions> percentChangeConditions = [];
@@ -56,9 +56,9 @@ SignInResult signInResultFromJson(dynamic data) {
           data['salary_info']['percent_change_conditions'];
       for (var element in responseChangeConditions) {
         UserPercentChangeConditions condition = UserPercentChangeConditions(
-            percentGoal: element.percent_goal.toDouble(),
-            percentChange: element.percent_change.toDouble(),
-            salaryBonus: element.salary_bonus.toDouble());
+            percentGoal: element['percent_goal'].toDouble(),
+            percentChange: element['percent_change'].toDouble(),
+            salaryBonus: element['salary_bonus']?.toDouble());
         percentChangeConditions.add(condition);
       }
       result.percentChangeConditions = percentChangeConditions;

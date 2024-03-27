@@ -65,6 +65,8 @@ class AppStrings {
       'Процент от продаж при выполнении';
   static const String bountyOnGoalReached = 'Премия при выполнении';
 
+  static const String finalSalary = 'Итоговая зарплата';
+
   static const String save = 'Сохранить';
   static const String addConditionds = 'Добавить условие смены процента';
   static const String add = 'Добавить';
@@ -85,16 +87,24 @@ class AppStrings {
   static const String register = 'Зарегестрируйтесь';
   static const String regiserMe = 'Зарегестрироватся';
 
-  static const noInternetConnection = 'Нет соединения с интернетом';
-  static const errOnWritingData = 'Ошибка при записи данных';
-  static const couldNotSyncData = 'Не удалось синхронизовать данные';
-  static const dataStoredInLocalStorage = 'Данные добавлены';
-  static const dataUpdated = 'Данные обновлены';
-  static const dataStoredAndSyncronized = 'Данные добавлены и синхронизированы';
-  static const dataUpdatedAndSyncronized = 'Данные обновлены и синхронизированы';
-  static const dataSyncronized = 'Данные синхронизированы';
+  static const String noInternetConnection = 'Нет соединения с интернетом';
+  static const String errOnWritingData = 'Ошибка при записи данных';
+  static const String couldNotSyncData = 'Не удалось синхронизовать данные';
+  static const String dataStoredInLocalStorage = 'Данные добавлены';
+  static const String dataUpdated = 'Данные обновлены';
+  static const String dataStoredAndSyncronized = 'Данные добавлены и синхронизированы';
+  static const String dataUpdatedAndSyncronized = 'Данные обновлены и синхронизированы';
+  static const String dataSyncronized = 'Данные синхронизированы';
+  static const String noDataToSync = 'Нет данных для синхронизации';
+  static const String noDataReportFound = 'Данные по текущему отчету не найдены';
+  static const String commonDataWillBeInThisBlock = 'Тут будут появлятся общие данные по текущему отчету в процессе работы с приложением';
 
-  static const saleStored = 'Продажа добавлена';
+  static const String curreReportData = 'Текущий отчет';
+  static const String recentActions = 'Недавние действия';
+  static const String started = 'Начало';
+  static const String planProgress = 'Прогресс плана';
+
+  static const String saleStored = 'Продажа добавлена';
 
   // common input error
   static const String fieldCannotBeEmpty = 'Поле не может быть пустым';

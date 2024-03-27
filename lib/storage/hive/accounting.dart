@@ -26,6 +26,30 @@ class AccountingStorage {
     return _storage.put(currentReportKey, payload);
   }
 
+  Future<List<Sale>?> getSalesByDateRange(DateTime from, DateTime to) async {
+    List<Sale>? list = await getSales();
+    if (list != null) {
+      return list.where((element) => (element.creationDate.isAfter(from) && element.creationDate.isBefore(to))).toList();
+    }
+    return null;
+  }
+
+  Future<List<Tip>?> getTipsByDateRange(DateTime from, DateTime to) async {
+    List<Tip>? list = await getTips();
+    if (list != null) {
+      return list.where((element) => (element.creationDate.isAfter(from) && element.creationDate.isBefore(to))).toList();
+    }
+    return null;
+  }
+
+  Future<List<Prepayment>?> getPrepaymentsByDateRange(DateTime from, DateTime to) async {
+    List<Prepayment>? list = await getPrepayments();
+    if (list != null) {
+      return list.where((element) => (element.creationDate.isAfter(from) && element.creationDate.isBefore(to))).toList();
+    }
+    return null;
+  }
+
   Future<List<Sale>?> getSales() async {
     SaleList? list = await _storage.get(salesKey);
     return list?.data;

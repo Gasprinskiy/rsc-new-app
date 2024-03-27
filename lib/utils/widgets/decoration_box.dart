@@ -5,11 +5,15 @@ class DecorationBox extends StatelessWidget {
   const DecorationBox({
     required this.children,
     this.colors = AppColors.defaultGradient,
+    this.padding = const EdgeInsets.all(20),
+    this.top = 25,
     super.key,
   });
 
   final List<Color> colors;
   final List<Widget> children;
+  final EdgeInsetsGeometry? padding;
+  final double? top;
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +24,8 @@ class DecorationBox extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(
-                height: 25,
+              SizedBox(
+                height: top,
               ),
               ...children,
             ],

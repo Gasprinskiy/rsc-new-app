@@ -9,22 +9,20 @@ TokenStorage tokenStorage = TokenStorage.getInstance();
 
 Dio initDio() {
   Dio dio = Dio(BaseOptions(
-    baseUrl: 'http://10.0.2.2:8000',
+    baseUrl: 'http://10.0.2.2:3000',
     connectTimeout: const Duration(seconds: 10),
     receiveTimeout: const Duration(seconds: 10)
   ));
   dio.interceptors.add(InterceptorsWrapper(
     onRequest: (options, handler) => {
       tokenStorage.getToken().then((value) => {
-            if (value != null)
-              {
-                options.headers['authorization'] = value,
-              },
-            handler.next(options)
-          })
+        if (value != null) {
+          options.headers['authorization'] = value,
+        },
+        handler.next(options)
+      })
     },
     onError: (error, handler) => {
- 
       handler.next(DioException(
         requestOptions: error.requestOptions,
         message: createErrorMessage(

@@ -50,6 +50,8 @@ dependencies:
   local_auth_android: ^1.0.37
   uuid: ^4.3.3
   internet_connection_checker: ^1.0.0+1
+  animated_digit: ^3.2.3
+  event_bus: ^2.0.0
   # flutter_pin_code_widget: ^0.1.1
 
 dev_dependencies:
