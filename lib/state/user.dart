@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:test_flutter/api/entity/user.dart';
+import 'package:test_flutter/api/user.dart';
 import 'package:test_flutter/storage/hive/synchronization_data.dart';
 import 'package:test_flutter/storage/hive/user.dart';
 import 'package:test_flutter/storage/hive/entity/adapters.dart';
@@ -8,6 +9,7 @@ class UserState {
   static UserState? _instance;
   final userStorage = UserStorage.getInstance();
   final syncStorage = SynchronizationDataStorage.getInstance();
+  final userApi = UserApi.getInstance();
 
   User? _userState;
   BiometricsSettings? _userBimetricsSettings;
@@ -112,6 +114,11 @@ class UserState {
           percentChangeConditions: _userState?.percentChangeConditions);
     }
     return null;
+  }
+
+  Future<void> updateUserInfo(User user) async {
+    await updateUserState(user);
+    // await userApi.
   }
 
   User? get user => _userState;

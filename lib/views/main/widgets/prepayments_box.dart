@@ -27,13 +27,23 @@ class PrepaymentsBox extends StatelessWidget {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            AppStrings.prepayments,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500
-            ),
-            textAlign: TextAlign.start,
+          const Row(
+            children: [
+              Icon(
+                Icons.money_off_csred,
+                color: AppColors.primary500,
+                size: 20,
+              ),
+              SizedBox(width: 5),
+              Text(
+                AppStrings.prepayment,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.start,
+              ),
+            ],
           ),
           const SizedBox(height: 10),
           SizedBox(

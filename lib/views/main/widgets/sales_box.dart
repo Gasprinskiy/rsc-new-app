@@ -54,13 +54,23 @@ class SalesBox extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            AppStrings.sales,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500
-            ),
-            textAlign: TextAlign.start,
+          const Row(
+            children: [
+              Icon(
+                Icons.sell_rounded,
+                color: AppColors.primary500,
+                size: 20,
+              ),
+              SizedBox(width: 5),
+              Text(
+                AppStrings.sales,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.start,
+              ),
+            ],
           ),
           const SizedBox(height: 10),
           SizedBox(

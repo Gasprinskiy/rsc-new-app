@@ -134,7 +134,10 @@ class AccountingState {
           amount: calcCore.calcPercent(item.total, percentFromSales!), 
           creationDate: item.creationDate
         );
-      }).where((element) => element.amount > 0));
+      }).where((element) {
+        double amount = double.parse(element.amount.toStringAsFixed(0));
+        return amount > 0;
+      }));
     }
     ///
     
@@ -521,8 +524,6 @@ class AccountingState {
         sourcePayload.cloudId = id;
       }
     }
-
-    print('sourcePayload: $sourcePayload');
 
     try {
       await storeFunc();

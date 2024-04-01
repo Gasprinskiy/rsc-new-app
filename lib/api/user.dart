@@ -54,4 +54,8 @@ class UserApi {
     Map<String, Object?> jsonPayload = payload.toJson();
     await _worker.post('/user/create_salary_info', jsonPayload);
   }
+
+  Future<void> updateUserInfo(UpdateUserInfoParams params) async {
+    
+  }
 }
