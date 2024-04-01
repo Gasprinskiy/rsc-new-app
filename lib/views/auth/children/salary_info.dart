@@ -13,6 +13,7 @@ import 'package:test_flutter/helpers/toasts.dart';
 import 'package:test_flutter/state/user.dart';
 import 'package:test_flutter/utils/widgets/decoration_box.dart';
 import 'package:test_flutter/storage/hive/entity/adapters.dart';
+import 'package:test_flutter/utils/widgets/dialog.dart';
 
 class SalaryInfoRoute extends StatefulWidget {
   
@@ -27,6 +28,7 @@ class _SalaryInfoRouteState extends State<SalaryInfoRoute> {
   final _percentChangeConditionsFormKey = GlobalKey<FormState>();
   final userState = UserState.getInstance();
   final userApi = UserApi.getInstance();
+  final appDialog = AppDialog.getInstance();
   bool _isVariablePercent = false;
   bool _ignorePlan = false;
   bool _isLoading = false;
@@ -138,6 +140,7 @@ class _SalaryInfoRouteState extends State<SalaryInfoRoute> {
 
   void addConditions() {
     if (_percentChangeConditionsFormKey.currentState?.validate() == true) {
+      print('bountyController.doubleValue: ${bountyController.doubleValue}');
       PercentChangeConditions value = PercentChangeConditions(
           percentGoal: planGoalController.doubleValue,
           percentChange: percentChangeController.doubleValue);
@@ -153,15 +156,11 @@ class _SalaryInfoRouteState extends State<SalaryInfoRoute> {
   }
 
   void showPercentChangeConditionsModal() {
-    showDialog(
-        context: context,
-        builder: (BuildContext builder) {
-          return AlertDialog(
-            scrollable: true,
-            title: const Text(
-              AppStrings.addConditionds,
-            ),
-            content: Column(
+    appDialog.show(
+        context,
+        AppStrings.addConditionds,
+        true,
+        Column(
               children: [
                 Form(
                     key: _percentChangeConditionsFormKey,
@@ -214,19 +213,18 @@ class _SalaryInfoRouteState extends State<SalaryInfoRoute> {
                     ))
               ],
             ),
-          );
-        });
+            null,
+    );
   }
 
   void showDescriptionModal(String title, String subtitle) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(title),
-            content: Text(subtitle),
-          );
-        });
+    appDialog.show(
+      context,
+      title,
+      true,
+      Text(subtitle),
+      null
+    );
   }
 
   Future<void> saveSalaryInfo() async {
@@ -389,10 +387,7 @@ class _SalaryInfoRouteState extends State<SalaryInfoRoute> {
                       ],
                     ),
                     TextButton(
-                        onPressed: () => {
-                              showDescriptionModal(AppStrings.variablePercent,
-                                  AppStrings.variablePercentDescription)
-                            },
+                        onPressed: () => showDescriptionModal(AppStrings.variablePercent, AppStrings.variablePercentDescription),
                         child: const Icon(Icons.info)),
                   ],
                 ),
@@ -436,7 +431,7 @@ class _SalaryInfoRouteState extends State<SalaryInfoRoute> {
                                   child: const Icon(Icons.info)),
                             ],
                           ),
-                          Row(
+                          Column(
                             mainAxisSize: MainAxisSize.max,
                             // crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,

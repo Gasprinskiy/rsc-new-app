@@ -17,7 +17,7 @@ class SynchronizationDataStorage {
   Future<List<SynchronizationData>?> getSynchronizationData() async {
     // await storage.remove(AppStrings.syncStorageKey);
     SynchronizationDataList? result = await _storage.get(AppStrings.syncStorageKey);
-    return result?.data;
+    return result?.data.toList();
   }
 
   Future<void> addSynchronizationData(SynchronizationData payload) async {
@@ -33,9 +33,14 @@ class SynchronizationDataStorage {
   Future<void> updateSyncData(SynchronizationData payload) async {
     List<SynchronizationData>? data = await getSynchronizationData();
     if (data != null) {
-      int index = await _findIndexById(data, payload.id);
+      int index = data.indexWhere((element) {
+        return element.data?.id == element.data?.id;
+      });
       if (index >= 0) {
         data[index] = payload;
+        await _storage.put(AppStrings.syncStorageKey, SynchronizationDataList(data: data));
+      } else {
+        data.add(payload);
         await _storage.put(AppStrings.syncStorageKey, SynchronizationDataList(data: data));
       }
     }
@@ -54,5 +59,9 @@ class SynchronizationDataStorage {
 
   Future<int> _findIndexById(List<SynchronizationData> data, String id) async {
     return data.indexWhere((element) => element.id == id);
+  }
+
+  Future<void> removeAll() {
+    return _storage.remove(AppStrings.syncStorageKey);
   }
 }

@@ -114,6 +114,21 @@ class Sale extends HiveObject {
   @HiveField(5)
   int? cloudId;
 
+  bool isEqual(Sale other) {
+    String thisDate = creationDate.toString().split(' ')[0];
+    String otherDate = other.creationDate.toString().split(' ')[0];
+    return  
+      total == other.total 
+      && 
+      nonCash == other.nonCash
+      &&
+      cashTaxes == other.cashTaxes
+      &&
+      thisDate == otherDate
+      &&
+      cloudId == other.cloudId;
+  }
+
   Sale(
       {required this.total,
       required this.nonCash,
@@ -133,6 +148,12 @@ class Tip extends HiveObject {
   @HiveField(5)
   int? cloudId;
 
+  bool isEqual(Tip other) {
+    String thisDate = creationDate.toString().split(' ')[0];
+    String otherDate = other.creationDate.toString().split(' ')[0];
+    return value == other.value && thisDate == otherDate && cloudId == other.cloudId;
+  }
+
   Tip({required this.value, required this.creationDate, this.cloudId});
 }
 
@@ -146,6 +167,12 @@ class Prepayment extends HiveObject {
   DateTime creationDate;
   @HiveField(5)
   int? cloudId;
+
+  bool isEqual(Prepayment other) {
+    String thisDate = creationDate.toString().split(' ')[0];
+    String otherDate = other.creationDate.toString().split(' ')[0];
+    return value == other.value && thisDate == otherDate && cloudId == other.cloudId;
+  }
 
   Prepayment({required this.value, required this.creationDate, this.cloudId});
 }
@@ -165,15 +192,17 @@ class CurrentReportInfo extends HiveObject {
 @HiveType(typeId: 11)
 enum SynchronizationDataType {
   @HiveField(0)
+  report,
+  @HiveField(1)
   sale,
-  @HiveField(1) 
+  @HiveField(2) 
   tip, 
-  @HiveField(2)
-  prepayment,
   @HiveField(3)
-  salaryinfo,
+  prepayment,
   @HiveField(4)
-  percentchangeconditions
+  salaryinfo,
+  @HiveField(5)
+  percentchangeconditions,
 }
 
 @HiveType(typeId: 12)

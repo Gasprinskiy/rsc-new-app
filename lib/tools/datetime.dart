@@ -14,6 +14,21 @@ Map<int, String> MonthList = {
   12: 'декабрь' 
 };
 
+Map<int, String> MonthListMulti = {
+  1: 'января',
+  2: 'февраля',
+  3: 'марта',
+  4: 'апреля',
+  5: 'мая',
+  6: 'июня',
+  7: 'июля',
+  8: 'августа',
+  9: 'сентября',
+  10: 'октября',
+  11: 'ноября',
+  12: 'декабря' 
+};
+
 String greetByHour() {
   int hour = DateTime.now().hour;
   int index = _getGreetIndex(hour);
@@ -33,6 +48,14 @@ String monthAndYear(DateTime time) {
   return '${MonthList[month]} $year';
 }
 
+String monthDateYear(DateTime time) {
+  int day = time.day;
+  int month = time.month;
+  int year = time.year;
+
+  return '$day ${MonthListMulti[month]} $year';
+}
+
 int _getGreetIndex(int hour) {
   if(hour >= 6 && hour <= 11){ 
     return 0;
@@ -47,4 +70,9 @@ int _getGreetIndex(int hour) {
     return 3; 
   } 
   return 0;
+}
+
+Duration getCurrentTimeDuration() {
+  DateTime now = DateTime.now();
+  return Duration(hours: now.hour, minutes: now.minute, seconds: now.second);
 }

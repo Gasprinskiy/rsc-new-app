@@ -52,17 +52,17 @@ class AccountingStorage {
 
   Future<List<Sale>?> getSales() async {
     SaleList? list = await _storage.get(salesKey);
-    return list?.data;
+    return list?.data.toList();
   }
 
   Future<List<Tip>?> getTips() async {
     TipList? list = await _storage.get(tipsKey);
-    return list?.data;
+    return list?.data.toList();
   }
 
   Future<List<Prepayment>?> getPrepayments() async {
     PrepaymentList? list = await _storage.get(prepaymentsKey);
-    return list?.data;
+    return list?.data.toList();
   }
 
   Future<Sale?> getSaleById(String id)  {
@@ -143,6 +143,13 @@ class AccountingStorage {
     }
   }
 
+  Future<void> removeAll() async {
+    await _storage.remove(currentReportKey);
+    await _storage.remove(salesKey);
+    await _storage.remove(tipsKey);
+    await _storage.remove(prepaymentsKey);
+  }
+
   Future<List<T>> _handleAddAction<T>(
     T payload,
     Future<List<T>?> Function() getListFunc,
@@ -162,6 +169,7 @@ class AccountingStorage {
     int Function(List<T>) findIndexFunc
   ) async {
     List<T>? list = await getListFunc();
+    print('handler list: $payload');
     if (list != null) {
       int indexOfSaleToUpdate = findIndexFunc(list);
       if (indexOfSaleToUpdate >= 0) {

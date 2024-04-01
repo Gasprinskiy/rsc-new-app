@@ -6,7 +6,7 @@ import 'package:test_flutter/constants/app_strings.dart';
 import 'package:test_flutter/state/user.dart';
 import 'package:test_flutter/storage/secure/pin_code.dart';
 import 'package:test_flutter/tools/pincrypt.dart';
-import 'package:test_flutter/utils/widgets/pin_code_screen.dart';
+import 'package:test_flutter/views/local_auth/widgets/pin_code_screen.dart';
 
 const androidAuthMessage = AndroidAuthMessages(
   signInTitle: AppStrings.authRequired,
@@ -39,6 +39,7 @@ class _LocalAuthRouteState extends State<LocalAuthRoute> {
   void initState() {
     super.initState();
     setHasedPin();
+    print(userState.biometricsAllowed);
     if (userState.biometricsAllowed) {
       authenticateWithBiometrics();
     }

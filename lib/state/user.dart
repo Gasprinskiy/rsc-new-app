@@ -23,6 +23,7 @@ class UserState {
 
   Future<void> initUserState() async {
     _userState = await userStorage.getUserInfo();
+    await setBiometricsSettingsFromStorage();
     _inited = true;
   }
 
@@ -87,6 +88,10 @@ class UserState {
     await userStorage.setBiometricsSettings(settings);
     //
     _userBimetricsSettings = settings;
+  }
+
+  Future<void> setBiometricsSettingsFromStorage() async {
+    _userBimetricsSettings = await userStorage.getBiometricsSettings();
   }
 
   Future<void> setEmailConfirmationInfo(EmailConfirmation info) async {

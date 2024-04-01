@@ -1,11 +1,11 @@
 import 'package:test_flutter/core/entity.dart';
 
-class AccointingCalculations {
-  static AccointingCalculations? _instance;
-  AccointingCalculations._();
+class AccountingCalculations {
+  static AccountingCalculations? _instance;
+  AccountingCalculations._();
 
-  static AccointingCalculations getInstance() {
-    _instance ??= AccointingCalculations._();
+  static AccountingCalculations getInstance() {
+    _instance ??= AccountingCalculations._();
     return _instance!;
   }
 
@@ -73,15 +73,17 @@ class AccointingCalculations {
   }
 
   ReachedConditionResult? findReachedConditions(FindReachedConditionsOptions options) {
-    double planProgress = calcPlanProgress(options.sales, options.plan);
-    List<PercentChangeRule> filteredRules = options.rules.where((item) => planProgress >= item.percentGoal).toList();
+    if (options.sales.isNotEmpty) {
+      double planProgress = calcPlanProgress(options.sales, options.plan);
+      List<PercentChangeRule> filteredRules = options.rules.where((item) => planProgress >= item.percentGoal).toList();
 
-    if (filteredRules.isNotEmpty) {
-      List<double> bonuses = filteredRules.map((item) => item.salaryBonus).where((item) => item > 0).toList();
-      return ReachedConditionResult(
-        bonuses: bonuses,
-        changedPercent: filteredRules[filteredRules.length - 1].percentChange
-      );
+      if (filteredRules.isNotEmpty) {
+        List<double> bonuses = filteredRules.map((item) => item.salaryBonus).where((item) => item > 0).toList();
+        return ReachedConditionResult(
+          bonuses: bonuses,
+          changedPercent: filteredRules[filteredRules.length - 1].percentChange
+        );
+      }
     }
     return null;
   }

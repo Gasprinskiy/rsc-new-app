@@ -9,6 +9,7 @@ import 'package:test_flutter/views/local_auth/enter.dart';
 import 'package:test_flutter/views/main/main.dart';
 import 'package:test_flutter/views/splash_screen.dart';
 import 'package:test_flutter/storage/hive/entity/init.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +22,8 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  // final shit = CupertinoLocalizationRu;
+
   @override
   Widget build(BuildContext context) {  
     return MaterialApp(
@@ -29,6 +32,13 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
         useMaterial3: true,
       ),
+      localizationsDelegates: const [
+         GlobalMaterialLocalizations.delegate
+       ],
+      supportedLocales: const [
+        Locale("en", "EN"),
+        Locale("RU"),
+      ],
       routes: {
         '/': (context) => const SplashScreen(),
         '/auth': (context) => const AuthRoute(),

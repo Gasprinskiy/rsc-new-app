@@ -4,7 +4,7 @@ import 'package:test_flutter/core/entity.dart';
 
 void main() {
   // test only complex core methods
-  AccointingCalculations core = AccointingCalculations.getInstance();
+  AccountingCalculations core = AccountingCalculations.getInstance();
 
   group('Test calcCommonSalary', () {
     test('without sales', () {
@@ -17,6 +17,26 @@ void main() {
         isVariablePercent: false,
         plan: 0,
         percentChangeRules: []
+      );
+      expect(core.calcCommonSalary(options), expectResult);
+    });
+
+    test('without sales and with variable percent', () {
+      double expectResult = 2000000;
+      CalcCommonSalaryOptions options = CalcCommonSalaryOptions(
+        sales: [],
+        salary: 2000000,
+        percentFromSales: 0,
+        ignorePlan: true,
+        isVariablePercent: true,
+        plan: 8000000,
+        percentChangeRules: [
+          PercentChangeRule(
+            percentGoal: 100, 
+            percentChange: 3, 
+            salaryBonus: 0
+          )
+        ]
       );
       expect(core.calcCommonSalary(options), expectResult);
     });

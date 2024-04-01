@@ -18,14 +18,19 @@ class _UserState extends State<UserRoute> {
   bool _isSyncInProgress = false;
 
   Sale sale = Sale(
-    total: 10000000,
+    total: 1000000,
     nonCash: 200000,
-    cashTaxes: 500000,
+    cashTaxes: 600000,
     creationDate: DateTime.now(),
   );
 
   Tip tip = Tip(
     value: 100000,
+    creationDate: DateTime.now()
+  );
+
+  Prepayment prepayment = Prepayment(
+    value: 1000000,
     creationDate: DateTime.now()
   );
   
@@ -72,6 +77,13 @@ class _UserState extends State<UserRoute> {
                 accountingState.addAndSyncTip(tip)
               }, 
               child: const Text('Add tip')
+            ),
+            ElevatedButton(
+              onPressed: () => {
+                appToast.init(context),
+                accountingState.addAndSyncPrepayment(prepayment)
+              }, 
+              child: const Text('Add prepayment')
             ),
             ElevatedButton(
               onPressed: () => {

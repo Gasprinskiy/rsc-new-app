@@ -1,5 +1,6 @@
 import 'package:animated_digit/animated_digit.dart';
 import 'package:flutter/material.dart';
+import 'package:test_flutter/api/acounting.dart';
 import 'package:test_flutter/constants/app_collors.dart';
 import 'package:test_flutter/constants/app_strings.dart';
 import 'package:test_flutter/core/accounting_calculations.dart';
@@ -10,6 +11,7 @@ import 'package:test_flutter/state/user.dart';
 import 'package:test_flutter/storage/hive/entity/adapters.dart';
 import 'package:test_flutter/tools/datetime.dart';
 import 'package:test_flutter/tools/extensions.dart';
+import 'package:test_flutter/tools/number.dart';
 import 'package:test_flutter/utils/widgets/decoration_box.dart';
 
 class Home extends StatefulWidget {
@@ -20,9 +22,10 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final calcCore = AccointingCalculations.getInstance();
+  final calcCore = AccountingCalculations.getInstance();
   final userState = UserState.getInstance();
   final accountingState = AccountingState.getInstance();
+  final accountingApi = AccountingApi.getInstance();
 
   double _finalSalary = 0;
   double? _planProgress;
@@ -32,7 +35,7 @@ class _HomeState extends State<Home> {
     RecentActionsValueType.percentFromSale: Icons.percent_rounded,
     RecentActionsValueType.tip: Icons.payments_outlined,
     RecentActionsValueType.prepayment: Icons.money_off_csred
-  }
+  };
 
   @override
   void initState() {
@@ -67,61 +70,88 @@ class _HomeState extends State<Home> {
           prepayments: prepayments.map((item) => item.value).toList()
         )
       );
-      if (userState.user?.salaryInfo?.plan != null) {
+      if (userState.user?.salaryInfo?.plan != null && salesTotal.isNotEmpty) {
         _planProgress = calcCore.calcPlanProgress(salesTotal, userState.user!.salaryInfo!.plan!);
       }
     });
   }
 
-  void setRecentActions()  {
-    setState(() async {
-      _recentActionsList = await accountingState.getRecentActions();
-    });
+  Future<void> setRecentActions() async {
+    List<RecentAction>? actions = await accountingState.getRecentActions();
+    if (actions != null) {
+      setState(()  {
+        _recentActionsList = actions;
+      });
+    }
   }
 
   Text recentActionValueFormat(RecentAction action) {
     if (action.type == RecentActionsType.expense) {
       return Text(
-        '-${action.amount}'
-      )
+        '-${currencyFormat(action.amount)}',
+        style: const TextStyle(
+          color: AppColors.error,
+          fontSize: 16,
+        ),
+        textAlign: TextAlign.right,
+      );
     }
+    return Text(
+      '+${currencyFormat(action.amount)}',
+      style: const TextStyle(
+        color: AppColors.success,
+        fontSize: 16
+      ),
+      textAlign: TextAlign.right,
+    );
   }
 
-  List<SizedBox>? recentActionsItems() {
+  List<Column> recentActionsItems() {
     if (_recentActionsList != null) {
       return _recentActionsList!.map((item) {
-        return SizedBox(
-          width: MediaQuery.of(context).size.width,
-          child: DecoratedBox(
-            decoration: const BoxDecoration(
-              color: AppColors.primaryTransparent,
-              borderRadius: BorderRadius.all(Radius.circular(5))
-            ),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-              child: Column(
-                children: [
-                  Row(
+        return Column(
+          children: [
+            const SizedBox(height: 10),
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: DecoratedBox(
+                decoration: const BoxDecoration(
+                  color: AppColors.primaryTransparent,
+                  borderRadius: BorderRadius.all(Radius.circular(5))
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(_recentActionsIconsMap[item.valueType])
-                      Text()
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Icon(
+                            _recentActionsIconsMap[item.valueType], 
+                            size: 30,
+                            color: AppColors.primary,
+                          ),
+                        ],
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          recentActionValueFormat(item),
+                          const SizedBox(height: 10),
+                          Text(monthDateYear(item.creationDate))
+                        ],
+                      )
                     ],
                   ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(item.creationDate.toString())
-                    ],
-                  )
-                ],
-              ),
-            ),
-          )
+                ),
+              )
+            )
+          ],
         );
       }).toList();
     }
+    return [];
   }
 
   @override
@@ -201,7 +231,7 @@ class _HomeState extends State<Home> {
                               )
                             ],
                           ),
-                          const SizedBox(height: 10),
+                          SizedBox(height: _planProgress != null ? 10 : 0),
                           _planProgress != null
                           ?
                           Row(
@@ -216,7 +246,7 @@ class _HomeState extends State<Home> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(5),
                                   child: Text(
-                                    '$_planProgress%',
+                                    '${_planProgress?.toStringAsFixed(2)}%',
                                     style: const TextStyle(color: Colors.white),
                                   )
                                     ,
@@ -232,6 +262,7 @@ class _HomeState extends State<Home> {
                   ),
                 ),
                 const SizedBox(height: 20),
+                _recentActionsList != null && _recentActionsList!.isNotEmpty ? 
                 const Text(
                   '${AppStrings.recentActions}:',
                   style: TextStyle(
@@ -239,15 +270,18 @@ class _HomeState extends State<Home> {
                     fontWeight: FontWeight.w500
                   ),
                   textAlign: TextAlign.end,
-                ),
+                )
+                :
+                const SizedBox(height: 0),
                 Column(
-                  children: [],
+                  children: [
+                    ...recentActionsItems()
+                  ],
                 )
               ],
             )
             :
-            const Expanded(
-              flex: 1,
+            const SizedBox(
               child: Align(
                 alignment: Alignment.center,
                 child: Column(

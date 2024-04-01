@@ -27,6 +27,11 @@ class Storage {
     await box.delete(key);
   }
 
+  Future<void> removeAllData() async {
+    Box<dynamic> box = await _openBox();
+    await box.deleteFromDisk();
+  }
+
   Future<Box<dynamic>> _openBox() async {
     if (Hive.isBoxOpen(AppStrings.appStorageKey)) {
       return Hive.box(AppStrings.appStorageKey);

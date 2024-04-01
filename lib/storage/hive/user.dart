@@ -41,7 +41,7 @@ class UserStorage {
     return _storage.put(AppStrings.biometricsSettingsStoreKey, payload);
   }
 
-  Future<void> getBiometricsSettings() {
+  Future<BiometricsSettings?> getBiometricsSettings() {
     return _storage.get(AppStrings.biometricsSettingsStoreKey);
   }
 }

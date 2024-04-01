@@ -654,20 +654,23 @@ class SynchronizationDataTypeAdapter
   @override
   void write(BinaryWriter writer, SynchronizationDataType obj) {
     switch (obj) {
-      case SynchronizationDataType.sale:
+      case SynchronizationDataType.report:
         writer.writeByte(0);
         break;
-      case SynchronizationDataType.tip:
+      case SynchronizationDataType.sale:
         writer.writeByte(1);
         break;
-      case SynchronizationDataType.prepayment:
+      case SynchronizationDataType.tip:
         writer.writeByte(2);
         break;
-      case SynchronizationDataType.salaryinfo:
+      case SynchronizationDataType.prepayment:
         writer.writeByte(3);
         break;
-      case SynchronizationDataType.percentchangeconditions:
+      case SynchronizationDataType.salaryinfo:
         writer.writeByte(4);
+        break;
+      case SynchronizationDataType.percentchangeconditions:
+        writer.writeByte(5);
         break;
     }
   }

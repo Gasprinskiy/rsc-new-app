@@ -11,15 +11,67 @@ class CreateReportResult {
   CreateReportResult({required this.id});
 }
 
+class ApiCurrentReport {
+  int id;
+  DateTime creationDate;
+  List<ApiSale>? sales;
+  List<CommonAdditionalReportData>? tips;
+  List<CommonAdditionalReportData>? prepayments;
+
+  ApiCurrentReport({
+    required this.id, 
+    required this.creationDate,
+    this.sales,
+    this.tips,
+    this.prepayments
+  });
+}
+
+ApiCurrentReport apiCurrentReportFromJson(dynamic data) {
+  ApiCurrentReport result = ApiCurrentReport(
+    id: data['accounting_id'].toInt(),
+    creationDate: DateTime.parse(data['creation_date'])
+  );
+
+  if (data['sales'] != null) {
+    List<dynamic> salesApiData = data['sales'];
+    List<ApiSale> sales = [];
+    for (var element in salesApiData) {
+      sales.add(saleFromJson(element));
+    }
+    result.sales = sales;
+  }
+
+  if (data['tips'] != null) {
+    List<dynamic> tipsApiData = data['tips'];
+    List<CommonAdditionalReportData> tips = [];
+    for (var element in tipsApiData) {
+      tips.add(commonAditionalDataFromJson(element));
+    }
+    result.tips = tips;
+  }
+
+  if (data['prepayments'] != null) {
+    List<dynamic> prepaymentsApiData = data['prepayments'];
+    List<CommonAdditionalReportData> prepayments = [];
+    for (var element in prepaymentsApiData) {
+      prepayments.add(commonAditionalDataFromJson(element));
+    }
+    result.prepayments = prepayments;
+  }
+
+  return result;
+}
+
 class CreateReportParams extends ApiPayload {
   DateTime creationDate;
 
   CreateReportParams({required this.creationDate});
 
   @override
-  Map<String, DateTime> get apiParams {
+  Map<String, String> get apiParams {
     return {
-      'creation_date': creationDate
+      'creation_date': creationDate.toIso8601String()
     };
   }
 }
@@ -87,7 +139,7 @@ class AccountingReport {
 AccountingReport accountingReportFromJson(dynamic data) {
   return AccountingReport(
     id: data['accounting_id'],
-    creationDate: data['creation_date']
+    creationDate: DateTime.parse(data['creation_date'])
   );
 }
 
@@ -126,12 +178,14 @@ class ArchivateReportSalaryParams extends ApiPayload {
 }
 
 class ApiSale extends ApiPayload {
+  int? id;
   double total;
   double nonCash;
   double cashTaxes;
   DateTime creationDate;
 
   ApiSale({
+    this.id,
     required this.total,
     required this.nonCash,
     required this.cashTaxes,
@@ -151,18 +205,20 @@ class ApiSale extends ApiPayload {
 
 ApiSale saleFromJson(dynamic data) {
   return ApiSale(
-    total: data['total_sales'],
-    nonCash: data['non_cash'],
-    cashTaxes: data['cash_texes'],
-    creationDate: data['creation_date']
+    id: data?['id'],
+    total: data['total_sales'].toDouble(),
+    nonCash: data['non_cash'].toDouble(),
+    cashTaxes: data['cash_taxes'].toDouble(),
+    creationDate: DateTime.parse(data['creation_date'])
   );
 }
 
 class CommonAdditionalReportData extends ApiPayload {
+  int? id;
   double value;
   DateTime creationDate;
 
-  CommonAdditionalReportData({required this.value, required this.creationDate});
+  CommonAdditionalReportData({this.id, required this.value, required this.creationDate});
 
   @override
   Map<String, dynamic> get apiParams {
@@ -175,8 +231,9 @@ class CommonAdditionalReportData extends ApiPayload {
 
 CommonAdditionalReportData commonAditionalDataFromJson(dynamic data) {
   return CommonAdditionalReportData(
-    value: data['value'],
-    creationDate: data['creation_date'],
+    id: data?['id'],
+    value: data['value'].toDouble(),
+    creationDate: DateTime.parse(data['creation_date']),
   );
 }
 

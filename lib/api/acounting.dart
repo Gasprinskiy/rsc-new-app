@@ -1,6 +1,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:test_flutter/api/entity/accounting.dart';
+import 'package:test_flutter/api/tools/error_handler.dart';
 import 'package:test_flutter/api/worker/worker.dart';
 
 
@@ -15,9 +16,16 @@ class AccountingApi {
     return _instance!;
   }
 
-  Future<CreateReportResult?> createReport(CreateReportParams payload) async {
+  Future<int?> createReport(CreateReportParams payload) async {
     Response<dynamic> response = await _worker.post('/accounting/create_report', payload.apiParams);
-    return CreateReportResult(id: response.data['accounting_id']);
+    return response.data['accounting_id'];
+  }
+
+  Future<ApiCurrentReport?> getCurrentReport() async {
+    return handleResponseDataParse<ApiCurrentReport?>(
+      () => _worker.get('/accounting/current_report', null, null),
+      (data) => apiCurrentReportFromJson(data)
+    );
   }
 
   Future<ArchivedReportsDateRange?> getArchivedReportsDateRange() async {
@@ -54,15 +62,15 @@ class AccountingApi {
   }
 
   Future<void> updateTip(int tipId, CommonAdditionalReportData payload) {
-    return _worker.post('/update_tip/$tipId', payload.apiParams);
+    return _worker.post('/accounting/update_tip/$tipId', payload.apiParams);
   }
 
-  Future<int?> addPrepayment(int prepeymentId, CommonAdditionalReportData payload) async {
-    Response<dynamic> response = await _worker.post('/add_prepayment/$prepeymentId', payload.apiParams);
+  Future<int?> addPrepayment(int reportId, CommonAdditionalReportData payload) async {
+    Response<dynamic> response = await _worker.post('/accounting/add_prepayment/$reportId', payload.apiParams);
     return response.data['id'];
   }
 
   Future<void> updatePrepayment(int prepeymentId, CommonAdditionalReportData payload) {
-    return _worker.post('/update_prepayment/$prepeymentId', payload.apiParams);
+    return _worker.post('/accounting/update_prepayment/$prepeymentId', payload.apiParams);
   }
 }

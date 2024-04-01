@@ -1,12 +1,17 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:test_flutter/api/acounting.dart';
+import 'package:test_flutter/api/entity/accounting.dart';
 import 'package:test_flutter/api/entity/user.dart';
+import 'package:test_flutter/api/tools/error_handler.dart';
 import 'package:test_flutter/api/user.dart';
 import 'package:test_flutter/constants/app_constants.dart';
 import 'package:test_flutter/constants/app_strings.dart';
 import 'package:test_flutter/constants/app_text_form_field.dart';
 import 'package:test_flutter/constants/app_theme.dart';
 import 'package:test_flutter/helpers/request_handler.dart';
+import 'package:test_flutter/state/accounting.dart';
 import 'package:test_flutter/state/user.dart';
 import 'package:test_flutter/utils/widgets/decoration_box.dart';
 import 'package:test_flutter/utils/widgets/toast.dart';
@@ -23,7 +28,9 @@ class _AuthRouteState extends State<AuthRoute> {
   final _formKey = GlobalKey<FormState>();
   final toast = AppToast.getInstance();
   final userState = UserState.getInstance();
+  final accountingState = AccountingState.getInstance();
   final userApi = UserApi.getInstance();
+  final accountingApi = AccountingApi.getInstance();
   bool _isLoading = false;
 
   final ValueNotifier<bool> passwordNotifier = ValueNotifier(true);
@@ -71,9 +78,10 @@ class _AuthRouteState extends State<AuthRoute> {
 
     // make sign in request
     SignInParams signInParams = SignInParams(
-        email: emailController.text, password: passwordController.text);
-    SignInResult? signInResult =
-        await handleRequestError(() => userApi.signin(signInParams));
+      email: emailController.text, 
+      password: passwordController.text
+    );
+    SignInResult? signInResult = await handleRequestError(() => userApi.signin(signInParams));
     //
 
     if (signInResult != null) {
@@ -81,17 +89,42 @@ class _AuthRouteState extends State<AuthRoute> {
         // save user data
         await userState.initUserStateFromSignInResult(signInResult);
         //
-        // nagigate to home page
-        navigateToSplashScreen();
-        //
+        // get current report
+        try {
+          ApiCurrentReport? currentReport = await accountingApi.getCurrentReport();
+          if (currentReport != null) {
+            await accountingState.initAccountingStateFromApiResult(currentReport);
+          }
+          setState(() {
+            _isLoading = false;
+          });
+          // nagigate to home page
+          navigateToSplashScreen();
+          //
+        } on DioException catch(err) {
+          if (err.message.toString() != errMap['no-content']) {
+            toast.showErrorToast(err.message.toString());
+          } else {
+            setState(() {
+              _isLoading = false;
+            });
+            // nagigate to home page
+            navigateToSplashScreen();
+            //
+          }
+        }
       } on HiveError catch (_) {
+        setState(() {
+          _isLoading = false;
+        });
         toast.showErrorToast(AppStrings.errOnWritingData);
       }
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+      return;
     }
-
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   void navigateToSplashScreen() {

@@ -27,7 +27,7 @@ class AccountingState {
   final appToast = AppToast.getInstance();
   final storage = AccountingStorage.getInstance();
   final syncStorage = SynchronizationDataStorage.getInstance();
-  final calcCore = AccointingCalculations.getInstance();
+  final calcCore = AccountingCalculations.getInstance();
   final userState = UserState.getInstance();
   final appBus = AppEventBus.getInstance();
 
@@ -45,14 +45,50 @@ class AccountingState {
   }
 
   Future<void> initState() async {
-    // storage.putCurrentReport(CurrentReport(
-    //   cloudId: 13,
-    //   creationDate: DateTime.parse('2024-03-05 08:43:18.128-05')
-    // ));
     CurrentReport? report = await storage.getCurrentReport();
-    print('report ${report?.cloudId}');
     _currentAccountingId = report?.cloudId;
     _currentAccountingCreationDate = report?.creationDate;
+  }
+
+  Future<void> initAccountingStateFromApiResult(ApiCurrentReport apiResult) async {
+    await storage.putCurrentReport(CurrentReport(
+      cloudId: apiResult.id,
+      creationDate: apiResult.creationDate
+    ));
+    _currentAccountingId = apiResult.id;
+    _currentAccountingCreationDate = apiResult.creationDate;
+
+    if (apiResult.sales != null) {
+      for (var element in apiResult.sales!) {
+        await storage.addSale(Sale(
+          total: element.total, 
+          nonCash: element.nonCash, 
+          cashTaxes: element.cashTaxes, 
+          creationDate: element.creationDate,
+          cloudId: element.id
+        ));
+      }
+    }
+
+    if (apiResult.tips != null) {
+      for (var element in apiResult.tips!) {
+        await storage.addTip(Tip(
+          value: element.value, 
+          creationDate: element.creationDate,
+          cloudId: element.id
+        ));
+      }
+    }
+
+    if (apiResult.prepayments != null) {
+      for (var element in apiResult.prepayments!) {
+        await storage.addPrepayment(Prepayment(
+          value: element.value, 
+          creationDate: element.creationDate,
+          cloudId: element.id
+        ));
+      }
+    }
   }
 
   Future<bool> hasDataToSync() async {
@@ -98,7 +134,7 @@ class AccountingState {
           amount: calcCore.calcPercent(item.total, percentFromSales!), 
           creationDate: item.creationDate
         );
-      }));
+      }).where((element) => element.amount > 0));
     }
     ///
     
@@ -142,6 +178,51 @@ class AccountingState {
 
   Future<List<Prepayment>?> getPrepaymentList() {
     return storage.getPrepayments();
+  }
+
+  Future<List<Tip>?> getTipList() {
+    return storage.getTips();
+  }
+
+  Future<void> addAndSyncReport(DateTime creationDate) async {
+    CreateReportParams apiPayload = CreateReportParams(
+      creationDate: creationDate
+    );
+    CurrentReport storagePayload = CurrentReport(
+      creationDate: creationDate
+    );
+    SynchronizationData syncPayload = SynchronizationData(
+      type: SynchronizationDataType.report,
+      data: CurrentReport(
+        creationDate: creationDate
+      )
+    );
+    
+    try {
+      int? id = await api.createReport(apiPayload);
+      if (id != null) {
+        storagePayload.cloudId = id;
+        await storage.putCurrentReport(storagePayload);
+        _currentAccountingCreationDate = creationDate;
+        _currentAccountingId = id;
+        appToast.showCustomToast(
+          AppColors.success, 
+          Icons.cloud_done_rounded, 
+          AppStrings.reportCreatedAndSyncronized
+        );
+      }
+    } on DioException catch(err) {
+      appBus.fire(SynchronizationDoneEvent(failedSyncCount: 1));
+      await _addSyncData(syncPayload);
+      await storage.putCurrentReport(storagePayload);
+      _currentAccountingCreationDate = creationDate;
+      appToast.showSuccessToast(AppStrings.reportCreated);
+      appToast.showCustomToast(
+        AppColors.warn, 
+        Icons.cloud_off_rounded, 
+        '${AppStrings.couldNotSyncData}: ${err.message.toString()}'
+      );
+    }
   }
 
   Future<void> addAndSyncSale(Sale sale) async {
@@ -203,21 +284,68 @@ class AccountingState {
     );
   }
 
+  Future<void> addAndSyncPrepayment(Prepayment prepayment) async {
+    CommonAdditionalReportData apiPayload = CommonAdditionalReportData(
+      value: prepayment.value,
+      creationDate: prepayment.creationDate
+    );
+
+    _handleAddDataAction(
+      prepayment,
+      SynchronizationDataType.prepayment,
+      _currentAccountingId != null ? () => api.addPrepayment(_currentAccountingId!, apiPayload) : null,
+      () => storage.addPrepayment(prepayment)
+    );
+  }
+
+  Future<void> updateAndSyncPrepayment(Prepayment prepayment) async {
+    CommonAdditionalReportData apiPayload = CommonAdditionalReportData(
+      value: prepayment.value,
+      creationDate: prepayment.creationDate
+    );
+
+    _handleUpdateDataAction(
+      prepayment,
+      SynchronizationDataType.prepayment,
+      _currentAccountingId != null ? () => api.updatePrepayment(_currentAccountingId!, apiPayload) : null,
+      () => storage.updatePrepayment(prepayment)
+    );
+  }
+
   Future<void> syncAllData() async {
     List<SynchronizationData>? list = await syncStorage.getSynchronizationData();
-
     if (list != null && list.isNotEmpty) {
       List<SynchronizationData> dataToRemove = [];
+      int reportIndex = list.indexWhere((element) => element.data is CurrentReport);
+      if (reportIndex >= 0) {
+        CurrentReport data = list[reportIndex].data;
+        try {
+          int? cloudId = await api.createReport(
+            CreateReportParams(creationDate: data.creationDate)
+          );
+          if (cloudId != null) {
+            await storage.putCurrentReport(data);
+            dataToRemove.add(list[reportIndex]);
+            data.cloudId = cloudId;
+            _currentAccountingId = cloudId;
+            _currentAccountingCreationDate = data.creationDate;
+          }
+        } on DioException catch(err) {
+          appToast.showErrorToast(err.message.toString());
+          return;
+        }
+        list.removeAt(reportIndex);
+      }
+
       for (var element in list) {
-        await Future.delayed(const Duration(seconds: 1));
         SyncRequestStatus status = SyncRequestStatus.success;
-        if (element.type == SynchronizationDataType.sale) {
+        if (element.data is Sale) {
           status = await syncSale(element);
         }
-        if (element.type == SynchronizationDataType.tip) {
+        if (element.data is Tip) {
           status = await syncTip(element);
         }
-        if (element.type == SynchronizationDataType.prepayment) {
+        if (element.data is Prepayment) {
           status = await syncPrepayment(element);
         }
 
@@ -264,16 +392,20 @@ class AccountingState {
         creationDate: sale.creationDate
       );
       SyncRequestType requestType = sale.cloudId != null ? SyncRequestType.update : SyncRequestType.add;
+      print('req type: $requestType');
       switch (requestType) {
         case SyncRequestType.update:
           try {
+            print(sale.cloudId);
             await api.updateSale(sale.cloudId!, apiPayload);
+            await storage.updateSale(sale);
             return SyncRequestStatus.success;
           } on DioException catch(_) {
             return SyncRequestStatus.error;
           }
         case SyncRequestType.add:
           try {
+            print('FUCK: $_currentAccountingId');
             int? cloudId = await api.addSale(_currentAccountingId!, apiPayload);
             if (cloudId != null) {
               sale.cloudId = cloudId;
@@ -374,7 +506,8 @@ class AccountingState {
     String? syncErrMessge;
     (id, syncErrMessge) = await _handleSyncRequest(
       payload,
-      apiFunc != null ? () => apiFunc() : null
+      apiFunc != null ? () => apiFunc() : null,
+      false
     );
 
     if (id != null) {
@@ -388,6 +521,8 @@ class AccountingState {
         sourcePayload.cloudId = id;
       }
     }
+
+    print('sourcePayload: $sourcePayload');
 
     try {
       await storeFunc();
@@ -435,11 +570,12 @@ class AccountingState {
       type: type,
       data: sourcePayload
     );
-
+    
     String? syncErrMessge;
     (_, syncErrMessge) = await _handleSyncRequest(
       payload,
-      apiFunc != null ? () => apiFunc() : null
+      apiFunc != null ? () => apiFunc() : null,
+      true
     );
     
     try {
@@ -478,6 +614,7 @@ class AccountingState {
   Future<(T?, String?)> _handleSyncRequest<T>(
     SynchronizationData payload, 
     Future<T?> Function()? func,
+    bool isUpdate
   ) async {
     bool hasConnection = await InternetConnectionChecker().hasConnection;
     if (hasConnection) {
@@ -486,15 +623,27 @@ class AccountingState {
           T? repose = await func();
           return (repose, null);
         } on DioException catch (err) {
-          await _addSyncData(payload);
+          if (!isUpdate) {
+            _addSyncData(payload);
+          } else {
+            await _updateSyncData(payload);
+          }
           return (null, err.message.toString());
         } 
       } else {
-        _updateSyncData(payload);
+        if (!isUpdate) {
+          await _addSyncData(payload);
+        } else {
+          await _updateSyncData(payload);
+        }
         return (null, null);
       }
     } else {
-      await _addSyncData(payload);
+      if (!isUpdate) {
+        await _addSyncData(payload);
+      } else {
+        await _updateSyncData(payload);
+      }
       return (null, AppStrings.noInternetConnection);
     }
   }

@@ -174,24 +174,24 @@ class _RegisterRouteState extends State<RegisterRoute> {
     return Colors.grey;
   }
 
-  AlertDialog confirmEmailSkipDialog(BuildContext context) {
-    return AlertDialog(
-      title: const Text(CommonStrings.areYouSure),
-      content:
-          const Text(AuthAndRegisterPageStrings.emailConfirmSkipDescription),
-      actions: [
-        TextButton(
-          onPressed: () => {Navigator.of(context).pop()},
-          child: const Text(CommonStrings.cancel),
-        ),
-        TextButton(
-          onPressed: () =>
-              {_skipEmailConfrimation = true, Navigator.of(context).pop()},
-          child: const Text(CommonStrings.cancel),
-        ),
-      ],
-    );
-  }
+  // AlertDialog confirmEmailSkipDialog(BuildContext context) {
+  //   return AlertDialog(
+  //     title: const Text(CommonStrings.areYouSure),
+  //     content:
+  //         const Text(AuthAndRegisterPageStrings.emailConfirmSkipDescription),
+  //     actions: [
+  //       TextButton(
+  //         onPressed: () => {Navigator.of(context).pop()},
+  //         child: const Text(CommonStrings.cancel),
+  //       ),
+  //       TextButton(
+  //         onPressed: () =>
+  //             {_skipEmailConfrimation = true, Navigator.of(context).pop()},
+  //         child: const Text(CommonStrings.cancel),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {

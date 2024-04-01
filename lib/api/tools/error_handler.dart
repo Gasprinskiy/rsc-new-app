@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+
 Map<String, String> errMap = {
   'wrong-password': 'Не верный пароль',
   'wrong-email': 'Не верный адрес эл. почты',
@@ -25,5 +27,20 @@ String createErrorMessage(String message) {
       return 'Сервер не доступен, попробуйте позже';
     default:
       return 'Внутреняя ошибка сервера';
+  }
+}
+
+Future<T?> handleResponseDataParse<T>(
+  Future<Response<dynamic>> Function() requestFunc,
+  T Function(dynamic) parseFunc,
+) async {
+  try {
+    Response<dynamic> res = await requestFunc();
+    if (res.statusCode != 204) {
+      return parseFunc(res.data);
+    }
+    return null;
+  } on DioException catch (err) {
+    rethrow;
   }
 }

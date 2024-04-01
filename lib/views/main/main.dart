@@ -9,7 +9,7 @@ import 'package:test_flutter/tools/datetime.dart';
 import 'package:test_flutter/tools/extensions.dart';
 import 'package:test_flutter/utils/event_bus/event_bus.dart';
 import 'package:test_flutter/utils/widgets/toast.dart';
-import 'package:test_flutter/views/main/children/accounting.dart';
+import 'package:test_flutter/views/main/children/accounting/accounting.dart';
 import 'package:test_flutter/views/main/children/home.dart';
 import 'package:test_flutter/views/main/children/user.dart';
 
