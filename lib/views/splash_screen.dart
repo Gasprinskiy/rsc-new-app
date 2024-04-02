@@ -27,7 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> checkUserDataAndNavigate() async {
-    // Navigator.pushNamed(context, '/auth/register/confirm-email');
+    // Navigator.pushNamed(context, '/auth/register/salary-info');
     // return;
     try {
       //

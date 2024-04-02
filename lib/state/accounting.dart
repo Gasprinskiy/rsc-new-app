@@ -16,8 +16,8 @@ import 'package:test_flutter/state/user.dart';
 import 'package:test_flutter/storage/hive/accounting.dart';
 import 'package:test_flutter/storage/hive/synchronization_data.dart';
 import 'package:test_flutter/storage/hive/entity/adapters.dart';
-import 'package:test_flutter/utils/event_bus/event_bus.dart';
-import 'package:test_flutter/utils/widgets/toast.dart';
+import 'package:test_flutter/utils/event_bus.dart';
+import 'package:test_flutter/widgets/toast.dart';
 
 
 class AccountingState {

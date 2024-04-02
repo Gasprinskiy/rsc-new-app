@@ -58,11 +58,10 @@ class AppStrings {
   static const String pleaseEnterPlan = 'Пожалуйста введите план';
   static const String variablePercent = 'Переменчивый процент';
   static const String ignorePlan = 'Игнорировать план';
-  static const String planGoal = 'Процент выполнения плана';
+  static const String planGoal = 'При выполнении плана на';
   static const String pleaseEnterPlanGoal =
       'Пожалуйста введите процент при выполнении';
-  static const String percentChangeOnGoalReached =
-      'Процент от продаж при выполнении';
+  static const String percentChangeOnGoalReached = 'Процент от продаж будет';
   static const String bountyOnGoalReached = 'Премия при выполнении';
 
   static const String finalSalary = 'Итоговая зарплата';

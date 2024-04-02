@@ -7,7 +7,6 @@ CurrencyTextFieldController getDefaultCurrencyTextFieldController(double? value)
     decimalSymbol: '',
     thousandSymbol: ' ',
     numberOfDecimals: 0,
-    initDoubleValue: 0
   );
   if (value != null) {
     controller.value = TextEditingValue(text: value.toStringAsFixed(0));

@@ -1,10 +1,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:test_flutter/constants/app_strings.dart';
-import 'package:test_flutter/constants/app_text_form_field.dart';
+import 'package:test_flutter/widgets/app_text_form_field.dart';
 import 'package:test_flutter/storage/hive/entity/adapters.dart';
 import 'package:test_flutter/tools/datetime.dart';
-import 'package:test_flutter/utils/widgets/dialog.dart';
+import 'package:test_flutter/widgets/dialog.dart';
 import 'package:test_flutter/views/main/entity/entity.dart';
 
 void showSalesDialog(ShowSalesDialogParams params) {

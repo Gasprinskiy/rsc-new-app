@@ -2,14 +2,14 @@ import 'package:currency_textfield/currency_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:test_flutter/constants/app_collors.dart';
 import 'package:test_flutter/constants/app_strings.dart';
-import 'package:test_flutter/constants/app_text_form_field.dart';
+import 'package:test_flutter/widgets/app_text_form_field.dart';
 import 'package:test_flutter/core/accounting_calculations.dart';
 import 'package:test_flutter/core/entity.dart';
 import 'package:test_flutter/state/accounting.dart';
 import 'package:test_flutter/state/user.dart';
 import 'package:test_flutter/storage/hive/entity/adapters.dart';
-import 'package:test_flutter/utils/widgets/dialog.dart';
-import 'package:test_flutter/utils/widgets/toast.dart';
+import 'package:test_flutter/widgets/dialog.dart';
+import 'package:test_flutter/widgets/toast.dart';
 import 'package:test_flutter/views/main/children/accounting/children/details/details.dart';
 import 'package:test_flutter/views/main/entity/entity.dart';
 import 'package:test_flutter/views/main/helpers/dialog.dart';
@@ -50,10 +50,10 @@ class _AccountingState extends State<Accounting> {
   bool _isReportStarted = false;
   bool _showAddActions = false;
   bool _addOrUpdateInProgress = false;
-  String _prepaymentsKey = 'prepayments';
-  String _salesKey = 'sales';
-  String _tipsKey = 'tips';
-
+  String _prepaymentsKey = 'prepayments-0';
+  String _salesKey = 'sales-0';
+  String _tipsKey = 'tips-0';
+  int _reportKey = 1;
 
   void initializeControllers() {
     String defaultValue = DateTime.now().toString().split(' ')[0];
@@ -98,6 +98,7 @@ class _AccountingState extends State<Accounting> {
         _isReportStarted = true;
         _addOrUpdateInProgress = false;
       }),
+      setReportData(),
       Navigator.of(context).pop()
     });
   }
@@ -148,14 +149,18 @@ class _AccountingState extends State<Accounting> {
 
   Future<void> addSale(Sale payload) async {
     if (_addUpdateSaleFormKey.currentState?.validate() == true) {
-      await accountingState.addAndSyncSale(payload);
       setState(() {
-        _sales?.add(payload);
-        updateSalesKey(payload.id);
+        if (_sales != null) {
+          _sales = [..._sales!, payload];
+        } else {
+          _sales = [payload];
+        }
         Navigator.of(context).pop();
         resetSaleFormController();
       });
       calcCommonSalary();
+      updateSalesKey();
+      await accountingState.addAndSyncSale(payload);
     }
   }
 
@@ -165,13 +170,17 @@ class _AccountingState extends State<Accounting> {
         value: value,
         creationDate: date
       );
-      await accountingState.addAndSyncPrepayment(payload);
       setState(() {
-        _prepayments?.add(payload);
-        updatePrepaymentsKey(payload.id);
+        if (_prepayments != null) {
+          _prepayments = [..._prepayments!, payload];
+        } else {
+          _prepayments = [payload];
+        }
         Navigator.of(context).pop();
         resetDefaultControllers();
       });
+      updatePrepaymentsKey();
+      await accountingState.addAndSyncPrepayment(payload);
     }
   }
 
@@ -181,31 +190,47 @@ class _AccountingState extends State<Accounting> {
         value: value,
         creationDate: date
       );
-      await accountingState.addAndSyncTip(payload);
       setState(() {
-        _tips?.add(payload);
-        updateTipsKey(payload.id);
+        if (_tips != null) {
+          _tips = [..._tips!, payload];
+        } else {
+          _tips = [payload];
+        }
         Navigator.of(context).pop();
         resetDefaultControllers();
       });
+      updateTipsKey();
+      await accountingState.addAndSyncTip(payload);
     }
   }
 
-  void updatePrepaymentsKey(String? uniqValue) {
+  void updatePrepaymentsKey() {
+    List<String> key = _prepaymentsKey.split('-');
+    int keynum = int.parse(key[1]) + 1;
     setState(() {
-      _prepaymentsKey += _prepayments != null ? '${_prepayments!.length}${uniqValue ?? 0}' : '${uniqValue ?? 0}';
+      _prepaymentsKey = '${key[0]}-$keynum';
     });
   }
 
-  void updateSalesKey(String? uniqValue) {
+  void updateSalesKey() {
+    List<String> key = _salesKey.split('-');
+    int keynum = int.parse(key[1]) + 1;
     setState(() {
-      _salesKey += _sales != null ? '${_sales!.length}${uniqValue ?? 0}' : '${uniqValue ?? 0}';
+      _salesKey = '${key[0]}-$keynum';
     });
   }
 
-  void updateTipsKey(String? uniqValue) {
+  void updateTipsKey() {
+    List<String> key = _tipsKey.split('-');
+    int keynum = int.parse(key[1]) + 1;
     setState(() {
-      _tipsKey += _tips != null ? '${_tips!.length}${uniqValue ?? 0}' : '${uniqValue ?? 0}';
+      _tipsKey = '${key[0]}-$keynum';
+    });
+  }
+
+  void updateReportKey() {
+    setState(() {
+      _reportKey += 1;
     });
   }
 
@@ -227,9 +252,10 @@ class _AccountingState extends State<Accounting> {
     });
 
     calcCommonSalary();
-    updatePrepaymentsKey(null);
-    updateSalesKey(null);
-    updateTipsKey(null);
+    updateReportKey();
+    updatePrepaymentsKey();
+    updateSalesKey();
+    updateTipsKey();
   }
 
   void calcCommonSalary() {
@@ -334,8 +360,9 @@ class _AccountingState extends State<Accounting> {
       Stack(
         children: [
           AnimatedPositioned(
-            right: _showAddActions ? 65 : 0,
-            bottom: 0,
+            // right: _showAddActions ? 65 : 0,
+            right: _showAddActions ? 0 : 10,
+            bottom: _showAddActions ? 65 : 0,
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
             child: FloatingActionButton(
@@ -356,8 +383,8 @@ class _AccountingState extends State<Accounting> {
             )
           ),
           AnimatedPositioned(
-            right: _showAddActions ? 45 : 0,
-            bottom: _showAddActions ? 45 : 0,
+            right: _showAddActions ? 65 : 0,
+            bottom: 0,
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
             child: FloatingActionButton(
@@ -378,8 +405,8 @@ class _AccountingState extends State<Accounting> {
             )
           ),
           AnimatedPositioned(
-            right: _showAddActions ? 0 : 10,
-            bottom: _showAddActions ? 65 : 0,
+            right: _showAddActions ? 45 : 0,
+            bottom: _showAddActions ? 45 : 0,
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
             child: FloatingActionButton(
@@ -427,26 +454,35 @@ class _AccountingState extends State<Accounting> {
             commonSalary: _commonSalary
           ),
           Padding(
+            key: ValueKey(_reportKey),
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                SalesBox(
+                Container(
                   key: ValueKey(_salesKey),
-                  sales: _sales ?? [],
-                  onBoxClick: () => navigateToDetailsScreenByType(DetailsScreenType.sales),
+                  child: SalesBox(
+                    sales: _sales ?? [],
+                    onBoxClick: () => navigateToDetailsScreenByType(DetailsScreenType.sales),
+                  ),
                 ),
                 const SizedBox(height: 20),
-                PrepaymentsBox(
+                Container(
                   key: ValueKey(_prepaymentsKey),
-                  prepayments: _prepayments ?? [],
-                  onBoxClick: () => navigateToDetailsScreenByType(DetailsScreenType.prepayments),
+                  child: PrepaymentsBox(
+                    key: ValueKey(_prepaymentsKey),
+                    prepayments: _prepayments ?? [],
+                    onBoxClick: () => navigateToDetailsScreenByType(DetailsScreenType.prepayments),
+                  ),
                 ),
                 const SizedBox(height: 20),
-                TipsBox(
+                Container(
                   key: ValueKey(_tipsKey),
-                  tips: _tips ?? [],
-                  onBoxClick: () => navigateToDetailsScreenByType(DetailsScreenType.tips),
-                )
+                  child: TipsBox(
+                    key: ValueKey(_tipsKey),
+                    tips: _tips ?? [],
+                    onBoxClick: () => navigateToDetailsScreenByType(DetailsScreenType.tips),
+                  )
+                ),
               ],
             )
           ),

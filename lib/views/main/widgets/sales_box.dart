@@ -4,6 +4,7 @@ import 'package:test_flutter/constants/app_strings.dart';
 import 'package:test_flutter/core/accounting_calculations.dart';
 import 'package:test_flutter/storage/hive/entity/adapters.dart';
 import 'package:test_flutter/tools/number.dart';
+import 'package:test_flutter/widgets/button_box.dart';
 
 class _SalesTotalValues {
   List<double> sales;
@@ -17,41 +18,65 @@ class _SalesTotalValues {
   });
 }
 
-
-class SalesBox extends StatelessWidget {
+class SalesBox extends StatefulWidget {
   final List<Sale> sales;
   final void Function()? onBoxClick;
 
-  SalesBox({
+  const SalesBox({
     super.key,
     required this.sales,
     this.onBoxClick
   });
 
+  @override
+  State<SalesBox> createState() => _SalesBoxState();
+}
+
+
+class _SalesBoxState extends State<SalesBox> {
+  late List<Sale> sales;
+  late void Function()? onBoxClick;
+
   final calcCore = AccountingCalculations.getInstance();
 
-  Column salesItem(BuildContext context) {
+  double _commonSales = 0;
+  double _commonCashTaxes = 0;
+  double _commonNonCash = 0;
+
+  void calcValues() {
     if (sales.isNotEmpty) {
-      double commonSales = 0; 
-      double commonCashTaxes = 0; 
-      double commonNonCash = 0; 
-      if (sales.isNotEmpty) {
-        _SalesTotalValues totalValues = _SalesTotalValues(
-          sales: [],
-          cashTaxes: [],
-          nonCash: []
-        );
-        for (var element in sales) {
-          totalValues.sales.add(element.total);
-          totalValues.cashTaxes.add(element.cashTaxes);
-          totalValues.nonCash.add(element.nonCash);
-        }
-        commonSales = calcCore.calcTotal(totalValues.sales);
-        commonCashTaxes = calcCore.calcTotal(totalValues.cashTaxes);
-        commonNonCash = calcCore.calcTotal(totalValues.nonCash);
+      _SalesTotalValues totalValues = _SalesTotalValues(
+        sales: [],
+        cashTaxes: [],
+        nonCash: []
+      );
+      for (var element in sales) {
+        totalValues.sales.add(element.total);
+        totalValues.cashTaxes.add(element.cashTaxes);
+        totalValues.nonCash.add(element.nonCash);
       }
-      
-      return Column(
+      setState(() {
+        _commonSales = calcCore.calcTotal(totalValues.sales);
+        _commonCashTaxes = calcCore.calcTotal(totalValues.cashTaxes);
+        _commonNonCash = calcCore.calcTotal(totalValues.nonCash);
+      });
+    } 
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    sales = widget.sales;
+    onBoxClick = widget.onBoxClick;
+    calcValues();
+  }
+
+  @override 
+  Widget build(BuildContext context) {
+    return Container(
+      key: widget.key,
+      child: Column(
+        key: widget.key,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Row(
@@ -73,23 +98,9 @@ class SalesBox extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: DecoratedBox(
-              decoration: const BoxDecoration(
-                color: AppColors.primaryTransparent,
-                borderRadius: BorderRadius.all(Radius.circular(5))
-              ),
-              child: TextButton(
-                onPressed: () => onBoxClick?.call(),
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    )
-                  )
-                ),
-              child: Column(
+          ButtonBox(
+            onPressed: () => onBoxClick?.call(),
+            child: Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -105,7 +116,7 @@ class SalesBox extends StatelessWidget {
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(5),
-                          child: Text(currencyFormat(commonCashTaxes), style: const TextStyle(
+                          child: Text(currencyFormat(_commonCashTaxes), style: const TextStyle(
                             color: Colors.white
                           )),
                         ),
@@ -127,7 +138,7 @@ class SalesBox extends StatelessWidget {
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(5),
-                          child: Text(currencyFormat(commonNonCash), style: const TextStyle(
+                          child: Text(currencyFormat(_commonNonCash), style: const TextStyle(
                             color: Colors.white
                           )),
                         ),
@@ -149,7 +160,7 @@ class SalesBox extends StatelessWidget {
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(5),
-                          child: Text(currencyFormat(commonSales), style: const TextStyle(
+                          child: Text(currencyFormat(_commonSales), style: const TextStyle(
                             color: Colors.white
                           )),
                         ),
@@ -158,19 +169,8 @@ class SalesBox extends StatelessWidget {
                   ),
                 ],
               ),
-            )
-          ),
-        ),
-      ]);
-    }
-    return const Column();
-  }
-
-  @override 
-  Widget build(BuildContext context) {
-    return Container(
-      key: super.key,
-      child: salesItem(context),
+          )
+      ]),
     );
   }
 }

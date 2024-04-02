@@ -40,7 +40,7 @@ Future<T?> handleResponseDataParse<T>(
       return parseFunc(res.data);
     }
     return null;
-  } on DioException catch (err) {
+  } on DioException catch (_) {
     rethrow;
   }
 }

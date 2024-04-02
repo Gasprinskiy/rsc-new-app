@@ -8,13 +8,13 @@ import 'package:test_flutter/api/tools/error_handler.dart';
 import 'package:test_flutter/api/user.dart';
 import 'package:test_flutter/constants/app_constants.dart';
 import 'package:test_flutter/constants/app_strings.dart';
-import 'package:test_flutter/constants/app_text_form_field.dart';
+import 'package:test_flutter/widgets/app_text_form_field.dart';
 import 'package:test_flutter/constants/app_theme.dart';
 import 'package:test_flutter/helpers/request_handler.dart';
 import 'package:test_flutter/state/accounting.dart';
 import 'package:test_flutter/state/user.dart';
-import 'package:test_flutter/utils/widgets/decoration_box.dart';
-import 'package:test_flutter/utils/widgets/toast.dart';
+import 'package:test_flutter/widgets/decoration_box.dart';
+import 'package:test_flutter/widgets/toast.dart';
 
 class AuthRoute extends StatefulWidget {
   
@@ -102,7 +102,7 @@ class _AuthRouteState extends State<AuthRoute> {
           navigateToSplashScreen();
           //
         } on DioException catch(err) {
-          if (err.message.toString() != errMap['no-content']) {
+          if (err.message.toString() != errMap['no-content'] && err.message != null) {
             toast.showErrorToast(err.message.toString());
           } else {
             setState(() {

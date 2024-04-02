@@ -3,7 +3,7 @@ import 'package:test_flutter/constants/app_collors.dart';
 import 'package:test_flutter/state/accounting.dart';
 import 'package:test_flutter/storage/hive/synchronization_data.dart';
 import 'package:test_flutter/storage/hive/entity/adapters.dart';
-import 'package:test_flutter/utils/widgets/toast.dart';
+import 'package:test_flutter/widgets/toast.dart';
 class UserRoute extends StatefulWidget {
   const UserRoute({super.key});
 

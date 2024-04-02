@@ -86,6 +86,30 @@ class UserState {
     _inited = false;
   }
 
+  Future<void> setAndSyncSalaryInfo(SalaryInfo salaryInfo, List<PercentChangeConditions>? conditions) async {
+    _userState?.salaryInfo = salaryInfo;
+    _userState?.percentChangeConditions = conditions;
+
+    if (_userState != null) {
+      await userStorage.putUserInfo(_userState!);
+      await userApi.createSalaryInfo(CreateSalaryInfoPayload(
+        salaryInfo: UserSalaryInfo(
+          salary: salaryInfo.salary,
+          percentFromSales: salaryInfo.percentFromSales,
+          plan: salaryInfo.plan,
+          ignorePlan: salaryInfo.ignorePlan
+        ),
+        percentChangeConditions: conditions?.map((item) {
+          return UserPercentChangeConditions(
+            percentGoal: item.percentGoal, 
+            percentChange: item.percentChange,
+            salaryBonus: item.salaryBonus
+          );
+        }).toList()
+      ));
+    }
+  }
+
   Future<void> setBiometricsSettings(BiometricsSettings settings) async {
     await userStorage.setBiometricsSettings(settings);
     //

@@ -10,7 +10,7 @@
 // import 'package:test_flutter/storage/hive/entity/adapters.dart';
 // import 'package:test_flutter/tools/datetime.dart';
 // import 'package:test_flutter/tools/number.dart';
-// import 'package:test_flutter/utils/widgets/decoration_box.dart';
+// import 'package:test_flutter/widgets/decoration_box.dart';
 
 // class AccountingView extends StatefulWidget {
 //   final User? user;

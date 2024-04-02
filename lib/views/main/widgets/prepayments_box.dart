@@ -4,6 +4,7 @@ import 'package:test_flutter/constants/app_strings.dart';
 import 'package:test_flutter/core/accounting_calculations.dart';
 import 'package:test_flutter/storage/hive/entity/adapters.dart';
 import 'package:test_flutter/tools/number.dart';
+import 'package:test_flutter/widgets/button_box.dart';
 
 
 class PrepaymentsBox extends StatelessWidget {
@@ -25,6 +26,7 @@ class PrepaymentsBox extends StatelessWidget {
       commonAmount = calcCore.calcTotal(prepayments.map((item) => item.value).toList());
     } 
     return Column(
+        key: key,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Row(
@@ -46,57 +48,40 @@ class PrepaymentsBox extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          SizedBox(
-            width: MediaQuery.of(context).size.width,
-            child: DecoratedBox(
-              decoration: const BoxDecoration(
-                color: AppColors.primaryTransparent,
-                borderRadius: BorderRadius.all(Radius.circular(5))
-              ),
-              child: TextButton(
-                onPressed: () => onBoxClick?.call(),
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
+          ButtonBox(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('${AppStrings.amount}:', style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500
+                    )),
+                    DecoratedBox(
+                      decoration: const BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.all(Radius.circular(3))
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: Text(currencyFormat(commonAmount), style: const TextStyle(
+                          color: Colors.white
+                        )),
+                      ),
                     )
-                )
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('${AppStrings.amount}:', style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500
-                      )),
-                      DecoratedBox(
-                        decoration: const BoxDecoration(
-                          color: AppColors.primary,
-                          borderRadius: BorderRadius.all(Radius.circular(3))
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(5),
-                          child: Text(currencyFormat(commonAmount), style: const TextStyle(
-                            color: Colors.white
-                          )),
-                        ),
-                      )
-                    ],
-                  ),
+                  ],
+                ),
               ],
             ),
-          )
-        ),
-      ),
+          ),
     ]);
   }
 
   @override 
   Widget build(BuildContext context) {
     return Container(
-      key: super.key,
+      key: key,
       child: prepaymentsItem(context),
     );
   }
