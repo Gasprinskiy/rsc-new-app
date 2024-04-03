@@ -3,14 +3,14 @@
 // import 'package:accordion/accordion_section.dart';
 // import 'package:animated_digit/animated_digit.dart';
 // import 'package:flutter/material.dart';
-// import 'package:test_flutter/constants/app_collors.dart';
-// import 'package:test_flutter/constants/app_strings.dart';
-// import 'package:test_flutter/core/accounting_calculations.dart';
-// import 'package:test_flutter/core/entity.dart';
-// import 'package:test_flutter/storage/hive/entity/adapters.dart';
-// import 'package:test_flutter/tools/datetime.dart';
-// import 'package:test_flutter/tools/number.dart';
-// import 'package:test_flutter/widgets/decoration_box.dart';
+// import 'package:rsc/constants/app_collors.dart';
+// import 'package:rsc/constants/app_strings.dart';
+// import 'package:rsc/core/accounting_calculations.dart';
+// import 'package:rsc/core/entity.dart';
+// import 'package:rsc/storage/hive/entity/adapters.dart';
+// import 'package:rsc/tools/datetime.dart';
+// import 'package:rsc/tools/number.dart';
+// import 'package:rsc/widgets/decoration_box.dart';
 
 // class AccountingView extends StatefulWidget {
 //   final User? user;

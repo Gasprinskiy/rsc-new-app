@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:test_flutter/constants/app_collors.dart';
-import 'package:test_flutter/state/user.dart';
-import 'package:test_flutter/storage/hive/entity/adapters.dart';
-import 'package:test_flutter/storage/hive/token.dart';
-import 'package:test_flutter/storage/hive/worker/worker.dart';
-import 'package:test_flutter/storage/secure/pin_code.dart';
+import 'package:rsc/constants/app_collors.dart';
+import 'package:rsc/state/user.dart';
+import 'package:rsc/storage/hive/entity/adapters.dart';
+import 'package:rsc/storage/hive/token.dart';
+import 'package:rsc/storage/hive/worker/worker.dart';
+import 'package:rsc/storage/secure/pin_code.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

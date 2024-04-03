@@ -1,8 +1,8 @@
 
 import 'package:dio/dio.dart';
-import 'package:test_flutter/api/entity/accounting.dart';
-import 'package:test_flutter/api/tools/error_handler.dart';
-import 'package:test_flutter/api/worker/worker.dart';
+import 'package:rsc/api/entity/accounting.dart';
+import 'package:rsc/api/tools/error_handler.dart';
+import 'package:rsc/api/worker/worker.dart';
 
 
 class AccountingApi {

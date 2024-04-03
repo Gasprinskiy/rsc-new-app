@@ -2,16 +2,16 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:test_flutter/api/entity/user.dart';
-import 'package:test_flutter/api/user.dart';
-import 'package:test_flutter/constants/app_collors.dart';
-import 'package:test_flutter/constants/app_strings.dart';
-import 'package:test_flutter/widgets/app_text_form_field.dart';
-import 'package:test_flutter/helpers/request_handler.dart';
-import 'package:test_flutter/state/user.dart';
-import 'package:test_flutter/storage/hive/entity/adapters.dart';
-import 'package:test_flutter/widgets/decoration_box.dart';
-import 'package:test_flutter/widgets/toast.dart';
+import 'package:rsc/api/entity/user.dart';
+import 'package:rsc/api/user.dart';
+import 'package:rsc/constants/app_collors.dart';
+import 'package:rsc/constants/app_strings.dart';
+import 'package:rsc/widgets/app_text_form_field.dart';
+import 'package:rsc/helpers/request_handler.dart';
+import 'package:rsc/state/user.dart';
+import 'package:rsc/storage/hive/entity/adapters.dart';
+import 'package:rsc/widgets/decoration_box.dart';
+import 'package:rsc/widgets/toast.dart';
 
 class ConfirmEmailRoute extends StatefulWidget {
   

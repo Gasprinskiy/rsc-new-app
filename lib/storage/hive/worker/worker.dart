@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:test_flutter/constants/app_strings.dart';
+import 'package:rsc/constants/app_strings.dart';
 
 class Storage {
   static Storage? _instanse;

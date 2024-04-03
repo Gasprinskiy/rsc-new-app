@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
-import 'package:test_flutter/core/accounting_calculations.dart';
-import 'package:test_flutter/core/entity.dart';
+import 'package:rsc/core/accounting_calculations.dart';
+import 'package:rsc/core/entity.dart';
 
 void main() {
   // test only complex core methods

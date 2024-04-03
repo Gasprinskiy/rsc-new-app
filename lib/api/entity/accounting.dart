@@ -1,5 +1,5 @@
 
-import 'package:test_flutter/api/entity/user.dart';
+import 'package:rsc/api/entity/user.dart';
 
 abstract class ApiPayload {
   Map<String, dynamic> get apiParams;

@@ -1,6 +1,6 @@
 import 'package:currency_textfield/currency_textfield.dart';
 import 'package:flutter/material.dart';
-import 'package:test_flutter/storage/hive/entity/adapters.dart';
+import 'package:rsc/storage/hive/entity/adapters.dart';
 
 enum DetailsScreenType {
   sales,

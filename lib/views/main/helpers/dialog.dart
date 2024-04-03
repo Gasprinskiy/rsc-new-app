@@ -1,11 +1,11 @@
 
 import 'package:flutter/material.dart';
-import 'package:test_flutter/constants/app_strings.dart';
-import 'package:test_flutter/widgets/app_text_form_field.dart';
-import 'package:test_flutter/storage/hive/entity/adapters.dart';
-import 'package:test_flutter/tools/datetime.dart';
-import 'package:test_flutter/widgets/dialog.dart';
-import 'package:test_flutter/views/main/entity/entity.dart';
+import 'package:rsc/constants/app_strings.dart';
+import 'package:rsc/widgets/app_text_form_field.dart';
+import 'package:rsc/storage/hive/entity/adapters.dart';
+import 'package:rsc/tools/datetime.dart';
+import 'package:rsc/widgets/dialog.dart';
+import 'package:rsc/views/main/entity/entity.dart';
 
 void showSalesDialog(ShowSalesDialogParams params) {
   final appDialog = AppDialog.getInstance();
@@ -53,7 +53,7 @@ void showSalesDialog(ShowSalesDialogParams params) {
               onTap: () => {
                 showDatePicker(
                   context: params.context,
-                  // locale: const Locale("ru", "RU"),
+                  locale: const Locale("ru", "RU"),
                   initialDate: DateTime.parse(params.dateController.text),
                   firstDate: DateTime(2000), 
                   lastDate: DateTime(2101),

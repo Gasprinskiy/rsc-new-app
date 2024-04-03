@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:test_flutter/constants/app_strings.dart';
+import 'package:rsc/constants/app_strings.dart';
 
 // class Alert {
 //   Future<void> show(

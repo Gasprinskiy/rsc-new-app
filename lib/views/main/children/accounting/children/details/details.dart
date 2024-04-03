@@ -1,11 +1,11 @@
 
 import 'package:flutter/material.dart';
-import 'package:test_flutter/constants/app_collors.dart';
-import 'package:test_flutter/constants/app_strings.dart';
-import 'package:test_flutter/views/main/children/accounting/children/details/children/prepayments.dart';
-import 'package:test_flutter/views/main/children/accounting/children/details/children/sales.dart';
-import 'package:test_flutter/views/main/children/accounting/children/details/children/tips.dart';
-import 'package:test_flutter/views/main/entity/entity.dart';
+import 'package:rsc/constants/app_collors.dart';
+import 'package:rsc/constants/app_strings.dart';
+import 'package:rsc/views/main/children/accounting/children/details/children/prepayments.dart';
+import 'package:rsc/views/main/children/accounting/children/details/children/sales.dart';
+import 'package:rsc/views/main/children/accounting/children/details/children/tips.dart';
+import 'package:rsc/views/main/entity/entity.dart';
 
 class Details extends StatefulWidget {
   final DetailsScreenType type;

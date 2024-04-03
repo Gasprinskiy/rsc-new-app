@@ -2,15 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:test_flutter/api/tools/error_handler.dart';
-import 'package:test_flutter/storage/hive/token.dart';
+import 'package:rsc/api/tools/error_handler.dart';
+import 'package:rsc/storage/hive/token.dart';
 
 TokenStorage tokenStorage = TokenStorage.getInstance();
 
 Dio initDio() {
   Dio dio = Dio(BaseOptions(
-    // baseUrl: 'http://retailer-salary-counter.uz',
-    baseUrl: 'http://10.0.2.2:3000',
+    baseUrl: 'http://retailer-salary-counter.uz',
+    // baseUrl: 'http://10.0.2.2:3000',
     connectTimeout: const Duration(seconds: 10),
     receiveTimeout: const Duration(seconds: 10),
   ));

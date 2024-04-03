@@ -1,8 +1,8 @@
 
 import 'package:animated_digit/animated_digit.dart';
 import 'package:flutter/material.dart';
-import 'package:test_flutter/constants/app_strings.dart';
-import 'package:test_flutter/widgets/decoration_box.dart';
+import 'package:rsc/constants/app_strings.dart';
+import 'package:rsc/widgets/decoration_box.dart';
 
 class CommonSalaryBox extends StatelessWidget {
   final double commonSalary;

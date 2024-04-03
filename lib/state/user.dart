@@ -1,9 +1,9 @@
 import 'package:hive/hive.dart';
-import 'package:test_flutter/api/entity/user.dart';
-import 'package:test_flutter/api/user.dart';
-import 'package:test_flutter/storage/hive/synchronization_data.dart';
-import 'package:test_flutter/storage/hive/user.dart';
-import 'package:test_flutter/storage/hive/entity/adapters.dart';
+import 'package:rsc/api/entity/user.dart';
+import 'package:rsc/api/user.dart';
+import 'package:rsc/storage/hive/synchronization_data.dart';
+import 'package:rsc/storage/hive/user.dart';
+import 'package:rsc/storage/hive/entity/adapters.dart';
 
 class UserState {
   static UserState? _instance;

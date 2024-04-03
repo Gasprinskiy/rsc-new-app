@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:test_flutter/constants/app_collors.dart';
-import 'package:test_flutter/views/auth/auth.dart';
-import 'package:test_flutter/views/auth/children/confirm_email.dart';
-import 'package:test_flutter/views/auth/children/register.dart';
-import 'package:test_flutter/views/auth/children/salary_info.dart';
-import 'package:test_flutter/views/local_auth/create.dart';
-import 'package:test_flutter/views/local_auth/enter.dart';
-import 'package:test_flutter/views/main/main.dart';
-import 'package:test_flutter/views/splash_screen.dart';
-import 'package:test_flutter/storage/hive/entity/init.dart';
+import 'package:rsc/constants/app_collors.dart';
+import 'package:rsc/state/user.dart';
+import 'package:rsc/views/auth/auth.dart';
+import 'package:rsc/views/auth/children/confirm_email.dart';
+import 'package:rsc/views/auth/children/register.dart';
+import 'package:rsc/views/auth/children/salary_info.dart';
+import 'package:rsc/views/local_auth/create.dart';
+import 'package:rsc/views/local_auth/enter.dart';
+import 'package:rsc/views/main/main.dart';
+import 'package:rsc/views/splash_screen.dart';
+import 'package:rsc/storage/hive/entity/init.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 Future<void> main() async {
@@ -18,15 +19,51 @@ Future<void> main() async {
 
   runApp(const MyApp());
 }
-
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  // final shit = CupertinoLocalizationRu;
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  final userState = UserState.getInstance();
+
+  bool _isPaused = false;
+  int _updateKey = 0;
 
   @override
-  Widget build(BuildContext context) {  
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      setState(() {
+        _isPaused = true;
+      });
+    } 
+    if (_isPaused && state == AppLifecycleState.resumed) {
+      setState(() {
+        if (userState.user?.salaryInfo != null) {
+          _updateKey += 1;
+        }
+        _isPaused = false;
+      });
+    }
+  }
+  
+  @override
+  Widget build(BuildContext context) {
     return MaterialApp(
+      key: ValueKey(_updateKey),
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),

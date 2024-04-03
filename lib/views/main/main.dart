@@ -1,17 +1,17 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:test_flutter/constants/app_collors.dart';
-import 'package:test_flutter/constants/app_strings.dart';
-import 'package:test_flutter/state/accounting.dart';
-import 'package:test_flutter/state/user.dart';
-import 'package:test_flutter/tools/datetime.dart';
-import 'package:test_flutter/tools/extensions.dart';
-import 'package:test_flutter/utils/event_bus.dart';
-import 'package:test_flutter/widgets/toast.dart';
-import 'package:test_flutter/views/main/children/accounting/accounting.dart';
-import 'package:test_flutter/views/main/children/home.dart';
-import 'package:test_flutter/views/main/children/user.dart';
+import 'package:rsc/constants/app_collors.dart';
+import 'package:rsc/constants/app_strings.dart';
+import 'package:rsc/state/accounting.dart';
+import 'package:rsc/state/user.dart';
+import 'package:rsc/tools/datetime.dart';
+import 'package:rsc/tools/extensions.dart';
+import 'package:rsc/utils/event_bus.dart';
+import 'package:rsc/widgets/toast.dart';
+import 'package:rsc/views/main/children/accounting/accounting.dart';
+import 'package:rsc/views/main/children/home.dart';
+import 'package:rsc/views/main/children/user.dart';
 
 class MainRoute extends StatefulWidget {
   

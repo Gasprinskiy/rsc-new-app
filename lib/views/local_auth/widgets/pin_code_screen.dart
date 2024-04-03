@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:test_flutter/constants/app_collors.dart';
-import 'package:test_flutter/constants/app_strings.dart';
-import 'package:test_flutter/constants/app_theme.dart';
+import 'package:rsc/constants/app_collors.dart';
+import 'package:rsc/constants/app_strings.dart';
+import 'package:rsc/constants/app_theme.dart';
 
 class PinCodeWidget extends StatefulWidget {
   final void Function(List<String>)? onEnter;

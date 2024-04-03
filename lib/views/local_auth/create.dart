@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:test_flutter/constants/app_strings.dart';
-import 'package:test_flutter/state/user.dart';
-import 'package:test_flutter/storage/hive/entity/adapters.dart';
-import 'package:test_flutter/storage/secure/pin_code.dart';
-import 'package:test_flutter/tools/pincrypt.dart';
-import 'package:test_flutter/views/local_auth/widgets/pin_code_screen.dart';
+import 'package:rsc/constants/app_strings.dart';
+import 'package:rsc/state/user.dart';
+import 'package:rsc/storage/hive/entity/adapters.dart';
+import 'package:rsc/storage/secure/pin_code.dart';
+import 'package:rsc/tools/pincrypt.dart';
+import 'package:rsc/views/local_auth/widgets/pin_code_screen.dart';
 
 class CreateLocalAuthRoute extends StatefulWidget {
   

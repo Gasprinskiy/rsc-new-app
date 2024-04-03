@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:test_flutter/constants/app_strings.dart';
-import 'package:test_flutter/widgets/toast.dart';
+import 'package:rsc/constants/app_strings.dart';
+import 'package:rsc/widgets/toast.dart';
 
 Future<T?> handleRequestError<T>(Future<T?> Function() func) async {
   bool hasConnection = await InternetConnectionChecker().hasConnection;

@@ -3,18 +3,18 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive/hive.dart';
-import 'package:test_flutter/api/entity/user.dart';
-import 'package:test_flutter/api/user.dart';
-import 'package:test_flutter/constants/app_collors.dart';
-import 'package:test_flutter/constants/app_strings.dart';
-import 'package:test_flutter/view-widgets/salary_info.dart';
-import 'package:test_flutter/widgets/app_text_form_field.dart';
-import 'package:test_flutter/constants/app_theme.dart';
-import 'package:test_flutter/helpers/toasts.dart';
-import 'package:test_flutter/state/user.dart';
-import 'package:test_flutter/widgets/decoration_box.dart';
-import 'package:test_flutter/storage/hive/entity/adapters.dart';
-import 'package:test_flutter/widgets/dialog.dart';
+import 'package:rsc/api/entity/user.dart';
+import 'package:rsc/api/user.dart';
+import 'package:rsc/constants/app_collors.dart';
+import 'package:rsc/constants/app_strings.dart';
+import 'package:rsc/view-widgets/salary_info.dart';
+import 'package:rsc/widgets/app_text_form_field.dart';
+import 'package:rsc/constants/app_theme.dart';
+import 'package:rsc/helpers/toasts.dart';
+import 'package:rsc/state/user.dart';
+import 'package:rsc/widgets/decoration_box.dart';
+import 'package:rsc/storage/hive/entity/adapters.dart';
+import 'package:rsc/widgets/dialog.dart';
 
 class SalaryInfoRoute extends StatefulWidget {
   

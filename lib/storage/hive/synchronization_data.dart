@@ -1,7 +1,7 @@
 
-import 'package:test_flutter/constants/app_strings.dart';
-import 'package:test_flutter/storage/hive/entity/adapters.dart';
-import 'package:test_flutter/storage/hive/worker/worker.dart';
+import 'package:rsc/constants/app_strings.dart';
+import 'package:rsc/storage/hive/entity/adapters.dart';
+import 'package:rsc/storage/hive/worker/worker.dart';
 
 class SynchronizationDataStorage {
   static SynchronizationDataStorage? _instanse;

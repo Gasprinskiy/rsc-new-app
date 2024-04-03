@@ -1,13 +1,13 @@
 
 import 'package:currency_textfield/currency_textfield.dart';
 import 'package:flutter/material.dart';
-import 'package:test_flutter/constants/app_collors.dart';
-import 'package:test_flutter/constants/app_strings.dart';
-import 'package:test_flutter/storage/hive/entity/adapters.dart';
-import 'package:test_flutter/tools/number.dart';
-import 'package:test_flutter/widgets/app_text_form_field.dart';
-import 'package:test_flutter/widgets/button_box.dart';
-import 'package:test_flutter/widgets/dialog.dart';
+import 'package:rsc/constants/app_collors.dart';
+import 'package:rsc/constants/app_strings.dart';
+import 'package:rsc/storage/hive/entity/adapters.dart';
+import 'package:rsc/tools/number.dart';
+import 'package:rsc/widgets/app_text_form_field.dart';
+import 'package:rsc/widgets/button_box.dart';
+import 'package:rsc/widgets/dialog.dart';
 
 class SalaryInfoWidget extends StatefulWidget {
   final User? userData;

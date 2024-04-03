@@ -1,9 +1,9 @@
 // import 'dart:html';
 
 import 'package:dio/dio.dart';
-import 'package:test_flutter/api/entity/user.dart';
-import 'package:test_flutter/api/worker/worker.dart';
-import 'package:test_flutter/storage/hive/token.dart';
+import 'package:rsc/api/entity/user.dart';
+import 'package:rsc/api/worker/worker.dart';
+import 'package:rsc/storage/hive/token.dart';
 
 class UserApi {
   static UserApi? _instance;

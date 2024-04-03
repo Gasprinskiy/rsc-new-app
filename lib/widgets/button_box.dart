@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:test_flutter/constants/app_collors.dart';
+import 'package:rsc/constants/app_collors.dart';
 
 class ButtonBox extends StatelessWidget {
   final Widget child;

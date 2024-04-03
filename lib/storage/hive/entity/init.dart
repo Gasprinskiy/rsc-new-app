@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:test_flutter/storage/hive/entity/adapters.dart';
+import 'package:rsc/storage/hive/entity/adapters.dart';
 
 class StorageInitializer {
   Future<void> initStorage() async {

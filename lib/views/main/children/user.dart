@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:test_flutter/constants/app_collors.dart';
-import 'package:test_flutter/state/accounting.dart';
-import 'package:test_flutter/storage/hive/synchronization_data.dart';
-import 'package:test_flutter/storage/hive/entity/adapters.dart';
-import 'package:test_flutter/widgets/toast.dart';
+import 'package:rsc/constants/app_collors.dart';
+import 'package:rsc/state/accounting.dart';
+import 'package:rsc/storage/hive/synchronization_data.dart';
+import 'package:rsc/storage/hive/entity/adapters.dart';
+import 'package:rsc/widgets/toast.dart';
 class UserRoute extends StatefulWidget {
   const UserRoute({super.key});
 

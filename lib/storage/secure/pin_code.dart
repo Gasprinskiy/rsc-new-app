@@ -1,5 +1,5 @@
-import 'package:test_flutter/constants/app_strings.dart';
-import 'package:test_flutter/storage/secure/worker/worker.dart';
+import 'package:rsc/constants/app_strings.dart';
+import 'package:rsc/storage/secure/worker/worker.dart';
 
 class PinCodeStorage {
   final _worker = SecureStorageWorker.getInstanse();

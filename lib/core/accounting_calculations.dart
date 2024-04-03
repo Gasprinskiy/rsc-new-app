@@ -1,4 +1,4 @@
-import 'package:test_flutter/core/entity.dart';
+import 'package:rsc/core/entity.dart';
 
 class AccountingCalculations {
   static AccountingCalculations? _instance;

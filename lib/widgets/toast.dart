@@ -1,8 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:test_flutter/constants/app_collors.dart';
-import 'package:test_flutter/constants/app_theme.dart';
+import 'package:rsc/constants/app_collors.dart';
+import 'package:rsc/constants/app_theme.dart';
 
 class AppToast {
   static AppToast? _instance;
