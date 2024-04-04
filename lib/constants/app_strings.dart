@@ -14,10 +14,12 @@ class AppStrings {
   static const String wellcome = 'Добро пожаловать';
   static const String loginToYouAccount = 'Войдите в свою учетную \nзапись.';
   static const String createAccount = 'Создайте учетную запись';
-  static const String typeYourSalaryInfo = 'Введите данные о зарплате';
+  static const String typeYourSalaryInfo = 'Введите данные по зарплате';
+  static const String salaryInfo = 'Данные по зарплате';
   static const String confirmYourEmail = 'Подтверждение почты';
   static const String confirmationCodeExpiresIn = 'Код истекает через:';
   static const String regiser = 'Регистрация';
+  static const String logout = 'Выйти';
 
   static const String createPinCode = 'Cоздайте пин код для входа';
   static const String typePinCode = 'Введите пин код для входа';
@@ -72,6 +74,7 @@ class AppStrings {
   static const String add = 'Добавить';
   static const String redact = 'Редактировать';
   static const String condition = 'Условие';
+  static const String changePassword = 'Сменить пароль';
 
   static const String areYouSure = 'Вы уверены?';
   static const String confirm = 'Подтвердить';
@@ -105,6 +108,7 @@ class AppStrings {
   static const String salesNotFound = 'Продажи не найдены';
   static const String tipsNotFound = 'Чаевые не найдены';
   static const String prepaymentsNotFound = 'Авансы не найдены';
+  static const String allUnsycDataWillBeRemoved = 'Все несинхронизированные данные будут утеряны';
 
   static const String curreReportData = 'Текущий отчет';
   static const String reportNotFound = 'Текущий отчет не найден';

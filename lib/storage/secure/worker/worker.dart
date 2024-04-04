@@ -22,4 +22,8 @@ class SecureStorageWorker {
   Future<void> remove(String key) {
     return _secureStorage.delete(key: key);
   }
+
+  Future<void> removeAll() {
+    return _secureStorage.deleteAll();
+  }
 }

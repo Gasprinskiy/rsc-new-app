@@ -9,12 +9,6 @@ class SalesScreen extends StatefulWidget {
 }
 
 class _SalesScreenState extends State<SalesScreen> {
-
-  
-  void navigateBack() {
-    Navigator.of(context).pop();
-  }
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

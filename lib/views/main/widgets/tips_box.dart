@@ -49,6 +49,7 @@ class TipsBox extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             ButtonBox(
+              onPressed: () => onBoxClick?.call(),
               child: Column(
                 children: [
                   Row(

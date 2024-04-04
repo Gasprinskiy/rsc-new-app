@@ -289,7 +289,6 @@ class _AccountingState extends State<Accounting> {
     ));
   }
 
-
   void showStartReportConditions() {
     appDialog.show(
       context,

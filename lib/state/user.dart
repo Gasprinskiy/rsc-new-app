@@ -4,6 +4,8 @@ import 'package:rsc/api/user.dart';
 import 'package:rsc/storage/hive/synchronization_data.dart';
 import 'package:rsc/storage/hive/user.dart';
 import 'package:rsc/storage/hive/entity/adapters.dart';
+import 'package:rsc/storage/hive/worker/worker.dart';
+import 'package:rsc/storage/secure/worker/worker.dart';
 
 class UserState {
   static UserState? _instance;
@@ -143,6 +145,19 @@ class UserState {
   Future<void> updateUserInfo(User user) async {
     await updateUserState(user);
     // await userApi.
+  }
+
+  Future<void> logout() async {
+    final storage = Storage.getInstance();
+    final secureStorage = SecureStorageWorker.getInstanse();
+
+    await storage.removeAllData();
+    await secureStorage.removeAll();
+    _userState = null;
+    _userBimetricsSettings = null;
+    _emailConfirmationInfo = null;
+    _inited = false;
+    return;
   }
 
   User? get user => _userState;

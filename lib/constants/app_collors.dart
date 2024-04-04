@@ -8,6 +8,7 @@ class AppColors {
   static const Color primary300 = Color(0xFF4DB6AC);
   static const Color primaryTransparent = Color.fromARGB(19, 77, 182, 172);
   static const Color error = Color(0xFFEF5350);
+  static const Color errorTransparent = Color.fromARGB(16, 239, 83, 80);
   static const Color warn = Color(0xFFFFA726);
   static const Color success = Color(0xFF66BB6A);
   // static const Color primary200 = Color(0xFF419E6C);

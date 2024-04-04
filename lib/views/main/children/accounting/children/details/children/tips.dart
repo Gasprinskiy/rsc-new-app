@@ -8,13 +8,7 @@ class TipsScreen extends StatefulWidget {
   State<TipsScreen> createState() => _TipsScreenState();
 }
 
-class _TipsScreenState extends State<TipsScreen> {
-
-  
-  void navigateBack() {
-    Navigator.of(context).pop();
-  }
-  
+class _TipsScreenState extends State<TipsScreen> {  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -11,7 +11,7 @@ import 'package:rsc/utils/event_bus.dart';
 import 'package:rsc/widgets/toast.dart';
 import 'package:rsc/views/main/children/accounting/accounting.dart';
 import 'package:rsc/views/main/children/home.dart';
-import 'package:rsc/views/main/children/user.dart';
+import 'package:rsc/views/main/children/user/user.dart';
 
 class MainRoute extends StatefulWidget {
   
@@ -26,6 +26,7 @@ class _MainRouteState extends State<MainRoute> {
   String _greetByHour = greetByHour().capitalize();
   bool _hasUnSyncData = false;
   bool _isSyncInProgress = false;
+  bool _showGreet = true;
   
   final appToast = AppToast.getInstance();
   final userState = UserState.getInstance();
@@ -49,6 +50,11 @@ class _MainRouteState extends State<MainRoute> {
   void _onBottomBarItemTapped(int index) {
     setState(() {
       _selectedViewIndex = index;
+      if (index == 2) {
+        _showGreet = false;
+      } else {
+        _showGreet = true;
+      }
     });
   }
 
@@ -94,7 +100,9 @@ class _MainRouteState extends State<MainRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
+      appBar: _showGreet 
+      ? 
+      PreferredSize(
         preferredSize: const Size.fromHeight(50.0),
         child: DecoratedBox(
             decoration: const BoxDecoration(color: AppColors.primary),
@@ -107,7 +115,7 @@ class _MainRouteState extends State<MainRoute> {
                   children: [
                     Row(
                       children: [
-                        const SizedBox(width: 10),
+                        const SizedBox(width: 10), 
                         Text(
                           _greetByHour, 
                           style: const TextStyle(
@@ -123,7 +131,7 @@ class _MainRouteState extends State<MainRoute> {
                             fontSize: 17,
                             fontWeight: FontWeight.w500
                           ),
-                        ),
+                        )
                       ],
                     ),
                     _isSyncInProgress 
@@ -163,7 +171,8 @@ class _MainRouteState extends State<MainRoute> {
               ],
             ),
           ),
-      ),
+      )
+      : null,
       body: viewOptions.elementAt(_selectedViewIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[

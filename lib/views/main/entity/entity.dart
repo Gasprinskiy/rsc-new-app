@@ -8,6 +8,11 @@ enum DetailsScreenType {
   tips
 }
 
+enum UsetActionsScreenType {
+  changePassword,
+  salaryInfo
+}
+
 class ShowDialogParams {
   BuildContext context;
   GlobalKey<FormState> formKey;

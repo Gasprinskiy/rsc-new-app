@@ -30,6 +30,7 @@ class Storage {
   Future<void> removeAllData() async {
     Box<dynamic> box = await _openBox();
     await box.deleteFromDisk();
+    return;
   }
 
   Future<Box<dynamic>> _openBox() async {

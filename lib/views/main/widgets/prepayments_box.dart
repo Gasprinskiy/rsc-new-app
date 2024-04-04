@@ -38,7 +38,7 @@ class PrepaymentsBox extends StatelessWidget {
               ),
               SizedBox(width: 5),
               Text(
-                AppStrings.prepayment,
+                AppStrings.prepayments,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,

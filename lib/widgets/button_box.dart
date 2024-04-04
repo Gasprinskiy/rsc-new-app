@@ -5,11 +5,15 @@ import 'package:rsc/constants/app_collors.dart';
 class ButtonBox extends StatelessWidget {
   final Widget child;
   final void Function()? onPressed;
+  final MaterialStateProperty<EdgeInsetsGeometry?>? padding;
+  final Color? color;
 
   const ButtonBox({
     super.key,
     required this.child,
-    this.onPressed
+    this.onPressed,
+    this.padding,
+    this.color
   });
 
   @override
@@ -17,9 +21,9 @@ class ButtonBox extends StatelessWidget {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       child: DecoratedBox(
-        decoration: const BoxDecoration(
-          color: AppColors.primaryTransparent,
-          borderRadius: BorderRadius.all(Radius.circular(5))
+        decoration: BoxDecoration(
+          color: color ?? AppColors.primaryTransparent,
+          borderRadius: const BorderRadius.all(Radius.circular(5))
         ),
         child: TextButton(
           onPressed: () => onPressed?.call(),
@@ -28,7 +32,8 @@ class ButtonBox extends StatelessWidget {
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
               )
-            )
+            ),
+            padding: padding
           ),
           child: child,
         ),

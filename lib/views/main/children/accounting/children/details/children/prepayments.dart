@@ -8,13 +8,7 @@ class PrepaymentsScreen extends StatefulWidget {
   State<PrepaymentsScreen> createState() => _PrepaymentsScreenState();
 }
 
-class _PrepaymentsScreenState extends State<PrepaymentsScreen> {
-
-  
-  void navigateBack() {
-    Navigator.of(context).pop();
-  }
-  
+class _PrepaymentsScreenState extends State<PrepaymentsScreen> { 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
