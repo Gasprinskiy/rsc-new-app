@@ -45,7 +45,8 @@ class ShowSalesDialogParams extends ShowDialogParams {
   CurrencyTextFieldController cashTaxesController;
   CurrencyTextFieldController nonCashController;
   TextEditingController dateController;
-  Future<void> Function(Sale payload)? onSave;
+  Sale? redactingSale;
+  Future<void> Function(Sale payload, String? id)? onSave;
 
   ShowSalesDialogParams({
     required super.context,
@@ -55,6 +56,7 @@ class ShowSalesDialogParams extends ShowDialogParams {
     required this.cashTaxesController,
     required this.nonCashController,
     required this.dateController,
+    this.redactingSale,
     this.onSave
   });
 }

@@ -465,18 +465,20 @@ class SynchronizationDataAdapter extends TypeAdapter<SynchronizationData> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return SynchronizationData(
-      type: fields[0] as SynchronizationDataType,
-      data: fields[1] as dynamic,
+      type: fields[1] as SynchronizationDataType,
+      data: fields[2] as dynamic,
     );
   }
 
   @override
   void write(BinaryWriter writer, SynchronizationData obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
-      ..write(obj.type)
+      ..write(obj.id)
       ..writeByte(1)
+      ..write(obj.type)
+      ..writeByte(2)
       ..write(obj.data);
   }
 
@@ -628,6 +630,47 @@ class PrepaymentListAdapter extends TypeAdapter<PrepaymentList> {
           typeId == other.typeId;
 }
 
+class ArchivateReportAdapter extends TypeAdapter<ArchivateReport> {
+  @override
+  final int typeId = 17;
+
+  @override
+  ArchivateReport read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return ArchivateReport(
+      reportId: fields[0] as int,
+      salaryInfo: fields[1] as SalaryInfo,
+      percentChangeConditions:
+          (fields[2] as List?)?.cast<PercentChangeConditions>(),
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, ArchivateReport obj) {
+    writer
+      ..writeByte(3)
+      ..writeByte(0)
+      ..write(obj.reportId)
+      ..writeByte(1)
+      ..write(obj.salaryInfo)
+      ..writeByte(2)
+      ..write(obj.percentChangeConditions);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ArchivateReportAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
 class SynchronizationDataTypeAdapter
     extends TypeAdapter<SynchronizationDataType> {
   @override
@@ -637,17 +680,19 @@ class SynchronizationDataTypeAdapter
   SynchronizationDataType read(BinaryReader reader) {
     switch (reader.readByte()) {
       case 0:
-        return SynchronizationDataType.sale;
+        return SynchronizationDataType.report;
       case 1:
-        return SynchronizationDataType.tip;
+        return SynchronizationDataType.sale;
       case 2:
-        return SynchronizationDataType.prepayment;
+        return SynchronizationDataType.tip;
       case 3:
-        return SynchronizationDataType.salaryinfo;
+        return SynchronizationDataType.prepayment;
       case 4:
+        return SynchronizationDataType.salaryinfo;
+      case 5:
         return SynchronizationDataType.percentchangeconditions;
       default:
-        return SynchronizationDataType.sale;
+        return SynchronizationDataType.report;
     }
   }
 

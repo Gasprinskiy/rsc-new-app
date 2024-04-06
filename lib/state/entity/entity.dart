@@ -2,6 +2,7 @@ enum SyncRequestType { update, add }
 enum SyncRequestStatus { success, error }
 enum RecentActionsType { expense, payment }
 enum RecentActionsValueType { tip, percentFromSale, prepayment }
+enum UpdatedValuesType { sale, tip, prepayment }
 
 class RecentAction {
   RecentActionsType type;

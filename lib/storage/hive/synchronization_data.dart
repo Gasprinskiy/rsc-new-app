@@ -30,7 +30,7 @@ class SynchronizationDataStorage {
     }
   }
 
-  Future<void> updateSyncData(SynchronizationData payload) async {
+  Future<void> updateReportSyncData(SynchronizationData payload) async {
     List<SynchronizationData>? data = await getSynchronizationData();
     if (data != null) {
       int index = data.indexWhere((element) {
@@ -38,6 +38,20 @@ class SynchronizationDataStorage {
       });
       if (index >= 0) {
         data[index] = payload;
+        await _storage.put(AppStrings.syncStorageKey, SynchronizationDataList(data: data));
+      } else {
+        data.add(payload);
+        await _storage.put(AppStrings.syncStorageKey, SynchronizationDataList(data: data));
+      }
+    }
+  }
+
+  Future<void> updateUserSyncData(SynchronizationData payload) async {
+    List<SynchronizationData>? data = await getSynchronizationData();
+    if (data != null) {
+      int userDataIndex = data.indexWhere((element) => element.data is User);
+      if (userDataIndex >= 0) {
+        data[userDataIndex] = payload;
         await _storage.put(AppStrings.syncStorageKey, SynchronizationDataList(data: data));
       } else {
         data.add(payload);

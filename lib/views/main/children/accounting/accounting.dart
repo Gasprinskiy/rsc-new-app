@@ -2,12 +2,15 @@ import 'package:currency_textfield/currency_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:rsc/constants/app_collors.dart';
 import 'package:rsc/constants/app_strings.dart';
+import 'package:rsc/state/entity/entity.dart';
+import 'package:rsc/views/main/children/accounting/children/archive/archive.dart';
 import 'package:rsc/widgets/app_text_form_field.dart';
 import 'package:rsc/core/accounting_calculations.dart';
 import 'package:rsc/core/entity.dart';
 import 'package:rsc/state/accounting.dart';
 import 'package:rsc/state/user.dart';
 import 'package:rsc/storage/hive/entity/adapters.dart';
+import 'package:rsc/widgets/button_box.dart';
 import 'package:rsc/widgets/dialog.dart';
 import 'package:rsc/widgets/toast.dart';
 import 'package:rsc/views/main/children/accounting/children/details/details.dart';
@@ -147,7 +150,7 @@ class _AccountingState extends State<Accounting> {
     );
   }
 
-  Future<void> addSale(Sale payload) async {
+  Future<void> addSale(Sale payload, _) async {
     if (_addUpdateSaleFormKey.currentState?.validate() == true) {
       setState(() {
         if (_sales != null) {
@@ -286,8 +289,48 @@ class _AccountingState extends State<Accounting> {
       builder: (BuildContext context) {
         return Details(type: type);
       }
-    ));
+    )).then((value) {
+      accountingState.updatedValuesCount.forEach((key, value) async {
+        if (key == UpdatedValuesType.sale && value > 0) {
+          List<Sale>? result = await accountingState.getSaleList();
+          if (result != null) {
+            setState(() {
+              _sales = result;
+              updateSalesKey();
+            });
+          }
+        }
+
+        if (key == UpdatedValuesType.prepayment && value > 0) {
+          List<Prepayment>? result = await accountingState.getPrepaymentList();
+          if (result != null) {
+            setState(() {
+              _prepayments = result;
+              updatePrepaymentsKey();
+            });
+          }
+        }
+
+        if (key == UpdatedValuesType.tip && value > 0) {
+          List<Tip>? result = await accountingState.getTipList();
+          if (result != null) {
+            setState(() {
+              _tips = result;
+              updateTipsKey();
+            });
+          }
+        }
+      });
+    });
   }
+
+   void navigateToArchive() {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (BuildContext context) {
+        return const ArchiveData();
+      }
+    ));
+   }
 
   void showStartReportConditions() {
     appDialog.show(
@@ -334,6 +377,37 @@ class _AccountingState extends State<Accounting> {
         )
       ]
     );
+  }
+
+  void showArchivateReportDialog() {
+    appDialog.show(
+      context,
+      AppStrings.areYouSureYouWantArhivateReport,
+      false,
+      null,
+      [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(), 
+          child: const Text(AppStrings.no)
+        ),
+        TextButton(
+          onPressed: archivateReportAction,
+          child: const Text(AppStrings.yes)
+        )
+      ]
+    );
+  }
+
+  Future<void> archivateReportAction() async {
+    appToast.init(context);
+
+    await accountingState.archivateCurrentReport();
+    await setReportData();
+    calcCommonSalary();
+    setState(() {
+      _isReportStarted = false;
+      Navigator.of(context).pop();
+    });
   }
 
   @override
@@ -440,7 +514,25 @@ class _AccountingState extends State<Accounting> {
                 color: Colors.white,
               ),
             ),
-          )
+          ),
+          Positioned(
+            left: 30,
+            bottom: 0,
+            child: FloatingActionButton(
+              heroTag: 'archivate',
+              elevation: 2,
+              onPressed: showArchivateReportDialog, 
+              backgroundColor: AppColors.warn,
+              tooltip: AppStrings.archivate,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50.0),
+              ),
+              child: const Icon(
+                Icons.archive_outlined,
+                color: Colors.white,
+              ),
+            )
+          ),
         ],
       )
       : null,
@@ -457,6 +549,41 @@ class _AccountingState extends State<Accounting> {
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width / 2.5,
+                        child: ButtonBox(
+                          onPressed: navigateToArchive,
+                          child: const Column(
+                            children: [
+                              Icon(Icons.archive_outlined, size: 30),
+                              SizedBox(height: 10),
+                              Text(AppStrings.archive)
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width / 2.5,
+                        child: ButtonBox(
+                          onPressed: () => {},
+                          child: const Column(
+                            children: [
+                              Icon(Icons.analytics_outlined, size: 30),
+                              SizedBox(height: 10),
+                              Text(AppStrings.analytics)
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
                 Container(
                   key: ValueKey(_salesKey),
                   child: SalesBox(
@@ -482,6 +609,32 @@ class _AccountingState extends State<Accounting> {
                     onBoxClick: () => navigateToDetailsScreenByType(DetailsScreenType.tips),
                   )
                 ),
+                const Padding(padding: EdgeInsets.fromLTRB(0, 60, 0, 0))
+                // const SizedBox(height: 20),
+                // TextButton(
+                //   onPressed: showArchivateReportDialog,
+                //   style: ButtonStyle(
+                //     backgroundColor: MaterialStateProperty.all(AppColors.warnTransparent),
+                //     overlayColor: MaterialStateProperty.all(AppColors.warnTransparent),
+                //     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                //       RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(5),
+                //       )
+                //     ),
+                //   ),
+                //   child: const Row(
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     children: [
+                //       Text(
+                //         AppStrings.archivate,
+                //         style: TextStyle(
+                //           color: AppColors.warn,
+                //           fontSize: 20
+                //         ),
+                //       )
+                //     ],
+                //   ),
+                // ),
               ],
             )
           ),
@@ -489,7 +642,7 @@ class _AccountingState extends State<Accounting> {
       )
       :
       Center(
-        child: FilledButton(
+        child: ButtonBox(
           onPressed: showStartReportConditions,
           child: const Text(AppStrings.startNewReport),
         ),

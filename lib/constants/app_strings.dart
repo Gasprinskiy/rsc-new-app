@@ -21,6 +21,11 @@ class AppStrings {
   static const String regiser = 'Регистрация';
   static const String logout = 'Выйти';
 
+  static const String archivate = 'Архивировать';
+  static const String archive = 'Архив';
+
+  static const String analytics = 'Аналитика';
+
   static const String createPinCode = 'Cоздайте пин код для входа';
   static const String typePinCode = 'Введите пин код для входа';
   // static const String cofirmPinCode = 'Подтвердите пин код';
@@ -75,6 +80,7 @@ class AppStrings {
   static const String redact = 'Редактировать';
   static const String condition = 'Условие';
   static const String changePassword = 'Сменить пароль';
+  static const String loadMore = 'Зазгрузить еще';
 
   static const String areYouSure = 'Вы уверены?';
   static const String confirm = 'Подтвердить';
@@ -99,24 +105,34 @@ class AppStrings {
   static const String dataUpdated = 'Данные обновлены';
   static const String dataStoredAndSyncronized = 'Данные добавлены и синхронизированы';
   static const String reportCreatedAndSyncronized = 'Отчет создан и синхронизован';
+  static const String reportArchivated = 'Отчет архивирован';
   static const String reportCreated = 'Отчет создан';
   static const String dataUpdatedAndSyncronized = 'Данные обновлены и синхронизированы';
   static const String dataSyncronized = 'Данные синхронизированы';
   static const String noDataToSync = 'Нет данных для синхронизации';
-  static const String noDataReportFound = 'Данные по текущему отчету не найдены';
+  static const String noDataReportFound = 'Новый отчет нe начат';
+  static const String noData = 'Нет данных';
   static const String commonDataWillBeInThisBlock = 'Тут будут появлятся общие данные по текущему отчету в процессе работы с приложением';
   static const String salesNotFound = 'Продажи не найдены';
   static const String tipsNotFound = 'Чаевые не найдены';
   static const String prepaymentsNotFound = 'Авансы не найдены';
+  static const String dataNotFound = 'Данные не найдены';
   static const String allUnsycDataWillBeRemoved = 'Все несинхронизированные данные будут утеряны';
 
   static const String curreReportData = 'Текущий отчет';
   static const String reportNotFound = 'Текущий отчет не найден';
   static const String startNewReport = 'Начать новый отчет';
+  static const String areYouSureYouWantArhivateReport = 'Вы уверены что хотите архивировать текущий отчет?';
   static const String recentActions = 'За последнее время';
   static const String started = 'Начало';
   static const String planProgress = 'Прогресс плана';
   static const String creationDate = 'Дата создания';
+
+  static const String from = 'От';
+  static const String to = 'До';
+
+  static const String apply = 'Применить';
+  static const String reset = 'Сбросить';
 
   static const String saleStored = 'Продажа добавлена';
 

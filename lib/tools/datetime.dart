@@ -76,3 +76,7 @@ Duration getCurrentTimeDuration() {
   DateTime now = DateTime.now();
   return Duration(hours: now.hour, minutes: now.minute, seconds: now.second);
 }
+
+DateTime getDurationIgnoredDate(DateTime time) {
+  return DateTime.parse(time.toString().split(' ')[0]);
+}

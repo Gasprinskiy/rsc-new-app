@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rsc/constants/app_collors.dart';
 import 'package:rsc/constants/app_strings.dart';
-import 'package:rsc/state/accounting.dart';
 import 'package:rsc/state/user.dart';
-import 'package:rsc/storage/hive/synchronization_data.dart';
 import 'package:rsc/views/main/children/user/children/actions/actions.dart';
 import 'package:rsc/views/main/entity/entity.dart';
 import 'package:rsc/widgets/button_box.dart';

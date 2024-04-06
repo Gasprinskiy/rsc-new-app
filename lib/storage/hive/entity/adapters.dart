@@ -250,3 +250,19 @@ class PrepaymentList extends HiveObject {
 
   PrepaymentList({required this.data});
 }
+
+@HiveType(typeId: 17)
+class ArchivateReport extends HiveObject {
+  @HiveField(0)
+  int reportId;
+  @HiveField(1)
+  SalaryInfo salaryInfo;
+  @HiveField(2)
+  List<PercentChangeConditions>? percentChangeConditions;
+
+  ArchivateReport({
+    required this.reportId,
+    required this.salaryInfo,
+    this.percentChangeConditions
+  });
+}

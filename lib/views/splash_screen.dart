@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:rsc/constants/app_collors.dart';
+import 'package:rsc/state/accounting.dart';
 import 'package:rsc/state/user.dart';
 import 'package:rsc/storage/hive/entity/adapters.dart';
 import 'package:rsc/storage/hive/token.dart';
@@ -16,6 +17,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   final userState = UserState.getInstance();
+  final accountingState = AccountingState.getInstance();
   final pinCodeStorage = PinCodeStorage.getInstance();
   final tokenStorage = TokenStorage.getInstance();
   final storage = Storage.getInstance();
@@ -58,6 +60,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
         if (pinCode != null) {
           navigateLocalAuth();
+          accountingState.initState();
           return;
         }
         if (pinCode == null) {

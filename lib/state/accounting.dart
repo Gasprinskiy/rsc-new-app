@@ -6,6 +6,7 @@ import 'package:hive/hive.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:rsc/api/acounting.dart';
 import 'package:rsc/api/entity/accounting.dart';
+import 'package:rsc/api/entity/user.dart';
 import 'package:rsc/constants/app_collors.dart';
 import 'package:rsc/constants/app_strings.dart';
 import 'package:rsc/core/accounting_calculations.dart';
@@ -33,9 +34,15 @@ class AccountingState {
 
   int? _currentAccountingId;
   DateTime? _currentAccountingCreationDate;
+  final Map<UpdatedValuesType, int> _updatedValuesCount = {
+    UpdatedValuesType.sale: 0,
+    UpdatedValuesType.tip: 0,
+    UpdatedValuesType.prepayment: 0
+  };
 
   int? get currentAccuntingId => _currentAccountingId;
   DateTime? get currentAccountingCreationDate => _currentAccountingCreationDate;
+  Map<UpdatedValuesType, int> get updatedValuesCount => _updatedValuesCount;
 
   AccountingState._();
 
@@ -89,6 +96,10 @@ class AccountingState {
         ));
       }
     }
+  }
+
+  void setUpdatedValuesCount(UpdatedValuesType type, int count) {
+    _updatedValuesCount[type] = _updatedValuesCount[type]! + count;
   }
 
   Future<bool> hasDataToSync() async {
@@ -320,6 +331,8 @@ class AccountingState {
     if (list != null && list.isNotEmpty) {
       List<SynchronizationData> dataToRemove = [];
       int reportIndex = list.indexWhere((element) => element.data is CurrentReport);
+      int arhivateReportIndex = list.indexWhere((element) => element.data is ArchivateReport);
+
       if (reportIndex >= 0) {
         CurrentReport data = list[reportIndex].data;
         try {
@@ -337,7 +350,33 @@ class AccountingState {
           appToast.showErrorToast(err.message.toString());
           return;
         }
-        list.removeAt(reportIndex);
+      }
+
+      if (arhivateReportIndex >= 0) {
+        ArchivateReport data = list[arhivateReportIndex].data;
+        try {
+          ArchivateReportSalaryParams payload = ArchivateReportSalaryParams(
+            salaryInfo: UserSalaryInfo(
+              salary: data.salaryInfo.salary,
+              percentFromSales: data.salaryInfo.percentFromSales,
+              plan: data.salaryInfo.plan,
+              ignorePlan: data.salaryInfo.ignorePlan,
+            ),
+            percentChangeConditions: data.percentChangeConditions?.map((item) {
+              return UserPercentChangeConditions(
+                percentGoal: item.percentGoal, 
+                percentChange: item.percentChange,
+                salaryBonus: item.salaryBonus
+              );
+            }).toList()
+          );
+          await api.archivateReport(data.reportId, payload);
+
+          dataToRemove.add(list[arhivateReportIndex]);
+        } on DioException catch(err) {
+          appToast.showErrorToast(err.message.toString());
+          return;
+        }
       }
 
       for (var element in list) {
@@ -494,6 +533,52 @@ class AccountingState {
     }
   }
 
+  Future<void> archivateCurrentReport() async {
+    ArchivateReportSalaryParams payload = ArchivateReportSalaryParams(
+      salaryInfo: UserSalaryInfo(
+        salary: userState.user?.salaryInfo?.salary ?? 0,
+        percentFromSales: userState.user?.salaryInfo?.percentFromSales ?? 0,
+        plan: userState.user?.salaryInfo?.plan,
+        ignorePlan: userState.user?.salaryInfo?.ignorePlan,
+      ),
+      percentChangeConditions: userState.user?.percentChangeConditions?.map((item) {
+        return UserPercentChangeConditions(
+          percentGoal: item.percentGoal, 
+          percentChange: item.percentChange,
+          salaryBonus: item.salaryBonus
+        );
+      }).toList()
+    );
+    try {
+      await storage.removeAll();
+      await api.archivateReport(_currentAccountingId!, payload);
+      appToast.showCustomToast(
+        AppColors.success,
+        Icons.cloud_done_rounded,
+        AppStrings.reportArchivated
+      );
+    } on DioException catch (_) {
+      SynchronizationData syncPayload = SynchronizationData(
+        type: SynchronizationDataType.report,
+        data: ArchivateReport(
+          reportId: _currentAccountingId!,
+          salaryInfo: userState.user!.salaryInfo!,
+          percentChangeConditions: userState.user?.percentChangeConditions
+        )
+      );
+      await _addSyncData(syncPayload);
+      appBus.fire(SynchronizationDoneEvent(failedSyncCount: 1));
+      appToast.showCustomToast(
+        AppColors.warn,
+        Icons.cloud_off_rounded,
+        AppStrings.reportArchivated
+      );
+    } finally {
+      _currentAccountingCreationDate = null;
+      _currentAccountingId = null;
+    }
+  }
+
   Future<void> _handleAddDataAction<T>(
     T sourcePayload, 
     SynchronizationDataType type,
@@ -627,7 +712,7 @@ class AccountingState {
           if (!isUpdate) {
             _addSyncData(payload);
           } else {
-            await _updateSyncData(payload);
+            await _updateReportSyncData(payload);
           }
           return (null, err.message.toString());
         } 
@@ -635,7 +720,7 @@ class AccountingState {
         if (!isUpdate) {
           await _addSyncData(payload);
         } else {
-          await _updateSyncData(payload);
+          await _updateReportSyncData(payload);
         }
         return (null, null);
       }
@@ -643,7 +728,7 @@ class AccountingState {
       if (!isUpdate) {
         await _addSyncData(payload);
       } else {
-        await _updateSyncData(payload);
+        await _updateReportSyncData(payload);
       }
       return (null, AppStrings.noInternetConnection);
     }
@@ -652,14 +737,15 @@ class AccountingState {
   Future<void> _addSyncData(SynchronizationData payload) async {
     try {
       await syncStorage.addSynchronizationData(payload);
-    } on HiveError catch(_) {
+    } on HiveError catch(err) {
+      print('sync data err: $err');
       showErrorToast(appToast.toast, AppStrings.errOnWritingData);
     }
   }
 
-  Future<void> _updateSyncData(SynchronizationData payload) async {
+  Future<void> _updateReportSyncData(SynchronizationData payload) async {
     try {
-      await syncStorage.updateSyncData(payload);
+      await syncStorage.updateReportSyncData(payload);
     } on HiveError catch(_) {
       showErrorToast(appToast.toast, AppStrings.errOnWritingData);
     }

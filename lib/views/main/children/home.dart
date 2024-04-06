@@ -287,13 +287,13 @@ class _HomeState extends State<Home> {
                 child: Column(
                   children: [
                     Icon(
-                      Icons.money,
+                      Icons.not_interested_rounded,
                       size: 35,
                       color: AppColors.primary,
                     ),
                     SizedBox(height: 10),
                     Text(
-                      AppStrings.commonDataWillBeInThisBlock,
+                      AppStrings.noDataReportFound,
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 18

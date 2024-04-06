@@ -83,10 +83,10 @@ class ArchivedReportsDateRange extends ApiPayload {
   ArchivedReportsDateRange({required this.from, required this.to});
 
   @override
-  Map<String, DateTime> get apiParams {
+  Map<String, String> get apiParams {
     return {
-      'date_from': from,
-      'date_to': to
+      'date_from': from.toIso8601String(),
+      'date_to': to.toIso8601String()
     };
   }
 }
@@ -132,14 +132,20 @@ class FindArchivedAccountingReportsParams extends ApiPayload {
 class AccountingReport {
   int id;
   DateTime creationDate;
+  double? total;
 
-  AccountingReport({required this.id, required this.creationDate});
+  AccountingReport({
+    required this.id, 
+    required this.creationDate,
+    this.total
+  });
 }
 
 AccountingReport accountingReportFromJson(dynamic data) {
   return AccountingReport(
     id: data['accounting_id'],
-    creationDate: DateTime.parse(data['creation_date'])
+    creationDate: DateTime.parse(data['creation_date']),
+    total: data['total']?.toDouble()
   );
 }
 

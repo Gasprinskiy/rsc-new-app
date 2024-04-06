@@ -42,7 +42,6 @@ class _MainRouteState extends State<MainRoute> {
   @override
   void initState() {
     super.initState();
-    accountingState.initState();
     _setGreedByHourTimer();
     _checkSyncData();
   }

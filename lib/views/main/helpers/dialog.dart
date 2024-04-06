@@ -83,8 +83,10 @@ void showSalesDialog(ShowSalesDialogParams params) {
                   total: params.totalSalesController.doubleValue, 
                   nonCash: params.nonCashController.doubleValue, 
                   cashTaxes: params.cashTaxesController.doubleValue, 
-                  creationDate: DateTime.parse(params.dateController.text).add(getCurrentTimeDuration())
-              )
+                  creationDate: DateTime.parse(params.dateController.text).add(getCurrentTimeDuration()),
+                  cloudId: params.redactingSale?.cloudId
+                ),
+                params.redactingSale?.id
               ),
               isLoading = false,
             }

@@ -29,5 +29,6 @@ class StorageInitializer {
     Hive.registerAdapter(SynchronizationDataListAdapter());
     Hive.registerAdapter(TipListAdapter());
     Hive.registerAdapter(PrepaymentListAdapter());
+    Hive.registerAdapter(ArchivateReportAdapter());
   }
 }
