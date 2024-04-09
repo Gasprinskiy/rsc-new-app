@@ -7,6 +7,7 @@ import 'package:rsc/state/user.dart';
 import 'package:rsc/storage/secure/pin_code.dart';
 import 'package:rsc/tools/pincrypt.dart';
 import 'package:rsc/views/local_auth/widgets/pin_code_screen.dart';
+import 'package:rsc/widgets/toast.dart';
 
 const androidAuthMessage = AndroidAuthMessages(
   signInTitle: AppStrings.authRequired,
@@ -33,13 +34,14 @@ class _LocalAuthRouteState extends State<LocalAuthRoute> {
   final userState = UserState.getInstance();
   final PinCodeStorage pinCodeStorage = PinCodeStorage.getInstance();
   final LocalAuthentication auth = LocalAuthentication();
+  final appToast = AppToast.getInstance(); 
+
   String _hashedPin = '';
 
   @override
   void initState() {
     super.initState();
     setHasedPin();
-    print(userState.biometricsAllowed);
     if (userState.biometricsAllowed) {
       authenticateWithBiometrics();
     }
@@ -52,6 +54,7 @@ class _LocalAuthRouteState extends State<LocalAuthRoute> {
   }
 
   Future<void> authenticateWithBiometrics() async {
+    appToast.init(context);
     bool authenticated = false;
     try {
       authenticated = await auth.authenticate(
@@ -63,7 +66,7 @@ class _LocalAuthRouteState extends State<LocalAuthRoute> {
         ),
       );
     } on PlatformException catch (e) {
-      print(e);
+      appToast.showErrorToast(e.message ?? AppStrings.unreqError);
       return;
     } finally {
       if (authenticated) {

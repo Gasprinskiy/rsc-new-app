@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:rsc/constants/app_collors.dart';
@@ -40,11 +39,7 @@ class AppToast {
     );
   }
 
-  void showCustomToast(
-    Color color, 
-    IconData icon, 
-    String msg
-  ) {
+  void showCustomToast(Color color, IconData icon, String msg) {
     toast.showToast(
       toastDuration: AppTheme.toastDuration,
       child: _toastChild(color, icon, msg),
@@ -53,34 +48,28 @@ class AppToast {
 
   Material _toastChild(Color color, IconData icon, String msg) {
     return Material(
-      borderRadius: AppTheme.toastBorderRadius,
-      color: color,
-      child: Padding(
-        padding: const EdgeInsets.all(5),
-        child: Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                const SizedBox(width: 10),
-                Icon(
-                  icon,
-                  color: Colors.white,
+        borderRadius: AppTheme.toastBorderRadius,
+        color: color,
+        child: Padding(
+          padding: const EdgeInsets.all(5),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              const SizedBox(width: 10),
+              Icon(
+                icon,
+                color: Colors.white,
+              ),
+              const SizedBox(width: 10),
+              Flexible(
+                child: Text(
+                  msg,
+                  style: const TextStyle(color: Colors.white, fontSize: 18.0, height: 1.3, fontWeight: FontWeight.w400),
                 ),
-                const SizedBox(width: 10),
-                Flexible(
-                  child: Text(
-                    msg,
-                    style: const TextStyle(
-                      color: Colors.white, 
-                      fontSize: 18.0, 
-                      height: 1.3, 
-                      fontWeight: FontWeight.w400
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-              ],
-            ),
-        ) 
-    );
+              ),
+              const SizedBox(width: 10),
+            ],
+          ),
+        ));
   }
 }

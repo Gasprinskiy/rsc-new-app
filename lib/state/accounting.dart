@@ -442,11 +442,9 @@ class AccountingState {
         creationDate: sale.creationDate
       );
       SyncRequestType requestType = sale.cloudId != null ? SyncRequestType.update : SyncRequestType.add;
-      print('req type: $requestType');
       switch (requestType) {
         case SyncRequestType.update:
           try {
-            print(sale.cloudId);
             await api.updateSale(sale.cloudId!, apiPayload);
             await storage.updateSale(sale);
             return SyncRequestStatus.success;
@@ -455,7 +453,6 @@ class AccountingState {
           }
         case SyncRequestType.add:
           try {
-            print('FUCK: $_currentAccountingId');
             int? cloudId = await api.addSale(_currentAccountingId!, apiPayload);
             if (cloudId != null) {
               sale.cloudId = cloudId;
@@ -745,8 +742,7 @@ class AccountingState {
   Future<void> _addSyncData(SynchronizationData payload) async {
     try {
       await syncStorage.addSynchronizationData(payload);
-    } on HiveError catch(err) {
-      print('sync data err: $err');
+    } on HiveError catch(_) {
       showErrorToast(appToast.toast, AppStrings.errOnWritingData);
     }
   }

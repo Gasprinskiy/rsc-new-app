@@ -6,6 +6,7 @@ import 'package:rsc/storage/hive/entity/adapters.dart';
 import 'package:rsc/storage/hive/token.dart';
 import 'package:rsc/storage/hive/worker/worker.dart';
 import 'package:rsc/storage/secure/pin_code.dart';
+import 'package:rsc/widgets/toast.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -20,6 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
   final pinCodeStorage = PinCodeStorage.getInstance();
   final tokenStorage = TokenStorage.getInstance();
   final storage = Storage.getInstance();
+  final appToast = AppToast.getInstance();
 
   @override
   void initState() {
@@ -28,15 +30,9 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> checkUserDataAndNavigate() async {
-    // Navigator.pushNamed(context, '/auth/register/salary-info');
-    // return;
+    appToast.init(context);
+
     try {
-      //
-      // await storage.removeAllData();
-      // await tokenStorage.removeToken();
-      // const secureStorage = FlutterSecureStorage(); // remove
-      // await secureStorage.deleteAll(); // remove
-      //
       if (!userState.isInited) {
         await userState.initUserState();
       }
@@ -72,33 +68,28 @@ class _SplashScreenState extends State<SplashScreen> {
         navigateToLogin();
       }
     } catch (err) {
-      print('err: $err');
+      appToast.showErrorToast(err.toString());
     }
   }
 
   void navigateToEmailConfirmForm() {
-    Navigator.of(context).pushNamedAndRemoveUntil(
-        '/auth/register/confirm-email', (Route<dynamic> route) => false);
+    Navigator.of(context).pushNamedAndRemoveUntil('/auth/register/confirm-email', (Route<dynamic> route) => false);
   }
 
   void navigateToSalaryInfoForm() {
-    Navigator.of(context).pushNamedAndRemoveUntil(
-        '/auth/register/salary-info', (Route<dynamic> route) => false);
+    Navigator.of(context).pushNamedAndRemoveUntil('/auth/register/salary-info', (Route<dynamic> route) => false);
   }
 
   void navigateCreateLocalAuth() {
-    Navigator.of(context).pushNamedAndRemoveUntil(
-        '/create_local_auth', (Route<dynamic> route) => false);
+    Navigator.of(context).pushNamedAndRemoveUntil('/create_local_auth', (Route<dynamic> route) => false);
   }
 
   void navigateLocalAuth() {
-    Navigator.of(context).pushNamedAndRemoveUntil(
-        '/local_auth', (Route<dynamic> route) => false);
+    Navigator.of(context).pushNamedAndRemoveUntil('/local_auth', (Route<dynamic> route) => false);
   }
 
   void navigateToLogin() {
-    Navigator.of(context)
-        .pushNamedAndRemoveUntil('/auth', (Route<dynamic> route) => false);
+    Navigator.of(context).pushNamedAndRemoveUntil('/auth', (Route<dynamic> route) => false);
   }
 
   @override

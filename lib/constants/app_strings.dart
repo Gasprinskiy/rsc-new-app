@@ -101,6 +101,7 @@ class AppStrings {
 
   static const String noInternetConnection = 'Нет соединения с интернетом';
   static const String errOnWritingData = 'Ошибка при записи данных';
+  static const String unreqError = 'Неопознанная ошибка';
   static const String couldNotSyncData = 'Не удалось синхронизовать данные';
   static const String dataStoredInLocalStorage = 'Данные добавлены';
   static const String dataUpdated = 'Данные обновлены';

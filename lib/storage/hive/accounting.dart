@@ -169,7 +169,6 @@ class AccountingStorage {
     int Function(List<T>) findIndexFunc
   ) async {
     List<T>? list = await getListFunc();
-    print('handler list: $payload');
     if (list != null) {
       int indexOfSaleToUpdate = findIndexFunc(list);
       if (indexOfSaleToUpdate >= 0) {

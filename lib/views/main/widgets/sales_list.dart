@@ -11,12 +11,7 @@ class SalesList extends StatefulWidget {
   final bool? readOnly;
   final void Function(Sale sale)? onSaleClick;
 
-  const SalesList({
-    super.key, 
-    required this.sales,
-    this.readOnly,
-    this.onSaleClick
-  });
+  const SalesList({super.key, required this.sales, this.readOnly, this.onSaleClick});
 
   @override
   State<SalesList> createState() => _SalesListState();
@@ -29,7 +24,7 @@ class _SalesListState extends State<SalesList> {
   late bool readOnly;
   late void Function(Sale sale)? onSaleClick;
 
-  @override 
+  @override
   void initState() {
     super.initState();
     sales = widget.sales;
@@ -42,105 +37,71 @@ class _SalesListState extends State<SalesList> {
     return Column(
       children: [
         ...sales.map((item) {
-          return Column(
-            children: [
-              ButtonBox(
-                onPressed: () => readOnly ? null : onSaleClick?.call(item),
-                child: Column(
+          return Column(children: [
+            ButtonBox(
+              onPressed: () => readOnly ? null : onSaleClick?.call(item),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text('${AppStrings.cashTaxes}:', style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500
-                          )),
-                          DecoratedBox(
-                            decoration: const BoxDecoration(
-                              color: AppColors.primary,
-                              borderRadius: BorderRadius.all(Radius.circular(3))
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(5),
-                              child: Text(currencyFormat(item.cashTaxes), style: const TextStyle(
-                                color: Colors.white
-                              )),
-                            ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text('${AppStrings.nonCash}:', style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500
-                          )),
-                          DecoratedBox(
-                            decoration: const BoxDecoration(
-                              color: AppColors.primary,
-                              borderRadius: BorderRadius.all(Radius.circular(3))
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(5),
-                              child: Text(currencyFormat(item.nonCash), style: const TextStyle(
-                                color: Colors.white
-                              )),
-                            ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text('${AppStrings.amount}:', style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500
-                          )),
-                          DecoratedBox(
-                            decoration: const BoxDecoration(
-                              color: AppColors.primary,
-                              borderRadius: BorderRadius.all(Radius.circular(3))
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(5),
-                              child: Text(currencyFormat(item.total), style: const TextStyle(
-                                color: Colors.white
-                              )),
-                            ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text('${AppStrings.creationDate}:', style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500
-                          )),
-                          DecoratedBox(
-                            decoration: const BoxDecoration(
-                              color: AppColors.primary,
-                              borderRadius: BorderRadius.all(Radius.circular(3))
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(5),
-                              child: Text(monthDateYear(item.creationDate), style: const TextStyle(
-                                color: Colors.white
-                              )),
-                            ),
-                          )
-                        ],
-                      ),
+                      const Text('${AppStrings.cashTaxes}:', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                      DecoratedBox(
+                        decoration: const BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.all(Radius.circular(3))),
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Text(currencyFormat(item.cashTaxes), style: const TextStyle(color: Colors.white)),
+                        ),
+                      )
                     ],
                   ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('${AppStrings.nonCash}:', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                      DecoratedBox(
+                        decoration: const BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.all(Radius.circular(3))),
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Text(currencyFormat(item.nonCash), style: const TextStyle(color: Colors.white)),
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('${AppStrings.amount}:', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                      DecoratedBox(
+                        decoration: const BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.all(Radius.circular(3))),
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Text(currencyFormat(item.total), style: const TextStyle(color: Colors.white)),
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('${AppStrings.creationDate}:', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                      DecoratedBox(
+                        decoration: const BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.all(Radius.circular(3))),
+                        child: Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: Text(monthDateYear(item.creationDate), style: const TextStyle(color: Colors.white)),
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 10)
-            ]
-          );
+          ]);
         })
       ],
     );
