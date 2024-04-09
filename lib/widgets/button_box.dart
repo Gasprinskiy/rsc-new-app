@@ -26,13 +26,14 @@ class ButtonBox extends StatelessWidget {
           borderRadius: const BorderRadius.all(Radius.circular(5))
         ),
         child: TextButton(
-          onPressed: () => onPressed?.call(),
+          onPressed: onPressed != null ? () => onPressed?.call() : null,
           style: ButtonStyle(
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
               )
             ),
+            foregroundColor: MaterialStateProperty.all(onPressed != null ? AppColors.primary : Colors.black),
             padding: padding
           ),
           child: child,

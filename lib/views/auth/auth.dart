@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:rsc/api/acounting.dart';
+import 'package:rsc/api/accounting.dart';
 import 'package:rsc/api/entity/accounting.dart';
 import 'package:rsc/api/entity/user.dart';
 import 'package:rsc/api/tools/error_handler.dart';
@@ -91,7 +91,7 @@ class _AuthRouteState extends State<AuthRoute> {
         //
         // get current report
         try {
-          ApiCurrentReport? currentReport = await accountingApi.getCurrentReport();
+          ApiReport? currentReport = await accountingApi.getCurrentReport();
           if (currentReport != null) {
             await accountingState.initAccountingStateFromApiResult(currentReport);
           }

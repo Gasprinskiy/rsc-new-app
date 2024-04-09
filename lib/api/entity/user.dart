@@ -150,9 +150,9 @@ class UserPercentChangeConditions {
 
 UserPercentChangeConditions percentChangeConditionsFromJson(dynamic data) {
   return UserPercentChangeConditions(
-    percentGoal: data['percent_goal'],
-    percentChange: data['percent_change'],
-    salaryBonus: data['salary_bonus']
+    percentGoal: data['percent_goal']?.toDouble(),
+    percentChange: data['percent_change']?.toDouble(),
+    salaryBonus: data['salary_bonus']?.toDouble()
   );
 }
 
@@ -180,10 +180,10 @@ class UserSalaryInfo {
 
 UserSalaryInfo userSalaryInfoFromJson(dynamic data) {
   return UserSalaryInfo(
-    salary: data['salary'],
-    percentFromSales: data['percent_from_sales'],
+    salary: data['salary']?.toDouble(),
+    percentFromSales: data['percent_from_sales']?.toDouble(),
     ignorePlan: data['ignore_plan'],
-    plan: data['plan']
+    plan: data['plan']?.toDouble()
   );
 }
 

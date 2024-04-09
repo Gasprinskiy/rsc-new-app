@@ -10,7 +10,10 @@ class AccountingCalculations {
   }
 
   double calcTotal(List<double> list) {
-    return list.reduce((total, item) => total + item);
+    if (list.isNotEmpty) {
+      return list.reduce((total, item) => total + item);
+    }
+    return 0;
   }
 
   double calcCommonSalary(CalcCommonSalaryOptions options) {
@@ -90,15 +93,23 @@ class AccountingCalculations {
 
   double calcPlanProgress(List<double> sales, double plan) {
     double totalSales = calcTotal(sales);
-    double result = (totalSales / plan) * 100;
+    double result = calcPercentOfValueFromTotalValue(totalSales, plan);
     return result >= 100 ? 100 : result;
   }
 
   double calcPercent(double total, double percent) {
     return total / 100 * percent;
   }
+  
+  double calcPercentOfValueFromTotalValue(double total, double value) {
+    return (total / value) * 100;
+  }
 
   bool isPlanReached(List<double> sales, double plan) {
     return calcPlanProgress(sales, plan) >= 100;
+  }
+
+  double calcAverageValue(List<double> list) {
+    return calcTotal(list) / list.length;
   }
 }

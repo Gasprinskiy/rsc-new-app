@@ -1,6 +1,6 @@
 import 'package:animated_digit/animated_digit.dart';
 import 'package:flutter/material.dart';
-import 'package:rsc/api/acounting.dart';
+import 'package:rsc/api/accounting.dart';
 import 'package:rsc/constants/app_collors.dart';
 import 'package:rsc/constants/app_strings.dart';
 import 'package:rsc/core/accounting_calculations.dart';

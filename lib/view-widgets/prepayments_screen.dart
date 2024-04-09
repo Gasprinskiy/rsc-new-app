@@ -15,6 +15,7 @@ import 'package:rsc/widgets/date_range_filter.dart';
 class PrepaymentsScreen extends StatefulWidget {
   final List<Prepayment> prepayments;
   final Future<void> Function(Prepayment prepayment)? onRedact;
+
   const PrepaymentsScreen({
     super.key,
     required this.prepayments,
@@ -65,7 +66,9 @@ class _PrepaymentsScreenState extends State<PrepaymentsScreen> {
     bool toIsSame =  getDurationIgnoredDate(to).isAtSameMomentAs(getDurationIgnoredDate(dateTo));
     if (!fromIsSame || !toIsSame) { 
       setState(() {
-        innerList = prepayments.where((element) => (element.creationDate.isAfter(from) && element.creationDate.isBefore(to))).toList();
+        innerList = prepayments.where((element) {
+          return isDateInDateRange(element.creationDate, from, to);
+        }).toList();
         innerList.sort((a, b) => b.creationDate.compareTo(a.creationDate));
       });
     }
@@ -122,9 +125,9 @@ class _PrepaymentsScreenState extends State<PrepaymentsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Container(
       key: widget.key,
-      body:
+      child:
       prepayments.isNotEmpty
       ?
       ListView(

@@ -1,57 +1,57 @@
 
 import 'package:flutter/material.dart';
-import 'package:rsc/state/accounting.dart';
-import 'package:rsc/state/entity/entity.dart';
+import 'package:rsc/api/entity/accounting.dart';
+import 'package:rsc/constants/app_strings.dart';
 import 'package:rsc/storage/hive/entity/adapters.dart';
+import 'package:rsc/tools/datetime.dart';
+import 'package:rsc/tools/extensions.dart';
 import 'package:rsc/view-widgets/tips_screen.dart';
-import 'package:rsc/widgets/toast.dart';
+import 'package:rsc/widgets/back_appbar.dart';
 
-class TipsDetails extends StatefulWidget {
-  const TipsDetails({super.key});
+class TipsArchivedDetails extends StatefulWidget {
+  final List<CommonAdditionalReportData> data;
+  final DateTime creationDate;
+  const TipsArchivedDetails({
+    super.key, 
+    required this.data,
+    required this.creationDate
+  });
 
   @override
-  State<TipsDetails> createState() => _TipsDetailsState();
+  State<TipsArchivedDetails> createState() => _TipsArchivedDetailsState();
 }
 
-class _TipsDetailsState extends State<TipsDetails> { 
-  final accountingState = AccountingState.getInstance();
-  final appTaost = AppToast.getInstance();
-
-  List<Tip> tips = [];
-
-  void initPrepayments() {
-    accountingState.getTipList().then((value) {
-      if (value != null) {
-        setState(() {
-          tips = value;
-        });
-      }
-    });
-  }
-
-  Future<void> redactTips(Tip tip) async {
-    appTaost.init(context);
-
-    int updatedIndex = tips.indexWhere((element) => element.id == tip.id);
-    if (updatedIndex >= 0) {
-      tips[updatedIndex] = tip;
-      await accountingState.updateAndSyncTip(tip);
-      accountingState.setUpdatedValuesCount(UpdatedValuesType.tip, 1);
-    }
-  }
+class _TipsArchivedDetailsState extends State<TipsArchivedDetails> { 
+  late List<CommonAdditionalReportData> data;
+  late DateTime creationDate;
 
   @override
   void initState() {
     super.initState();
-    initPrepayments();
+    data = widget.data;
+    creationDate = widget.creationDate;
   }
 
   @override
   Widget build(BuildContext context) {
-    return TipsScreen(
-      key: ValueKey(tips.length),
-      tips: tips,
-      onRedact: redactTips,
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(50.0),
+        child: BackAppBar(
+          title: Text(
+            '${AppStrings.tips} ${monthAndYear(creationDate).capitalize()}',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w500
+            ),
+          )
+        )
+      ),
+      body: TipsScreen(
+        key: ValueKey(data.length),
+        tips: data.map((item) => Tip(value: item.value, creationDate: item.creationDate)).toList(),
+      ),
     );
   }
 }

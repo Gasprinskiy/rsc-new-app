@@ -4,6 +4,7 @@ import 'package:rsc/constants/app_collors.dart';
 import 'package:rsc/constants/app_strings.dart';
 import 'package:rsc/state/entity/entity.dart';
 import 'package:rsc/views/main/children/accounting/children/archive/archive.dart';
+import 'package:rsc/views/main/children/accounting/children/statistics.dart';
 import 'package:rsc/widgets/app_text_form_field.dart';
 import 'package:rsc/core/accounting_calculations.dart';
 import 'package:rsc/core/entity.dart';
@@ -21,6 +22,41 @@ import 'package:rsc/views/main/widgets/prepayments_box.dart';
 import 'package:rsc/views/main/widgets/sales_box.dart';
 import 'package:rsc/views/main/widgets/tips_box.dart';
 import 'package:rsc/views/main/widgets/common_salary_box.dart';
+
+class TestClass {
+  double value;
+  DateTime creationDate;
+
+  TestClass({required this.value, required this.creationDate});
+}
+
+List<TestClass> testList = [
+  TestClass(
+    creationDate: DateTime(2024, 1, 0, 0),
+    value: 20000000
+  ),
+  TestClass(
+    creationDate: DateTime(2024, 2, 0, 0),
+    value: 10000000
+  ),
+  TestClass(
+    creationDate: DateTime(2024, 3, 0, 0),
+    value: 30000000
+  ),
+];
+
+final Map<int, double> map = {};
+
+void calcPercentsByList() {
+  final calcCore = AccountingCalculations.getInstance();
+  double total = calcCore.calcTotal(testList.map((e) => e.value).toList());
+  for (var element in testList) {
+    double percentFromTotal = calcCore.calcPercentOfValueFromTotalValue(total, element.value);
+    map[element.creationDate.month] = 0;
+    map[element.creationDate.month] = map[element.creationDate.month]! + percentFromTotal;
+  }
+}
+
 
 class Accounting extends StatefulWidget {
   const Accounting({super.key});
@@ -324,13 +360,21 @@ class _AccountingState extends State<Accounting> {
     });
   }
 
-   void navigateToArchive() {
+  void navigateToArchive() {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (BuildContext context) {
         return const ArchiveData();
       }
     ));
-   }
+  }
+
+  void navigateToStatistics() {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (BuildContext context) {
+        return const ReportStatistics();
+      }
+    ));
+  }
 
   void showStartReportConditions() {
     appDialog.show(
@@ -415,6 +459,7 @@ class _AccountingState extends State<Accounting> {
     super.initState();
     initializeControllers();
     setReportData();
+    calcPercentsByList();
     _isReportStarted = accountingState.currentAccountingCreationDate != null;
   }
 
@@ -516,7 +561,7 @@ class _AccountingState extends State<Accounting> {
             ),
           ),
           Positioned(
-            left: 30,
+            left: 35,
             bottom: 0,
             child: FloatingActionButton(
               heroTag: 'archivate',
@@ -544,6 +589,10 @@ class _AccountingState extends State<Accounting> {
             key: Key(_commonSalary.toString()),
             commonSalary: _commonSalary
           ),
+          // CustomPaint(
+          //   size: Size(200, 200),
+          //   painter: CircleBordersPainter(map, monthColorsMap),
+          // ),
           Padding(
             key: ValueKey(_reportKey),
             padding: const EdgeInsets.all(20),
@@ -570,12 +619,12 @@ class _AccountingState extends State<Accounting> {
                       SizedBox(
                         width: MediaQuery.of(context).size.width / 2.5,
                         child: ButtonBox(
-                          onPressed: () => {},
+                          onPressed: navigateToStatistics,
                           child: const Column(
                             children: [
                               Icon(Icons.analytics_outlined, size: 30),
                               SizedBox(height: 10),
-                              Text(AppStrings.analytics)
+                              Text(AppStrings.statistics)
                             ],
                           ),
                         ),

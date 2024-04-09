@@ -50,6 +50,11 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
     }
   }
 
+  void disposeControllers() {
+    fromController.dispose();
+    toController.dispose();
+  }
+
   void onSubmitAction() {
     if (_formKey.currentState?.validate() == true) {
       onSubmit.call(
@@ -86,6 +91,12 @@ class _DateRangeFilterState extends State<DateRangeFilter> {
     from = widget.from;
     to = widget.to;
     initControllers();
+  }
+
+  @override
+  void dispose() {
+    disposeControllers();
+    super.dispose();
   }
 
   @override

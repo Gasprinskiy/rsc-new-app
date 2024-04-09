@@ -40,6 +40,8 @@ class _CreateLocalAuthRouteState extends State<CreateLocalAuthRoute> {
     bool isBimetricsAllowed = await checkDeviceFingerprintAuth();
     if (isBimetricsAllowed) {
       showAllowBiometricsDialog();
+    } else {
+      setBiometricsSettingsAndNaviageteToHomePage(false);
     }
   }
 

@@ -1,57 +1,57 @@
 
 import 'package:flutter/material.dart';
-import 'package:rsc/state/accounting.dart';
-import 'package:rsc/state/entity/entity.dart';
+import 'package:rsc/api/entity/accounting.dart';
+import 'package:rsc/constants/app_strings.dart';
 import 'package:rsc/storage/hive/entity/adapters.dart';
+import 'package:rsc/tools/datetime.dart';
+import 'package:rsc/tools/extensions.dart';
 import 'package:rsc/view-widgets/prepayments_screen.dart';
-import 'package:rsc/widgets/toast.dart';
+import 'package:rsc/widgets/back_appbar.dart';
 
-class PrepaymentsDetails extends StatefulWidget {
-  const PrepaymentsDetails({super.key});
+class PrepaymentsArchivedDetails extends StatefulWidget {
+  final List<CommonAdditionalReportData> data;
+  final DateTime creationDate;
+  const PrepaymentsArchivedDetails({
+    super.key, 
+    required this.data,
+    required this.creationDate
+  });
 
   @override
-  State<PrepaymentsDetails> createState() => _PrepaymentsDetailsState();
+  State<PrepaymentsArchivedDetails> createState() => _PrepaymentsArchivedDetailsState();
 }
 
-class _PrepaymentsDetailsState extends State<PrepaymentsDetails> { 
-  final accountingState = AccountingState.getInstance();
-  final appTaost = AppToast.getInstance();
-
-  List<Prepayment> prepayments = [];
-
-  void initPrepayments() {
-    accountingState.getPrepaymentList().then((value) {
-      if (value != null) {
-        setState(() {
-          prepayments = value;
-        });
-      }
-    });
-  }
-
-  Future<void> redactPrepayment(Prepayment prepayment) async {
-    appTaost.init(context);
-
-    int updatedIndex = prepayments.indexWhere((element) => element.id == prepayment.id);
-    if (updatedIndex >= 0) {
-      prepayments[updatedIndex] = prepayment;
-      await accountingState.updateAndSyncPrepayment(prepayment);
-      accountingState.setUpdatedValuesCount(UpdatedValuesType.prepayment, 1);
-    }
-  }
+class _PrepaymentsArchivedDetailsState extends State<PrepaymentsArchivedDetails> { 
+  late List<CommonAdditionalReportData> data;
+  late DateTime creationDate;
 
   @override
   void initState() {
     super.initState();
-    initPrepayments();
+    data = widget.data;
+    creationDate = widget.creationDate;
   }
 
   @override
   Widget build(BuildContext context) {
-    return PrepaymentsScreen(
-      key: ValueKey(prepayments.length),
-      prepayments: prepayments,
-      onRedact: redactPrepayment,
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(50.0),
+        child: BackAppBar(
+          title: Text(
+            '${AppStrings.prepayments} ${monthAndYear(creationDate).capitalize()}',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w500
+            ),
+          )
+        )
+      ),
+      body: PrepaymentsScreen(
+        key: ValueKey(data.length),
+        prepayments: data.map((item) => Prepayment(value: item.value, creationDate: item.creationDate)).toList(),
+      ),
     );
   }
 }

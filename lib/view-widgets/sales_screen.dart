@@ -15,10 +15,11 @@ import 'package:rsc/widgets/date_range_filter.dart';
 class SalesScreen extends StatefulWidget {
   final List<Sale> sales;
   final Future<void> Function(Sale sale)? onRedact;
+
   const SalesScreen({
     super.key,
     required this.sales,
-    this.onRedact
+    this.onRedact,
   });
 
   @override
@@ -28,6 +29,7 @@ class SalesScreen extends StatefulWidget {
 class _SalesScreenState extends State<SalesScreen> {
   late List<Sale> sales;
   late Future<void> Function(Sale sale)? onRedact;
+
   final updateFormKey = GlobalKey<FormState>();
 
   List<Sale> innerList = [];
@@ -71,7 +73,9 @@ class _SalesScreenState extends State<SalesScreen> {
     bool toIsSame =  getDurationIgnoredDate(to).isAtSameMomentAs(getDurationIgnoredDate(dateTo));
     if (!fromIsSame || !toIsSame) { 
       setState(() {
-        innerList = sales.where((element) => (element.creationDate.isAfter(from) && element.creationDate.isBefore(to))).toList();
+        innerList = sales.where((element) {
+          return isDateInDateRange(element.creationDate, from, to);
+        }).toList();
         innerList.sort((a, b) => b.creationDate.compareTo(a.creationDate));
       });
     }
@@ -132,9 +136,9 @@ class _SalesScreenState extends State<SalesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Container(
       key: widget.key,
-      body:
+      child:
       sales.isNotEmpty
       ?
       ListView(

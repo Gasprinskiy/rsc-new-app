@@ -65,7 +65,9 @@ class _TipsScreenState extends State<TipsScreen> {
     bool toIsSame =  getDurationIgnoredDate(to).isAtSameMomentAs(getDurationIgnoredDate(dateTo));
     if (!fromIsSame || !toIsSame) { 
       setState(() {
-        innerList = tips.where((element) => (element.creationDate.isAfter(from) && element.creationDate.isBefore(to))).toList();
+        innerList = tips.where((element) {
+          return isDateInDateRange(element.creationDate, from, to);
+        }).toList();
         innerList.sort((a, b) => b.creationDate.compareTo(a.creationDate));
       });
     }
@@ -122,9 +124,9 @@ class _TipsScreenState extends State<TipsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Container(
       key: widget.key,
-      body:
+      child:
       tips.isNotEmpty
       ?
       ListView(

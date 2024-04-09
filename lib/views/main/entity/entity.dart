@@ -60,3 +60,17 @@ class ShowSalesDialogParams extends ShowDialogParams {
     this.onSave
   });
 }
+
+class DatedValue {
+  int? id;
+  DateTime date;
+  double value;
+  double? additionalValue; 
+
+  DatedValue({
+    this.id,
+    required this.date,
+    required this.value,
+    this.additionalValue,
+  });
+}

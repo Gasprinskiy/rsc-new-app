@@ -16,7 +16,7 @@ class SalaryInfoWidget extends StatefulWidget {
   const SalaryInfoWidget({
     super.key,
     this.userData,
-    this.onSave
+    this.onSave,
   });
 
   @override

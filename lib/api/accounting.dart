@@ -21,10 +21,10 @@ class AccountingApi {
     return response.data['accounting_id'];
   }
 
-  Future<ApiCurrentReport?> getCurrentReport() async {
-    return handleResponseDataParse<ApiCurrentReport?>(
+  Future<ApiReport?> getCurrentReport() {
+    return handleResponseDataParse<ApiReport?>(
       () => _worker.get('/accounting/current_report', null, null),
-      (data) => apiCurrentReportFromJson(data)
+      (data) => apiReportFromJson(data)
     );
   }
 
@@ -33,18 +33,32 @@ class AccountingApi {
     return reportsDateRangeFromJson(response.data);
   }
 
-  Future<FindArchivedAccountingReportsResult> findUserArchivedReportsByDateRange(FindArchivedAccountingReportsParams params) async {
-    Response<dynamic> response = await _worker.get('/accounting/archived_reports', params.apiParams, null);
-    return archivedAccountingReportsResultFromJson(response.data);
+  Future<FindArchivedAccountingReportsResult?> findUserArchivedReportsByDateRange(FindArchivedAccountingReportsParams params) {
+    return handleResponseDataParse<FindArchivedAccountingReportsResult?>(
+      () => _worker.get('/accounting/archived_reports', params.apiParams, null),
+      (data) => archivedAccountingReportsResultFromJson(data)
+    );
+  }
+
+  Future<List<ReportInfo>?> findAllUserArchivedReportsByDateRange() {
+    return handleResponseDataParse<List<ReportInfo>?>(
+      () => _worker.get('/accounting/archived_reports_all', null, null),
+      (data) {
+        List<dynamic>? list = data;
+        return list?.map((item) => reportInfoFromJson(item)).toList();
+      } 
+    );
   }
 
   Future<void> archivateReport(int reportId, ArchivateReportSalaryParams payload) {
     return _worker.post('/accounting/archivate_report/$reportId', payload.apiParams);
   }
 
-  Future<ReportInfo?> getReportInfoById(int reportId) async {
-    Response<dynamic> response = await _worker.get('/accounting/report_datails/$reportId', null, null);
-    return reportInfoFromJson(response.data);
+  Future<ReportInfo?> getReportInfoById(int reportId) {
+    return handleResponseDataParse<ReportInfo?>(
+      () => _worker.get('/accounting/report_datails/$reportId', null, null),
+      (data) => reportInfoFromJson(data)
+    );
   }
 
   Future<int?> addSale(int reportId, ApiSale payload) async {

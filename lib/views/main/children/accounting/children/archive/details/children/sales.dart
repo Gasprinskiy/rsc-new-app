@@ -1,59 +1,64 @@
 
 import 'package:flutter/material.dart';
-import 'package:rsc/state/accounting.dart';
-import 'package:rsc/state/entity/entity.dart';
+import 'package:rsc/api/entity/accounting.dart';
+import 'package:rsc/constants/app_strings.dart';
 import 'package:rsc/storage/hive/entity/adapters.dart';
+import 'package:rsc/tools/datetime.dart';
+import 'package:rsc/tools/extensions.dart';
 import 'package:rsc/view-widgets/sales_screen.dart';
-import 'package:rsc/widgets/toast.dart';
+import 'package:rsc/widgets/back_appbar.dart';
 
-class SaleDetails extends StatefulWidget {
-  const SaleDetails({
-    super.key,
+class SalesArchivedDetails extends StatefulWidget {
+  final List<ApiSale> data;
+  final DateTime creationDate;
+  const SalesArchivedDetails({
+    super.key, 
+    required this.data,
+    required this.creationDate
   });
 
   @override
-  State<SaleDetails> createState() => _SaleDetailsState();
+  State<SalesArchivedDetails> createState() => _SalesArchivedDetailsState();
 }
 
-class _SaleDetailsState extends State<SaleDetails> {
-  List<Sale> sales = [];
-
-  final accountingState = AccountingState.getInstance();
-  final appTaost = AppToast.getInstance();
-  
-  void initSales() {
-    accountingState.getSaleList().then((value) {
-      if (value != null) {
-        setState(() {
-          sales = value;
-        });
-      }
-    });
-  }
-
-  Future<void> onSaleRedact(Sale sale) async {
-    appTaost.init(context);
-
-    int updatedIndex = sales.indexWhere((element) => element.id == sale.id);
-    if (updatedIndex >= 0) {
-      sales[updatedIndex] = sale;
-      await accountingState.updateAndSyncSale(sale);
-      accountingState.setUpdatedValuesCount(UpdatedValuesType.sale, 1);
-    }
-  }
+class _SalesArchivedDetailsState extends State<SalesArchivedDetails> { 
+  late List<ApiSale> data;
+  late DateTime creationDate;
 
   @override
   void initState() {
     super.initState();
-    initSales();
+    data = widget.data;
+    creationDate = widget.creationDate;
   }
 
   @override
   Widget build(BuildContext context) {
-    return SalesScreen(
-      key: ValueKey(sales.length),
-      sales: sales,
-      onRedact: onSaleRedact,
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(50.0),
+        child: BackAppBar(
+          title: Text(
+            '${AppStrings.sales} ${monthAndYear(creationDate).capitalize()}',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w500
+            ),
+          )
+        )
+      ),
+      body: SalesScreen(
+        key: ValueKey(data.length),
+        sales: data.map((item) {
+          return Sale(
+            total: item.total, 
+            nonCash: item.nonCash, 
+            cashTaxes: item.cashTaxes, 
+            creationDate: item.creationDate
+          );
+        }).toList(),
+      ),
     );
   }
 }

@@ -1,11 +1,14 @@
 
 import 'package:flutter/material.dart';
-import 'package:rsc/api/acounting.dart';
+import 'package:rsc/api/accounting.dart';
 import 'package:rsc/api/entity/accounting.dart';
 import 'package:rsc/constants/app_collors.dart';
 import 'package:rsc/constants/app_strings.dart';
+import 'package:rsc/helpers/request_handler.dart';
 import 'package:rsc/tools/datetime.dart';
+import 'package:rsc/tools/extensions.dart';
 import 'package:rsc/tools/number.dart';
+import 'package:rsc/views/main/children/accounting/children/archive/details/details.dart';
 import 'package:rsc/widgets/button_box.dart';
 import 'package:rsc/widgets/date_range_filter.dart';
 
@@ -22,37 +25,89 @@ class _ArchiveDataState extends State<ArchiveData> {
   List<AccountingReport> data = [];
   int totalCount = 0;
   int totalPage = 0;
-  int limit = 1;
+  int limit = 5;
   int currentPage = 1;
   bool isLoading = true;
   bool isLoadingMore = false;
+  bool isSearching = false;
 
   DateTime dateFrom = DateTime(DateTime.now().year);
   DateTime dateTo = DateTime.now();
 
   Future<void> getAcrhivedData() async {
-    FindArchivedAccountingReportsResult result = await api.findUserArchivedReportsByDateRange(
-      FindArchivedAccountingReportsParams(
-        dateRange: ArchivedReportsDateRange(
-          from: dateFrom,
-          to: dateTo
-        ), 
-        pagination: FindArchivedAccountngPaginParams(
-          limit: limit,
-          offset: currentPage
+    FindArchivedAccountingReportsResult? result = await handleRequestError(() {
+      return api.findUserArchivedReportsByDateRange(
+        FindArchivedAccountingReportsParams(
+          dateRange: ArchivedReportsDateRange(
+            from: dateFrom,
+            to: dateTo
+          ), 
+          pagination: FindArchivedAccountngPaginParams(
+            limit: limit,
+            offset: currentPage
+          )
         )
-      )
-    );
-    
+      );
+    });
+
+    if (result != null) {
+       setState(() {
+        totalCount = result.totalCount;
+        totalPage = result.totalPage;
+        data = [...data, ...result.reports];
+      });
+    }
+  }
+
+  Future<void> getDataByDateRange(DateTime from, DateTime to) async {
     setState(() {
-      totalCount = result.totalCount;
-      totalPage = result.totalPage;
-      data = [...data, ...result.reports];
+      currentPage = 1;
+      isSearching = true;
+    });
+
+    FindArchivedAccountingReportsResult? result = await handleRequestError(() {
+      return api.findUserArchivedReportsByDateRange(
+        FindArchivedAccountingReportsParams(
+          dateRange: ArchivedReportsDateRange(
+            from: from,
+            to: to
+          ), 
+          pagination: FindArchivedAccountngPaginParams(
+            limit: limit,
+            offset: currentPage
+          )
+        )
+      );
+    });
+
+    if (result != null) {
+      setState(() {
+        totalCount = result.totalCount;
+        totalPage = result.totalPage;
+        data = result.reports;
+        isSearching = false;
+      });
+    }
+  }
+
+  Future<void> resetDataAndRefecth() async {
+    setState(() {
+      currentPage = 1;
+      isSearching = true;
+      data = [];
+    });
+
+    await getAcrhivedData();
+
+    setState(() {
+      isSearching = false;
     });
   }
 
   Future<void> getDateRange() async {
-    ArchivedReportsDateRange? value = await api.getArchivedReportsDateRange();
+    ArchivedReportsDateRange? value = await handleRequestError(() {
+      return api.getArchivedReportsDateRange();
+    });
     if (value != null) {
       setState(() {
         dateFrom = value.from;
@@ -75,7 +130,6 @@ class _ArchiveDataState extends State<ArchiveData> {
       isLoadingMore = true;
       currentPage += 1;
     });
-    await Future.delayed(Duration(seconds: 3));
     await getAcrhivedData();
     setState(() {
       isLoadingMore = false;
@@ -84,6 +138,14 @@ class _ArchiveDataState extends State<ArchiveData> {
 
   void navigateBack() {
     Navigator.of(context).pop();
+  }
+
+  void navigateToDetails(AccountingReport report) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (BuildContext context) {
+        return ArchivedReportDetails(reportId: report.id, creationDate: report.creationDate);
+      }
+    ));
   }
 
   @override
@@ -147,108 +209,123 @@ class _ArchiveDataState extends State<ArchiveData> {
           DateRangeFilter(
             from: dateFrom,
             to: dateTo,
-            onSubmit: (from, to) => {},
-            onReset: () => {},
+            onSubmit: getDataByDateRange,
+            onReset: resetDataAndRefecth,
           ),
           const Divider(height: 20),
           data.isNotEmpty
           ?
           Column(
+            key: ValueKey(data.length),
             children: [
-              ...data.map((item) {
-                return Column(
-                  children: [
-                    ButtonBox(
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text('${AppStrings.amount}:', style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500
-                              )),
-                              DecoratedBox(
-                                decoration: const BoxDecoration(
-                                  color: AppColors.primary,
-                                  borderRadius: BorderRadius.all(Radius.circular(3))
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5),
-                                  child: Text(currencyFormat(item.total ?? 0), style: const TextStyle(
-                                    color: Colors.white
-                                  )),
-                                ),
-                              )
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text('${AppStrings.creationDate}:', style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500
-                              )),
-                              DecoratedBox(
-                                decoration: const BoxDecoration(
-                                  color: AppColors.primary,
-                                  borderRadius: BorderRadius.all(Radius.circular(3))
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5),
-                                  child: Text(monthDateYear(item.creationDate), style: const TextStyle(
-                                    color: Colors.white
-                                  )),
-                                ),
-                              )
-                            ],
-                          ),
-                        ],
-                      )
-                    ),
-                    const SizedBox(height: 10)
-                  ]
-                );
-              }),
-              isLoadingMore 
+              isSearching
               ?
-              const Padding(
-                padding: EdgeInsets.all(10),
-                child: CircularProgressIndicator(
-                  backgroundColor: AppColors.primary,
-                  color: Colors.white,
+              SizedBox(
+                height: MediaQuery.of(context).size.height - 300,
+                child: const Center(
+                  child: Text(AppStrings.dataNotFound, style: TextStyle(fontSize: 20))
                 ),
               )
               :
-              const SizedBox(width: 0),
-              totalPage > currentPage
-              ?
               Column(
                 children: [
-                  const SizedBox(height: 20),
-                  TextButton(
-                    onPressed: () => !isLoadingMore ? loadMore() : null,
-                    style: ButtonStyle(
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
+                  ...data.map((item) {
+                    return Column(
+                      children: [
+                        ButtonBox(
+                          onPressed: () => navigateToDetails(item),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text('${AppStrings.amount}:', style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500
+                                  )),
+                                  DecoratedBox(
+                                    decoration: const BoxDecoration(
+                                      color: AppColors.primary,
+                                      borderRadius: BorderRadius.all(Radius.circular(3))
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5),
+                                      child: Text(currencyFormat(item.total ?? 0), style: const TextStyle(
+                                        color: Colors.white
+                                      )),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text('${AppStrings.creationDate}:', style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500
+                                  )),
+                                  DecoratedBox(
+                                    decoration: const BoxDecoration(
+                                      color: AppColors.primary,
+                                      borderRadius: BorderRadius.all(Radius.circular(3))
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5),
+                                      child: Text(monthAndYear(item.creationDate).capitalize(), style: const TextStyle(
+                                        color: Colors.white
+                                      )),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ],
+                          )
+                        ),
+                        const SizedBox(height: 10)
+                      ]
+                    );
+                  }),
+                  isLoadingMore 
+                  ?
+                  const Padding(
+                    padding: EdgeInsets.all(10),
+                    child: CircularProgressIndicator(
+                      backgroundColor: AppColors.primary,
+                      color: Colors.white,
+                    ),
+                  )
+                  :
+                  const SizedBox(width: 0),
+                  totalPage > currentPage
+                  ?
+                  Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      TextButton(
+                        onPressed: () => !isLoadingMore ? loadMore() : null,
+                        style: ButtonStyle(
+                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            )
+                          ),
+                          // backgroundColor: MaterialStateProperty.all(AppColors.warnTransparent),
+                          backgroundColor: MaterialStateProperty.all(AppColors.primaryTransparent)
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(AppStrings.loadMore, style: TextStyle(fontSize: 18)),
+                          ],
                         )
                       ),
-                      // backgroundColor: MaterialStateProperty.all(AppColors.warnTransparent),
-                      backgroundColor: MaterialStateProperty.all(AppColors.primaryTransparent)
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('${AppStrings.loadMore} $limit', style: const TextStyle(fontSize: 18)),
-                      ],
-                    )
-                  ),
+                    ],
+                  )
+                  :
+                  const SizedBox(height: 20),
                 ],
               )
-              :
-              const SizedBox(height: 20),
             ],
           )
           :

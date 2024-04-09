@@ -1,5 +1,5 @@
 
-Map<int, String> MonthList = {
+Map<int, String> monthList = {
   1: 'январь',
   2: 'февраль',
   3: 'март',
@@ -14,7 +14,7 @@ Map<int, String> MonthList = {
   12: 'декабрь' 
 };
 
-Map<int, String> MonthListMulti = {
+Map<int, String> monthListMulti = {
   1: 'января',
   2: 'февраля',
   3: 'марта',
@@ -45,7 +45,7 @@ String monthAndYear(DateTime time) {
   int month = time.month;
   int year = time.year;
 
-  return '${MonthList[month]} $year';
+  return '${monthList[month]} $year';
 }
 
 String monthDateYear(DateTime time) {
@@ -53,7 +53,7 @@ String monthDateYear(DateTime time) {
   int month = time.month;
   int year = time.year;
 
-  return '$day ${MonthListMulti[month]} $year';
+  return '$day ${monthListMulti[month]} $year';
 }
 
 int _getGreetIndex(int hour) {
@@ -79,4 +79,23 @@ Duration getCurrentTimeDuration() {
 
 DateTime getDurationIgnoredDate(DateTime time) {
   return DateTime.parse(time.toString().split(' ')[0]);
+}
+
+DateTime todayLastYear() {
+  DateTime now = DateTime.now();
+  return DateTime(now.year -1, now.month, now.day);
+}
+
+bool isDateInDateRange(DateTime date, DateTime from, DateTime to) {
+  DateTime compareDate = getDurationIgnoredDate(date);
+  DateTime rangeFrom = getDurationIgnoredDate(from);
+  DateTime rangeTo = getDurationIgnoredDate(to);
+  bool isAfterOrEqual = compareDate.isAfter(getDurationIgnoredDate(rangeFrom)) || compareDate.isAtSameMomentAs(getDurationIgnoredDate(rangeFrom));
+  bool isBeforeOrEqual = compareDate.isBefore(getDurationIgnoredDate(rangeTo)) || compareDate.isAtSameMomentAs(getDurationIgnoredDate(rangeTo));
+  return isAfterOrEqual && isBeforeOrEqual;
+}
+
+bool isDateBeforeOrEqual(DateTime sourceDate, DateTime compateDate) {
+  DateTime sourceDataIgnoredTime = getDurationIgnoredDate(sourceDate);
+  return sourceDataIgnoredTime.isBefore(getDurationIgnoredDate(compateDate)) || sourceDataIgnoredTime.isAtSameMomentAs(getDurationIgnoredDate(compateDate));
 }

@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:rsc/api/acounting.dart';
+import 'package:rsc/api/accounting.dart';
 import 'package:rsc/api/entity/accounting.dart';
 import 'package:rsc/api/entity/user.dart';
 import 'package:rsc/constants/app_collors.dart';
@@ -57,7 +57,7 @@ class AccountingState {
     _currentAccountingCreationDate = report?.creationDate;
   }
 
-  Future<void> initAccountingStateFromApiResult(ApiCurrentReport apiResult) async {
+  Future<void> initAccountingStateFromApiResult(ApiReport apiResult) async {
     await storage.putCurrentReport(CurrentReport(
       cloudId: apiResult.id,
       creationDate: apiResult.creationDate
@@ -120,29 +120,37 @@ class AccountingState {
 
     bool calcSales = saleList != null && commonSales != null && percentFromSales != null;
     if (calcSales) {
-      if (userState.user?.percentChangeConditions != null && userState.user?.salaryInfo?.plan != null) {
-        ReachedConditionResult? reachedConditions = calcCore.findReachedConditions(
-          FindReachedConditionsOptions(
-            sales: commonSales.map((item) => item.total).toList(), 
-            plan: userState.user!.salaryInfo!.plan!, 
-            rules: userState.user!.percentChangeConditions!.map((item) {
-              return PercentChangeRule(
-                percentGoal: item.percentGoal, 
-                percentChange: item.percentChange, 
-                salaryBonus: item.salaryBonus != null ? item.salaryBonus! : 0
-              );
-            }).toList()
-          )
-        );
-        if (reachedConditions != null) {
-          percentFromSales = reachedConditions.changedPercent;
-        }
-      }
+      List<double> reachecSales = [];
+      double totalAmount = 0;
       list.addAll(saleList.map((item) {
+        if (userState.user?.percentChangeConditions != null && userState.user?.salaryInfo?.plan != null) {
+          reachecSales.add(item.total);
+          ReachedConditionResult? reachedConditions = calcCore.findReachedConditions(
+            FindReachedConditionsOptions(
+              sales: reachecSales, 
+              plan: userState.user!.salaryInfo!.plan!, 
+              rules: userState.user!.percentChangeConditions!.map((item) {
+                return PercentChangeRule(
+                  percentGoal: item.percentGoal, 
+                  percentChange: item.percentChange, 
+                  salaryBonus: item.salaryBonus != null ? item.salaryBonus! : 0
+                );
+              }).toList()
+            )
+          );
+          if (reachedConditions != null) {
+            percentFromSales = reachedConditions.changedPercent;
+            totalAmount = calcCore.calcTotal(reachecSales);
+            if (userState.user?.salaryInfo?.ignorePlan == true) {
+              totalAmount -= (userState.user?.salaryInfo?.plan ?? 0);
+            }
+          }
+        }
+
         return RecentAction(
           type: RecentActionsType.payment, 
           valueType: RecentActionsValueType.percentFromSale,
-          amount: calcCore.calcPercent(item.total, percentFromSales!), 
+          amount: calcCore.calcPercent(totalAmount, percentFromSales!), 
           creationDate: item.creationDate
         );
       }).where((element) {

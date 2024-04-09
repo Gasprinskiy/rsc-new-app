@@ -30,6 +30,7 @@ class UserApi {
   }
 
   Future<SignInResult> signin(SignInParams params) async {
+    print('DO SUKA');
     Response<dynamic> response = await _worker.post(
         '/user/sign_in', {'email': params.email, 'password': params.password});
     await _tokenStorage.setToken(response.data['access_token']);

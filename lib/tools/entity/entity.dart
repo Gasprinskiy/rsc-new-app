@@ -1,0 +1,5 @@
+
+enum ShortedNumberResultKeys {
+  value,
+  suffix
+}

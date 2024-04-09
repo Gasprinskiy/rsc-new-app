@@ -24,7 +24,7 @@ class AppStrings {
   static const String archivate = 'Архивировать';
   static const String archive = 'Архив';
 
-  static const String analytics = 'Аналитика';
+  static const String statistics = 'Статистика';
 
   static const String createPinCode = 'Cоздайте пин код для входа';
   static const String typePinCode = 'Введите пин код для входа';
@@ -72,6 +72,7 @@ class AppStrings {
   static const String bountyOnGoalReached = 'Премия при выполнении';
 
   static const String finalSalary = 'Итоговая зарплата';
+  static const String finalSalaryShort = 'Зарплата';
   static const String commonSalary = 'Общая зарплата';
 
   static const String save = 'Сохранить';
@@ -127,6 +128,9 @@ class AppStrings {
   static const String started = 'Начало';
   static const String planProgress = 'Прогресс плана';
   static const String creationDate = 'Дата создания';
+  static const String date = 'Дата';
+  static const String reportBy = 'Отчет за';
+  static const String monthDiagram = 'По месяцам';
 
   static const String from = 'От';
   static const String to = 'До';
@@ -137,7 +141,9 @@ class AppStrings {
   static const String saleStored = 'Продажа добавлена';
 
   static const String sales = 'Продажи';
+  static const String recordSales = 'Рекордные продажи';
   static const String commonSales = 'Общие продажи';
+  static const String recordSalary = 'Рекордная зарплата';
   static const String tips = 'Чаевые';
   static const String prepayments = 'Авансы';
   static const String sale = 'Продажа';
@@ -148,13 +154,20 @@ class AppStrings {
   static const String detailData = 'Детальные данные';
   static const String cashTaxes = 'Инкасация';
   static const String nonCash = 'Без нал';
-  static const String date = 'Дата';
+
+  static const String commonDiagram = 'Общая диаграмма';
+  static const String commonData = 'Общие данные';
 
   static const String saleAddRedact = 'продажу';
   static const String tipAddRedact = 'чаевые';
   static const String prepaymentAddRedact = 'аванс';
 
   static const String amount = 'Суммарно';
+  static const String lastYear = 'Прошлый год'; 
+  static const String lastYearThisMonth = 'Год назад этот месяц';
+  static const String progress = 'Прогресс';
+  static const String recordData = 'Рекордные показатели';
+  static const String avarageData = 'Средние показатели';
 
   // common input error
   static const String fieldCannotBeEmpty = 'Поле не может быть пустым';

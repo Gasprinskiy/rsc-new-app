@@ -11,14 +11,14 @@ class CreateReportResult {
   CreateReportResult({required this.id});
 }
 
-class ApiCurrentReport {
+class ApiReport {
   int id;
   DateTime creationDate;
   List<ApiSale>? sales;
   List<CommonAdditionalReportData>? tips;
   List<CommonAdditionalReportData>? prepayments;
 
-  ApiCurrentReport({
+  ApiReport({
     required this.id, 
     required this.creationDate,
     this.sales,
@@ -27,9 +27,9 @@ class ApiCurrentReport {
   });
 }
 
-ApiCurrentReport apiCurrentReportFromJson(dynamic data) {
-  ApiCurrentReport result = ApiCurrentReport(
-    id: data['accounting_id'].toInt(),
+ApiReport apiReportFromJson(dynamic data) {
+  ApiReport result = ApiReport(
+    id: data['accounting_id']?.toInt() ?? 0,
     creationDate: DateTime.parse(data['creation_date'])
   );
 
@@ -245,14 +245,18 @@ CommonAdditionalReportData commonAditionalDataFromJson(dynamic data) {
 
 
 class ReportInfo {
-  List<ApiSale> sales;
+  int id;
+  DateTime creationDate;
+  List<ApiSale>? sales;
   List<CommonAdditionalReportData>? tips;
   List<CommonAdditionalReportData>? prepayments;
   UserSalaryInfo salaryInfo;
   List<UserPercentChangeConditions>? percentChangeConditions;
 
   ReportInfo({
-    required this.sales, 
+    required this.id,
+    required this.creationDate,
+    this.sales, 
     this.tips, 
     this.prepayments, 
     required this.salaryInfo, 
@@ -261,9 +265,12 @@ class ReportInfo {
 }
 
 ReportInfo reportInfoFromJson(dynamic data) {
-  List<dynamic> jsonSales = data['sales'];
+  List<ApiSale> sales = [];
+  data['sales']?.forEach((item) => sales.add(saleFromJson(item)));
   ReportInfo result = ReportInfo(
-    sales: jsonSales.map((item) => saleFromJson(item)).toList(),
+    id: data['accounting_id'],
+    creationDate: DateTime.parse(data['creation_date']),
+    sales: sales,
     salaryInfo: userSalaryInfoFromJson(data['salary_info']),
   );
 
