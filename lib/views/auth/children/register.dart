@@ -27,7 +27,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
   final userState = UserState.getInstance();
   final userApi = UserApi.getInstance();
   bool _isLoading = false;
-  bool _skipEmailConfrimation = false;
+  final bool _skipEmailConfrimation = false;
 
   final ValueNotifier<bool> passwordNotifier = ValueNotifier(true);
   final ValueNotifier<bool> fieldValidNotifier = ValueNotifier(false);

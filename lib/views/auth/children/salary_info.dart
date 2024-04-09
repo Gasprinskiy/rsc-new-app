@@ -1,16 +1,9 @@
-import 'package:currency_textfield/currency_textfield.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:hive/hive.dart';
-import 'package:rsc/api/entity/user.dart';
 import 'package:rsc/api/user.dart';
-import 'package:rsc/constants/app_collors.dart';
 import 'package:rsc/constants/app_strings.dart';
 import 'package:rsc/view-widgets/salary_info.dart';
-import 'package:rsc/widgets/app_text_form_field.dart';
 import 'package:rsc/constants/app_theme.dart';
-import 'package:rsc/helpers/toasts.dart';
 import 'package:rsc/state/user.dart';
 import 'package:rsc/widgets/decoration_box.dart';
 import 'package:rsc/storage/hive/entity/adapters.dart';

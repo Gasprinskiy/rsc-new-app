@@ -1,6 +1,3 @@
-
-import 'dart:math';
-
 import 'package:animated_digit/animated_digit.dart';
 import 'package:flutter/material.dart';
 import 'package:rsc/api/accounting.dart';
@@ -12,14 +9,12 @@ import 'package:rsc/core/accounting_calculations.dart';
 import 'package:rsc/core/entity.dart';
 import 'package:rsc/helpers/request_handler.dart';
 import 'package:rsc/tools/datetime.dart';
-import 'package:rsc/tools/entity/entity.dart';
 import 'package:rsc/tools/extensions.dart';
 import 'package:rsc/tools/number.dart';
 import 'package:rsc/views/main/entity/entity.dart';
 import 'package:rsc/views/main/widgets/statistics_circular_diagram.dart';
 import 'package:rsc/widgets/back_appbar.dart';
 import 'package:rsc/widgets/button_box.dart';
-import 'package:rsc/widgets/date_range_filter.dart';
 
 class ReportStatistics extends StatefulWidget {
   const ReportStatistics({super.key});

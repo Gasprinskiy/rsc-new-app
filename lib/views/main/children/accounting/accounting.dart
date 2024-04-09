@@ -114,7 +114,7 @@ class _AccountingState extends State<Accounting> {
 
   void resetDefaultControllers() {
     String defaultValue = DateTime.now().toString().split(' ')[0];
-    reportCrationDateController.value = TextEditingValue(text: defaultValue);;
+    reportCrationDateController.value = TextEditingValue(text: defaultValue);
     defaultCurrencyController.value = const TextEditingValue(text: '0');
   }
 

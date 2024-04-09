@@ -11,7 +11,7 @@ class ChangeUserSalaryInfoScreen extends StatefulWidget {
 class _ChangeUserSalaryInfoScreenState extends State<ChangeUserSalaryInfoScreen> {  
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(child: Text('Change salary info')),
     );
   }

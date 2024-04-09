@@ -1,5 +1,0 @@
-
-enum ShortedNumberResultKeys {
-  value,
-  suffix
-}
