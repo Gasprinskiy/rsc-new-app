@@ -10,6 +10,7 @@ import 'package:rsc/constants/app_theme.dart';
 import 'package:rsc/helpers/request_handler.dart';
 import 'package:rsc/state/user.dart';
 import 'package:rsc/storage/hive/entity/adapters.dart';
+import 'package:rsc/widgets/back_appbar.dart';
 import 'package:rsc/widgets/decoration_box.dart';
 import 'package:rsc/widgets/toast.dart';
 
@@ -196,7 +197,13 @@ class _RegisterRouteState extends State<RegisterRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: ListView(padding: EdgeInsets.zero, children: [
+      appBar: const PreferredSize(
+        preferredSize: Size.fromHeight(50.0),
+        child: BackAppBar(title: null),
+      ),
+      body: ListView(
+      padding: EdgeInsets.zero, 
+      children: [
       const DecorationBox(
         children: [
           Text(AuthAndRegisterPageStrings.registration,
@@ -317,6 +324,11 @@ class _RegisterRouteState extends State<RegisterRoute> {
                         signUp()
                       }
                     },
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        AppTheme.buttonBorderRadius
+                      )
+                    ),
                     child: _isLoading
                         ? const CircularProgressIndicator(
                             color: Colors.white,

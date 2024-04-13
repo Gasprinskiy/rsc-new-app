@@ -30,5 +30,6 @@ class StorageInitializer {
     Hive.registerAdapter(TipListAdapter());
     Hive.registerAdapter(PrepaymentListAdapter());
     Hive.registerAdapter(ArchivateReportAdapter());
+    Hive.registerAdapter(UpdatedSalaryInfoAdapter());
   }
 }

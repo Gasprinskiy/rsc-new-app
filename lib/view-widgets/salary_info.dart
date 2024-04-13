@@ -3,6 +3,7 @@ import 'package:currency_textfield/currency_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:rsc/constants/app_collors.dart';
 import 'package:rsc/constants/app_strings.dart';
+import 'package:rsc/constants/app_theme.dart';
 import 'package:rsc/storage/hive/entity/adapters.dart';
 import 'package:rsc/tools/number.dart';
 import 'package:rsc/widgets/app_text_form_field.dart';
@@ -44,6 +45,7 @@ class _SalaryInfoState extends State<SalaryInfoWidget> {
   bool _isVariablePercent = false;
   bool _ignorePlan = false;
   bool _isLoading = false;
+  String conditionAction = AppStrings.add;
   int conditionsKey = 1;
 
   void disposeControllers() {
@@ -56,9 +58,9 @@ class _SalaryInfoState extends State<SalaryInfoWidget> {
     bountyController.dispose();
   }
 
-  void disposePercentChangeControllers() {
-    planController.dispose();
-  }
+  // void disposePercentChangeControllers() {
+  //   planController.dispose();
+  // }
 
   void initializeControllers() {
     salaryController = CurrencyTextFieldController(
@@ -104,7 +106,6 @@ class _SalaryInfoState extends State<SalaryInfoWidget> {
     String salary = userData?.salaryInfo?.salary != null ? userData!.salaryInfo!.salary.toStringAsFixed(0) : '0';
     String percentFromSales = userData?.salaryInfo?.percentFromSales != null ? userData!.salaryInfo!.percentFromSales.toStringAsFixed(0) : '0';
     String plan = userData?.salaryInfo?.plan != null ? userData!.salaryInfo!.plan!.toStringAsFixed(0) : '0';
-
     setState(() {
       _isVariablePercent = userData?.percentChangeConditions != null && userData!.percentChangeConditions!.isNotEmpty;
       _ignorePlan = userData?.salaryInfo?.ignorePlan ?? false;
@@ -216,15 +217,25 @@ class _SalaryInfoState extends State<SalaryInfoWidget> {
     bool redactMode = false;
     if (condition != null) {
       redactMode = true;
+      setState(() {
+        conditionAction = AppStrings.redact;
+      });
       planGoalController.value = TextEditingValue(text: condition.percentGoal.toStringAsFixed(1));
       percentChangeController.value = TextEditingValue(text: condition.percentChange.toStringAsFixed(1));
       if (condition.salaryBonus != null) {
         bountyController.value = TextEditingValue(text: condition.salaryBonus!.toStringAsFixed(0));
       }
+    } else {
+      setState(() {
+        conditionAction = AppStrings.add;
+      });
+      planGoalController.value = const TextEditingValue(text: '');
+      percentChangeController.value = const TextEditingValue(text: '');
+      bountyController.value = const TextEditingValue(text: '');
     }
     appDialog.show(
         context,
-        AppStrings.addConditionds,
+        '$conditionAction ${AppStrings.conditiondOfPercentChange}',
         true,
         Column(
               children: [
@@ -278,6 +289,9 @@ class _SalaryInfoState extends State<SalaryInfoWidget> {
                                   addConditions();
                                 }
                               },
+                              style: ButtonStyle(
+                                shape: MaterialStateProperty.all(AppTheme.buttonBorderRadius) 
+                              ),
                               child: Text(redactMode ? AppStrings.save : AppStrings.add)
                             )
                           ],
@@ -308,7 +322,7 @@ class _SalaryInfoState extends State<SalaryInfoWidget> {
   @override
   void dispose() {
     disposeControllers();
-    disposePercentChangeControllers();
+    userData = null;
     super.dispose();
   }
 
@@ -511,14 +525,21 @@ class _SalaryInfoState extends State<SalaryInfoWidget> {
                             ],
                           ),
                           TextButton(
-                              onPressed: () => showPercentChangeConditionsModal(null, null),
-                              child: const Text(AppStrings.addConditionds)),
+                            onPressed: () => showPercentChangeConditionsModal(null, null),
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all(AppTheme.buttonBorderRadius)
+                            ),
+                            child: const Text('${AppStrings.add} ${AppStrings.conditiondOfPercentChange}'),
+                          ),
                           const SizedBox(height: 20)
                         ],
                       )
                     : const SizedBox(height: 20),
                 FilledButton(
                   onPressed: onSaveAction,
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all(AppTheme.buttonBorderRadius) 
+                  ),
                   child: _isLoading
                       ? const CircularProgressIndicator(
                           color: Colors.white,

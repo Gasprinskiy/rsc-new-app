@@ -15,6 +15,7 @@ import 'package:rsc/views/main/entity/entity.dart';
 import 'package:rsc/views/main/widgets/statistics_circular_diagram.dart';
 import 'package:rsc/widgets/back_appbar.dart';
 import 'package:rsc/widgets/button_box.dart';
+import 'package:rsc/widgets/toast.dart';
 
 class ReportStatistics extends StatefulWidget {
   const ReportStatistics({super.key});
@@ -26,6 +27,7 @@ class ReportStatistics extends StatefulWidget {
 class _ReportStatisticsState extends State<ReportStatistics> {
   final api = AccountingApi.getInstance();
   final calcCore = AccountingCalculations.getInstance();
+  final appToast = AppToast.getInstance();
 
   final Map<int, Color> monthColorsMap = {
     1: const Color(0xFFBC2A95),
@@ -58,6 +60,8 @@ class _ReportStatisticsState extends State<ReportStatistics> {
   
 
   Future<void> getAllData() async {
+    appToast.init(context);
+
     List<ReportInfo>? result = await handleRequestError(() {
       return api.findAllUserArchivedReportsByDateRange();
     });
@@ -279,10 +283,12 @@ class _ReportStatisticsState extends State<ReportStatistics> {
   }
 
   void calcStatistics() {
-    calcDiagramValues();
-    findLastYearData();
-    findRecords();
-    calcAverageValues();
+    if (data.isNotEmpty) {
+      calcDiagramValues();
+      findLastYearData();
+      findRecords();
+      calcAverageValues();
+    }
   }
 
   void executeInitialData() {
@@ -794,16 +800,11 @@ class _ReportStatisticsState extends State<ReportStatistics> {
         ),
       )
       :
+      data.isNotEmpty 
+      ?
       ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          // DateRangeFilter(
-          //   from: dateFrom,
-          //   to: dateTo,
-          //   onSubmit: getDataByRange,
-          //   onReset: () => {},
-          // ),
-          // const SizedBox(height: 20),
           Row(
             children: [
               Expanded(child: Divider(color: Colors.grey.shade200)),
@@ -825,8 +826,6 @@ class _ReportStatisticsState extends State<ReportStatistics> {
               Expanded(child: Divider(color: Colors.grey.shade200)),
             ],
           ),
-          data.isNotEmpty
-          ?
           Column(
             children: [
               totalItems(),
@@ -842,29 +841,33 @@ class _ReportStatisticsState extends State<ReportStatistics> {
                 width: MediaQuery.of(context).size.width,
                 child: monthColorsBoxes()
               ),
-              const SizedBox(height: 40),
-              Row(
+              lastYearData != null && lastYearUntilThisDayData != null
+              ?
+              Column(
                 children: [
-                  Expanded(child: Divider(color: Colors.grey.shade200)),
-                  lastYearData != null && lastYearUntilThisDayData != null
-                  ?
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Text(
-                      AppStrings.lastYear,
-                      style: AppTheme.bodySmall.copyWith(
-                        color: Colors.black,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
+                  const SizedBox(height: 40),
+                  Row(
+                    children: [
+                      Expanded(child: Divider(color: Colors.grey.shade200)),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          AppStrings.lastYear,
+                          style: AppTheme.bodySmall.copyWith(
+                            color: Colors.black,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
-                    ),
-                  )
-                  :
-                  const SizedBox(),
-                  Expanded(child: Divider(color: Colors.grey.shade200)),
+                      Expanded(child: Divider(color: Colors.grey.shade200)),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
                 ],
-              ),
-              const SizedBox(height: 20),
+              )
+              :
+              const SizedBox(),
               lastYearDataItem(),
               const SizedBox(height: 20),
               lastYearUntilThisDayDataItem(),
@@ -920,16 +923,12 @@ class _ReportStatisticsState extends State<ReportStatistics> {
               avarageDataItem()
             ],
           )
-          :
-          SizedBox(
-            height: MediaQuery.of(context).size.height - 300,
-            child: const Center(
-              child: Text(AppStrings.dataNotFound, style: TextStyle(fontSize: 20))
-            ),
-          )
         ],
       )
-      ,
+      :
+      const Center(
+        child: Text(AppStrings.dataNotFound, style: TextStyle(fontSize: 20))
+      ),
     );
   }
 }

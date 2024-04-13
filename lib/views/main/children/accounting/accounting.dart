@@ -589,10 +589,6 @@ class _AccountingState extends State<Accounting> {
             key: Key(_commonSalary.toString()),
             commonSalary: _commonSalary
           ),
-          // CustomPaint(
-          //   size: Size(200, 200),
-          //   painter: CircleBordersPainter(map, monthColorsMap),
-          // ),
           Padding(
             key: ValueKey(_reportKey),
             padding: const EdgeInsets.all(20),
@@ -622,7 +618,7 @@ class _AccountingState extends State<Accounting> {
                           onPressed: navigateToStatistics,
                           child: const Column(
                             children: [
-                              Icon(Icons.analytics_outlined, size: 30),
+                              Icon(Icons.donut_large_rounded, size: 30),
                               SizedBox(height: 10),
                               Text(AppStrings.statistics)
                             ],
@@ -659,31 +655,6 @@ class _AccountingState extends State<Accounting> {
                   )
                 ),
                 const Padding(padding: EdgeInsets.fromLTRB(0, 60, 0, 0))
-                // const SizedBox(height: 20),
-                // TextButton(
-                //   onPressed: showArchivateReportDialog,
-                //   style: ButtonStyle(
-                //     backgroundColor: MaterialStateProperty.all(AppColors.warnTransparent),
-                //     overlayColor: MaterialStateProperty.all(AppColors.warnTransparent),
-                //     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                //       RoundedRectangleBorder(
-                //         borderRadius: BorderRadius.circular(5),
-                //       )
-                //     ),
-                //   ),
-                //   child: const Row(
-                //     mainAxisAlignment: MainAxisAlignment.center,
-                //     children: [
-                //       Text(
-                //         AppStrings.archivate,
-                //         style: TextStyle(
-                //           color: AppColors.warn,
-                //           fontSize: 20
-                //         ),
-                //       )
-                //     ],
-                //   ),
-                // ),
               ],
             )
           ),
@@ -691,9 +662,12 @@ class _AccountingState extends State<Accounting> {
       )
       :
       Center(
-        child: ButtonBox(
-          onPressed: showStartReportConditions,
-          child: const Text(AppStrings.startNewReport),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: ButtonBox(
+            onPressed: showStartReportConditions,
+            child: const Text(AppStrings.startNewReport),
+          ),
         ),
       )
       ,

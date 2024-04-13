@@ -76,7 +76,7 @@ class AppStrings {
   static const String commonSalary = 'Общая зарплата';
 
   static const String save = 'Сохранить';
-  static const String addConditionds = 'Добавить условие смены процента';
+  static const String conditiondOfPercentChange = 'условие смены процента';
   static const String add = 'Добавить';
   static const String redact = 'Редактировать';
   static const String condition = 'Условие';
@@ -103,6 +103,7 @@ class AppStrings {
   static const String errOnWritingData = 'Ошибка при записи данных';
   static const String unreqError = 'Неопознанная ошибка';
   static const String couldNotSyncData = 'Не удалось синхронизовать данные';
+  static const String couldNotSyncUserData = 'Не удалось синхронизовать данные пользователя';
   static const String dataStoredInLocalStorage = 'Данные добавлены';
   static const String dataUpdated = 'Данные обновлены';
   static const String dataStoredAndSyncronized = 'Данные добавлены и синхронизированы';

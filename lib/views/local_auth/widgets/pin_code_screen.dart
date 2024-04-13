@@ -248,9 +248,10 @@ class _PinCodeWidgetState extends State<PinCodeWidget> {
                       ),
                     ]),
                     ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        minimumSize: const Size.fromHeight(50),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(AppColors.primary),
+                        minimumSize: MaterialStateProperty.all(const Size.fromHeight(50)),
+                        shape: MaterialStateProperty.all(AppTheme.buttonBorderRadius)
                       ),
                       onPressed: executeOnEnter,
                       child: Text(

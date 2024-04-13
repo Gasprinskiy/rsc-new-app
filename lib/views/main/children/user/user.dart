@@ -163,7 +163,7 @@ class _UserState extends State<UserRoute> {
                 padding: MaterialStateProperty.all<EdgeInsets>(
                   const EdgeInsets.fromLTRB(20, 15, 20, 15)
                 ),
-                onPressed: () => navigateToDetailsScreenByType(UsetActionsScreenType.changePassword),
+                onPressed: null,
                 child: const Row(
                   children: [
                     Icon(

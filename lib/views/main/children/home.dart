@@ -281,30 +281,20 @@ class _HomeState extends State<Home> {
               ],
             )
             :
-            const SizedBox(
-              child: Align(
-                alignment: Alignment.center,
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.not_interested_rounded,
-                      size: 35,
-                      color: AppColors.primary,
-                    ),
-                    SizedBox(height: 10),
-                    Text(
+            SizedBox(
+              height: MediaQuery.of(context).size.height - 400,
+              child: const Center(
+                child: Text(
                       AppStrings.noDataReportFound,
                       style: TextStyle(
-                        color: Colors.grey,
+                        // color: Colors.grey,
                         fontSize: 18
                       ),
                       textAlign: TextAlign.center,
-                    )
-                  ],
-                ),
-              ),
+                    ),
+              )
             ),
-          )
+          ),
         ]
       )
     );

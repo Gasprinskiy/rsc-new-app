@@ -11,6 +11,7 @@ import 'package:rsc/tools/number.dart';
 import 'package:rsc/views/main/children/accounting/children/archive/details/details.dart';
 import 'package:rsc/widgets/button_box.dart';
 import 'package:rsc/widgets/date_range_filter.dart';
+import 'package:rsc/widgets/toast.dart';
 
 class ArchiveData extends StatefulWidget {
   const ArchiveData({super.key});
@@ -21,6 +22,7 @@ class ArchiveData extends StatefulWidget {
 
 class _ArchiveDataState extends State<ArchiveData> {
   final api = AccountingApi.getInstance();
+  final appToast = AppToast.getInstance();
 
   List<AccountingReport> data = [];
   int totalCount = 0;
@@ -117,6 +119,7 @@ class _ArchiveDataState extends State<ArchiveData> {
   }
 
   void executeInitialData() {
+    appToast.init(context);
     getDateRange().then((_) {
       getAcrhivedData();
       setState(() {
@@ -126,6 +129,7 @@ class _ArchiveDataState extends State<ArchiveData> {
   }
 
   Future<void> loadMore() async {
+    appToast.init(context);
     setState(() {
       isLoadingMore = true;
       currentPage += 1;

@@ -55,7 +55,7 @@ class UserApi {
     await _worker.post('/user/create_salary_info', jsonPayload);
   }
 
-  Future<void> updateUserInfo(UpdateUserInfoParams params) async {
-    
+  Future<void> updateUserSalaryInfo(UpdateUserSalaryInfoParams params) {
+    return _worker.post('/user/update_salary_info', params.apiParams);
   }
 }

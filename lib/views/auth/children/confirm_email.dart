@@ -6,6 +6,7 @@ import 'package:rsc/api/entity/user.dart';
 import 'package:rsc/api/user.dart';
 import 'package:rsc/constants/app_collors.dart';
 import 'package:rsc/constants/app_strings.dart';
+import 'package:rsc/constants/app_theme.dart';
 import 'package:rsc/widgets/app_text_form_field.dart';
 import 'package:rsc/helpers/request_handler.dart';
 import 'package:rsc/state/user.dart';
@@ -269,6 +270,11 @@ class _ConfirmEmailRouteeState extends State<ConfirmEmailRoute> {
                               confirmEmail()
                             }
                           },
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                              AppTheme.buttonBorderRadius
+                            )
+                          ),
                           child: _isLoading
                               ? const CircularProgressIndicator(
                                   color: Colors.white,

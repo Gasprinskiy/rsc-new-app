@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:rsc/constants/app_collors.dart';
 
 class BackAppBar extends StatelessWidget {
-  final Widget title;
+  final Widget? title;
   
   const BackAppBar({
     super.key,
@@ -34,7 +34,7 @@ class BackAppBar extends StatelessWidget {
                           color: Colors.white
                         )
                       ),
-                      title
+                      title ?? const SizedBox()
                     ],
                   )
                 ]

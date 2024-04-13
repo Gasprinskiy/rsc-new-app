@@ -75,12 +75,21 @@ SignInResult signInResultFromJson(dynamic data) {
   return result;
 }
 
-class UpdateUserInfoParams extends SignInResult {
-  UpdateUserInfoParams({
-    required super.personalInfo,
-    super.salaryInfo,
-    super.percentChangeConditions,
+class UpdateUserSalaryInfoParams {
+  UserSalaryInfo salaryInfo;
+  List<UserPercentChangeConditions>? percentChangeConditions;
+
+  UpdateUserSalaryInfoParams({
+    required this.salaryInfo,
+    this.percentChangeConditions,
   });
+
+  Map<String, dynamic> get apiParams {
+    return {
+      'user_info': salaryInfo.apiParams,
+      'percent_change_conditions': percentChangeConditions?.map((e) => e.apiParams).toList()
+    };
+  }
 }
 
 class CreateSalaryInfoPayload {

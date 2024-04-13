@@ -49,6 +49,17 @@ class SalaryInfo extends HiveObject {
   @HiveField(3)
   bool? ignorePlan;
 
+  bool isEqual(SalaryInfo other) {
+    return  
+      salary == other.salary 
+      && 
+      percentFromSales == other.percentFromSales
+      &&
+      plan == other.plan
+      &&
+      ignorePlan == other.ignorePlan;
+  }
+
   SalaryInfo(
       {required this.salary,
       required this.percentFromSales,
@@ -64,6 +75,15 @@ class PercentChangeConditions extends HiveObject {
   double percentChange;
   @HiveField(2)
   double? salaryBonus;
+
+  bool isEqual(PercentChangeConditions other) {
+    return  
+      percentGoal == other.percentGoal 
+      && 
+      percentChange == other.percentChange
+      &&
+      salaryBonus == other.salaryBonus;
+  }
 
   PercentChangeConditions(
       {required this.percentGoal,
@@ -255,13 +275,19 @@ class PrepaymentList extends HiveObject {
 class ArchivateReport extends HiveObject {
   @HiveField(0)
   int reportId;
-  @HiveField(1)
-  SalaryInfo salaryInfo;
-  @HiveField(2)
-  List<PercentChangeConditions>? percentChangeConditions;
 
   ArchivateReport({
     required this.reportId,
+  });
+}
+
+@HiveType(typeId: 18)
+class UpdatedSalaryInfo extends HiveObject {
+  @HiveField(0)
+  SalaryInfo salaryInfo;
+  List<PercentChangeConditions>? percentChangeConditions;
+
+  UpdatedSalaryInfo({
     required this.salaryInfo,
     this.percentChangeConditions
   });

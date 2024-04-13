@@ -1,17 +1,26 @@
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:rsc/api/entity/user.dart';
 import 'package:rsc/api/user.dart';
+import 'package:rsc/constants/app_collors.dart';
+import 'package:rsc/constants/app_strings.dart';
 import 'package:rsc/storage/hive/synchronization_data.dart';
 import 'package:rsc/storage/hive/user.dart';
 import 'package:rsc/storage/hive/entity/adapters.dart';
 import 'package:rsc/storage/hive/worker/worker.dart';
 import 'package:rsc/storage/secure/worker/worker.dart';
+import 'package:rsc/utils/event_bus.dart';
+import 'package:rsc/widgets/toast.dart';
 
 class UserState {
   static UserState? _instance;
   final userStorage = UserStorage.getInstance();
   final syncStorage = SynchronizationDataStorage.getInstance();
   final userApi = UserApi.getInstance();
+  final appToast = AppToast.getInstance();
+  final appBus = AppEventBus.getInstance();
 
   User? _userState;
   BiometricsSettings? _userBimetricsSettings;
@@ -112,6 +121,92 @@ class UserState {
     }
   }
 
+  Future<void> syncSalaryInfoData(UpdatedSalaryInfo payload) async {
+    try {
+      await userApi.updateUserSalaryInfo(UpdateUserSalaryInfoParams(
+        salaryInfo: UserSalaryInfo(
+          salary: payload.salaryInfo.salary,
+          percentFromSales: payload.salaryInfo.percentFromSales,
+          plan: payload.salaryInfo.plan,
+          ignorePlan: payload.salaryInfo.ignorePlan,
+        ),
+        percentChangeConditions: payload.percentChangeConditions?.map((item) {
+          return UserPercentChangeConditions(
+            percentGoal: item.percentGoal, 
+            percentChange: item.percentChange,
+            salaryBonus: item.salaryBonus
+          );
+        }).toList()
+      ));
+    } on DioException catch(err) {
+      appToast.showCustomToast(
+        AppColors.error,
+        Icons.cloud_off_rounded,
+        '${AppStrings.couldNotSyncUserData}: ${err.message}'
+      );
+      appBus.fire(SynchronizationDoneEvent(failedSyncCount: 1));
+    }
+  }
+
+  Future<void> updateSalaryInfo(SalaryInfo salaryInfo, List<PercentChangeConditions>? conditions) async {
+    _userState?.salaryInfo = salaryInfo;
+    _userState?.percentChangeConditions = conditions;
+
+    if (_userState != null) {
+      bool hasConnection = await InternetConnectionChecker().hasConnection;
+      try {
+        await userStorage.putUserInfo(_userState!);
+        if (hasConnection) {
+          await userApi.updateUserSalaryInfo(UpdateUserSalaryInfoParams(
+            salaryInfo: UserSalaryInfo(
+              salary: salaryInfo.salary,
+              percentFromSales: salaryInfo.percentFromSales,
+              plan: salaryInfo.plan,
+              ignorePlan: salaryInfo.ignorePlan,
+            ),
+            percentChangeConditions: conditions?.map((item) {
+              return UserPercentChangeConditions(
+                percentGoal: item.percentGoal, 
+                percentChange: item.percentChange,
+                salaryBonus: item.salaryBonus
+              );
+            }).toList()
+          ));
+        } else {
+          SynchronizationData syncPayload = SynchronizationData(
+            type: SynchronizationDataType.salaryinfo,
+            data: UpdatedSalaryInfo(
+              salaryInfo: salaryInfo,
+              percentChangeConditions: conditions
+            )
+          );
+          await syncStorage.addSynchronizationData(syncPayload);
+          appBus.fire(SynchronizationDoneEvent(failedSyncCount: 1));
+          appToast.showCustomToast(
+            AppColors.warn,
+            Icons.cloud_off_rounded,
+            '${AppStrings.couldNotSyncData}: ${AppStrings.noInternetConnection}'
+          );
+        }
+      } on DioException catch (err) {
+        SynchronizationData syncPayload = SynchronizationData(
+          type: SynchronizationDataType.salaryinfo,
+          data: UpdatedSalaryInfo(
+            salaryInfo: salaryInfo,
+            percentChangeConditions: conditions
+          )
+        );
+        await syncStorage.addSynchronizationData(syncPayload);
+        appBus.fire(SynchronizationDoneEvent(failedSyncCount: 1));
+        appToast.showCustomToast(
+          AppColors.warn,
+          Icons.cloud_off_rounded,
+          '${AppStrings.couldNotSyncData}: ${err.message}'
+        );
+      }
+    }
+  }
+
   Future<void> setBiometricsSettings(BiometricsSettings settings) async {
     await userStorage.setBiometricsSettings(settings);
     //
@@ -160,7 +255,22 @@ class UserState {
     return;
   }
 
-  User? get user => _userState;
+  User? get user {
+    if (_userState != null) {
+      return User(
+        personalInfo: _userState!.personalInfo,
+        salaryInfo: _userState!.salaryInfo,
+        percentChangeConditions: _userState!.percentChangeConditions?.map((element) {
+          return PercentChangeConditions(
+            percentGoal: element.percentGoal, 
+            percentChange: element.percentChange,
+            salaryBonus: element.salaryBonus
+          );
+        }).toList()
+      );
+    }
+    return null;
+  }
   EmailConfirmation? get verificationInfo => _emailConfirmationInfo;
   bool get isInited => _inited;
   bool get isNotEmpty => _userState != null;

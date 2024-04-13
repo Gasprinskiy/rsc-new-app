@@ -104,6 +104,6 @@ class AppTheme {
   );
 
   static const Duration toastDuration = Duration(milliseconds: 3000);
-  static const BorderRadius toastBorderRadius =
-      BorderRadius.all(Radius.circular(10.0));
+  static const BorderRadius toastBorderRadius = BorderRadius.all(Radius.circular(5.0));
+  static RoundedRectangleBorder buttonBorderRadius = RoundedRectangleBorder(borderRadius: BorderRadius.circular(5));
 }

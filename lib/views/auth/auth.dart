@@ -209,6 +209,11 @@ class _AuthRouteState extends State<AuthRoute> {
                         signIn()
                       }
                     },
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        AppTheme.buttonBorderRadius
+                      )
+                    ),
                     child: _isLoading
                         ? const CircularProgressIndicator(
                             color: Colors.white,
@@ -238,8 +243,14 @@ class _AuthRouteState extends State<AuthRoute> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   TextButton(
-                    onPressed: () =>
-                        {Navigator.pushNamed(context, '/auth/register')},
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/auth/register');
+                    },
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        AppTheme.buttonBorderRadius
+                      )
+                    ),
                     child: const Text(AppStrings.register),
                   ),
                 ],

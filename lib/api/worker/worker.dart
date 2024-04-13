@@ -12,8 +12,8 @@ Dio initDio() {
     // baseUrl: 'http://retailer-salary-counter.uz',
     baseUrl: 'http://10.0.2.2:3000',
     // baseUrl: 'http://127.0.0.1:3000',
-    connectTimeout: const Duration(seconds: 10),
-    receiveTimeout: const Duration(seconds: 10),
+    connectTimeout: const Duration(seconds: 20),
+    receiveTimeout: const Duration(seconds: 20),
   ));
   dio.interceptors.add(InterceptorsWrapper(
     onRequest: (options, handler) => {
@@ -24,7 +24,7 @@ Dio initDio() {
         handler.next(options)
       })
     },
-    onError: (error, handler) => {
+    onError: (error, handler) {
       handler.next(DioException(
         requestOptions: error.requestOptions,
         message: createErrorMessage(
@@ -35,7 +35,7 @@ Dio initDio() {
           error.response!.data['message']
         )
       )
-    )
+    );
     },
   ));
   return dio;
@@ -66,7 +66,7 @@ class ApiWorker {
     );
   }
 
-  Future<Response> post(String path, Map<String, Object?> payload) async {
+  Future<Response> post(String path, Map<String, Object?>? payload) async {
     return _dio.post(path,
       data: jsonEncode({'params': payload}),
       options: _reqOptions

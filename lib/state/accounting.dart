@@ -340,6 +340,14 @@ class AccountingState {
       List<SynchronizationData> dataToRemove = [];
       int reportIndex = list.indexWhere((element) => element.data is CurrentReport);
       int arhivateReportIndex = list.indexWhere((element) => element.data is ArchivateReport);
+      int salarInfoindex = list.indexWhere((element) => element.data is UpdatedSalaryInfo);
+
+      UpdatedSalaryInfo? updatedSalaryInfo;
+
+      if (salarInfoindex >= 0) {
+        updatedSalaryInfo = list[salarInfoindex].data;
+        list.removeAt(salarInfoindex);
+      }
 
       if (reportIndex >= 0) {
         CurrentReport data = list[reportIndex].data;
@@ -358,33 +366,21 @@ class AccountingState {
           appToast.showErrorToast(err.message.toString());
           return;
         }
+        list.removeAt(reportIndex);
       }
 
       if (arhivateReportIndex >= 0) {
         ArchivateReport data = list[arhivateReportIndex].data;
         try {
-          ArchivateReportSalaryParams payload = ArchivateReportSalaryParams(
-            salaryInfo: UserSalaryInfo(
-              salary: data.salaryInfo.salary,
-              percentFromSales: data.salaryInfo.percentFromSales,
-              plan: data.salaryInfo.plan,
-              ignorePlan: data.salaryInfo.ignorePlan,
-            ),
-            percentChangeConditions: data.percentChangeConditions?.map((item) {
-              return UserPercentChangeConditions(
-                percentGoal: item.percentGoal, 
-                percentChange: item.percentChange,
-                salaryBonus: item.salaryBonus
-              );
-            }).toList()
-          );
-          await api.archivateReport(data.reportId, payload);
+          await api.archivateReport(data.reportId);
 
           dataToRemove.add(list[arhivateReportIndex]);
         } on DioException catch(err) {
           appToast.showErrorToast(err.message.toString());
           return;
         }
+
+        list.removeAt(arhivateReportIndex);
       }
 
       for (var element in list) {
@@ -429,6 +425,10 @@ class AccountingState {
         );
       }
       appBus.fire(SynchronizationDoneEvent(failedSyncCount: list.length - dataToRemove.length));
+
+      if (updatedSalaryInfo != null) {
+        await userState.syncSalaryInfoData(updatedSalaryInfo);
+      }
     }
   }
 
@@ -539,36 +539,36 @@ class AccountingState {
   }
 
   Future<void> archivateCurrentReport() async {
-    ArchivateReportSalaryParams payload = ArchivateReportSalaryParams(
-      salaryInfo: UserSalaryInfo(
-        salary: userState.user?.salaryInfo?.salary ?? 0,
-        percentFromSales: userState.user?.salaryInfo?.percentFromSales ?? 0,
-        plan: userState.user?.salaryInfo?.plan,
-        ignorePlan: userState.user?.salaryInfo?.ignorePlan,
-      ),
-      percentChangeConditions: userState.user?.percentChangeConditions?.map((item) {
-        return UserPercentChangeConditions(
-          percentGoal: item.percentGoal, 
-          percentChange: item.percentChange,
-          salaryBonus: item.salaryBonus
-        );
-      }).toList()
-    );
+    bool hasConnection = await InternetConnectionChecker().hasConnection;
     try {
       await storage.removeAll();
-      await api.archivateReport(_currentAccountingId!, payload);
-      appToast.showCustomToast(
-        AppColors.success,
-        Icons.cloud_done_rounded,
-        AppStrings.reportArchivated
-      );
-    } on DioException catch (_) {
+      if (hasConnection) {
+        await api.archivateReport(_currentAccountingId!);
+        appToast.showCustomToast(
+          AppColors.success,
+          Icons.cloud_done_rounded,
+          AppStrings.reportArchivated
+        );
+      } else {
+        SynchronizationData syncPayload = SynchronizationData(
+          type: SynchronizationDataType.report,
+          data: ArchivateReport(
+            reportId: _currentAccountingId!,
+          )
+        );
+        await _addSyncData(syncPayload);
+        appBus.fire(SynchronizationDoneEvent(failedSyncCount: 1));
+        appToast.showCustomToast(
+          AppColors.warn,
+          Icons.cloud_off_rounded,
+          '${AppStrings.couldNotSyncData}: ${AppStrings.noInternetConnection}'
+        );
+      }
+    } on DioException catch (err) {
       SynchronizationData syncPayload = SynchronizationData(
         type: SynchronizationDataType.report,
         data: ArchivateReport(
           reportId: _currentAccountingId!,
-          salaryInfo: userState.user!.salaryInfo!,
-          percentChangeConditions: userState.user?.percentChangeConditions
         )
       );
       await _addSyncData(syncPayload);
@@ -576,7 +576,7 @@ class AccountingState {
       appToast.showCustomToast(
         AppColors.warn,
         Icons.cloud_off_rounded,
-        AppStrings.reportArchivated
+        '${AppStrings.couldNotSyncData}: ${err.message.toString()}'
       );
     } finally {
       _currentAccountingCreationDate = null;

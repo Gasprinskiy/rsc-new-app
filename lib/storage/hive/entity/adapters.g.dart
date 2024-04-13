@@ -642,22 +642,15 @@ class ArchivateReportAdapter extends TypeAdapter<ArchivateReport> {
     };
     return ArchivateReport(
       reportId: fields[0] as int,
-      salaryInfo: fields[1] as SalaryInfo,
-      percentChangeConditions:
-          (fields[2] as List?)?.cast<PercentChangeConditions>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, ArchivateReport obj) {
     writer
-      ..writeByte(3)
-      ..writeByte(0)
-      ..write(obj.reportId)
       ..writeByte(1)
-      ..write(obj.salaryInfo)
-      ..writeByte(2)
-      ..write(obj.percentChangeConditions);
+      ..writeByte(0)
+      ..write(obj.reportId);
   }
 
   @override
@@ -667,6 +660,40 @@ class ArchivateReportAdapter extends TypeAdapter<ArchivateReport> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is ArchivateReportAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class UpdatedSalaryInfoAdapter extends TypeAdapter<UpdatedSalaryInfo> {
+  @override
+  final int typeId = 18;
+
+  @override
+  UpdatedSalaryInfo read(BinaryReader reader) {
+    final numOfFields = reader.readByte();
+    final fields = <int, dynamic>{
+      for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
+    };
+    return UpdatedSalaryInfo(
+      salaryInfo: fields[0] as SalaryInfo,
+    );
+  }
+
+  @override
+  void write(BinaryWriter writer, UpdatedSalaryInfo obj) {
+    writer
+      ..writeByte(1)
+      ..writeByte(0)
+      ..write(obj.salaryInfo);
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is UpdatedSalaryInfoAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

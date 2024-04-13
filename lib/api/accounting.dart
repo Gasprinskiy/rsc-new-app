@@ -28,9 +28,11 @@ class AccountingApi {
     );
   }
 
-  Future<ArchivedReportsDateRange?> getArchivedReportsDateRange() async {
-    Response<dynamic> response = await _worker.get('/accounting/report_date_range', null, null);
-    return reportsDateRangeFromJson(response.data);
+  Future<ArchivedReportsDateRange?> getArchivedReportsDateRange() {
+    return handleResponseDataParse<ArchivedReportsDateRange?>(
+      () => _worker.get('/accounting/report_date_range', null, null),
+      (data) => reportsDateRangeFromJson(data)
+    );
   }
 
   Future<FindArchivedAccountingReportsResult?> findUserArchivedReportsByDateRange(FindArchivedAccountingReportsParams params) {
@@ -50,8 +52,8 @@ class AccountingApi {
     );
   }
 
-  Future<void> archivateReport(int reportId, ArchivateReportSalaryParams payload) {
-    return _worker.post('/accounting/archivate_report/$reportId', payload.apiParams);
+  Future<void> archivateReport(int reportId) {
+    return _worker.post('/accounting/archivate_report/$reportId', null);
   }
 
   Future<ReportInfo?> getReportInfoById(int reportId) {
