@@ -172,6 +172,12 @@ class UserState {
               );
             }).toList()
           ));
+
+          appToast.showCustomToast(
+            AppColors.success,
+            Icons.cloud_done_rounded,
+            AppStrings.dataUpdatedAndSyncronized
+          );
         } else {
           SynchronizationData syncPayload = SynchronizationData(
             type: SynchronizationDataType.salaryinfo,
