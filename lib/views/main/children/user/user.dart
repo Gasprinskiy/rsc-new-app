@@ -159,28 +159,28 @@ class _UserState extends State<UserRoute> {
                 height: 5,
                 color: Colors.white,
               ),
-              ButtonBox(
-                padding: MaterialStateProperty.all<EdgeInsets>(
-                  const EdgeInsets.fromLTRB(20, 15, 20, 15)
-                ),
-                onPressed: null,
-                child: const Row(
-                  children: [
-                    Icon(
-                      Icons.password_rounded,
-                      size: 40,
-                      color: AppColors.primary,
-                    ),
-                    SizedBox(width: 20),
-                    Text(
-                      AppStrings.changePassword,
-                      style: TextStyle(
-                        fontSize: 15
-                      ),
-                    )
-                  ],
-                )
-              ),
+              // ButtonBox(
+              //   padding: MaterialStateProperty.all<EdgeInsets>(
+              //     const EdgeInsets.fromLTRB(20, 15, 20, 15)
+              //   ),
+              //   onPressed: null,
+              //   child: const Row(
+              //     children: [
+              //       Icon(
+              //         Icons.password_rounded,
+              //         size: 40,
+              //         color: AppColors.primary,
+              //       ),
+              //       SizedBox(width: 20),
+              //       Text(
+              //         AppStrings.changePassword,
+              //         style: TextStyle(
+              //           fontSize: 15
+              //         ),
+              //       )
+              //     ],
+              //   )
+              // ),
             ],
           ),
           const SizedBox(height: 20),

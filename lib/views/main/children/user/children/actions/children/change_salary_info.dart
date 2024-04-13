@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:rsc/constants/app_strings.dart';
 import 'package:rsc/state/user.dart';
 import 'package:rsc/storage/hive/entity/adapters.dart';
 import 'package:rsc/view-widgets/salary_info.dart';

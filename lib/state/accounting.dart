@@ -346,6 +346,7 @@ class AccountingState {
 
       if (salarInfoindex >= 0) {
         updatedSalaryInfo = list[salarInfoindex].data;
+        dataToRemove.add(list[salarInfoindex]);
         list.removeAt(salarInfoindex);
       }
 
