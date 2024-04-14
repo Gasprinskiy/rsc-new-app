@@ -31,7 +31,7 @@ class _ChangeUserSalaryInfoScreenState extends State<ChangeUserSalaryInfoScreen>
 
     if (!isSalaryInfoEqual || !isConditionsEqual) {
       appToast.init(context);
-      await userState.updateSalaryInfo(salaryInfo, isConditionsEqual ? conditions : null);
+      await userState.updateSalaryInfo(salaryInfo, !isConditionsEqual ? conditions : null);
     }
   }
 

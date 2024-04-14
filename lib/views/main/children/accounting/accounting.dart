@@ -93,11 +93,17 @@ class _AccountingState extends State<Accounting> {
   String _salesKey = 'sales-0';
   String _tipsKey = 'tips-0';
   int _reportKey = 1;
+  String defaultDateTimeValue = DateTime.now().toString().split(' ')[0];
 
   void initializeControllers() {
-    String defaultValue = DateTime.now().toString().split(' ')[0];
+    defaultDateTimeValue = accountingState.currentAccountingCreationDate != null 
+    ? 
+    accountingState.currentAccountingCreationDate.toString().split(' ')[0] 
+    : 
+    defaultDateTimeValue;
+
     reportCrationDateController = TextEditingController();
-    reportCrationDateController.text = defaultValue;
+    reportCrationDateController.text = defaultDateTimeValue;
     totalSalesController = getDefaultCurrencyTextFieldController(null);
     cashTaxesController = getDefaultCurrencyTextFieldController(null);
     nonCashController = getDefaultCurrencyTextFieldController(null);
@@ -113,14 +119,12 @@ class _AccountingState extends State<Accounting> {
   }
 
   void resetDefaultControllers() {
-    String defaultValue = DateTime.now().toString().split(' ')[0];
-    reportCrationDateController.value = TextEditingValue(text: defaultValue);
+    reportCrationDateController.value = TextEditingValue(text: defaultDateTimeValue);
     defaultCurrencyController.value = const TextEditingValue(text: '0');
   }
 
   void resetSaleFormController() {
-    String defaultValue = DateTime.now().toString().split(' ')[0];
-    reportCrationDateController.value = TextEditingValue(text: defaultValue);
+    reportCrationDateController.value = TextEditingValue(text: defaultDateTimeValue);
     totalSalesController.value = const TextEditingValue(text: '0');
     cashTaxesController.value = const TextEditingValue(text: '0');
     nonCashController.value = const TextEditingValue(text: '0');
@@ -136,6 +140,7 @@ class _AccountingState extends State<Accounting> {
       setState(() {
         _isReportStarted = true;
         _addOrUpdateInProgress = false;
+        defaultDateTimeValue = reportCrationDateController.text;
       }),
       setReportData(),
       Navigator.of(context).pop()

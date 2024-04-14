@@ -6,7 +6,6 @@ import 'package:hive/hive.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:rsc/api/accounting.dart';
 import 'package:rsc/api/entity/accounting.dart';
-import 'package:rsc/api/entity/user.dart';
 import 'package:rsc/constants/app_collors.dart';
 import 'package:rsc/constants/app_strings.dart';
 import 'package:rsc/core/accounting_calculations.dart';
@@ -117,7 +116,6 @@ class AccountingState {
     List<Sale>? saleList = await storage.getSalesByDateRange(from, now);
     List<Sale>? commonSales = await storage.getSales();
     double? percentFromSales = userState.user?.salaryInfo?.percentFromSales;
-
     bool calcSales = saleList != null && commonSales != null && percentFromSales != null;
     if (calcSales) {
       List<double> reachecSales = [];

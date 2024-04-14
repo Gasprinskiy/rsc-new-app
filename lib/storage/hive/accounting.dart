@@ -1,6 +1,7 @@
 import 'package:rsc/constants/app_strings.dart';
 import 'package:rsc/storage/hive/entity/adapters.dart';
 import 'package:rsc/storage/hive/worker/worker.dart';
+import 'package:rsc/tools/datetime.dart';
 
 class AccountingStorage {
   static AccountingStorage? _instanse;
@@ -29,7 +30,7 @@ class AccountingStorage {
   Future<List<Sale>?> getSalesByDateRange(DateTime from, DateTime to) async {
     List<Sale>? list = await getSales();
     if (list != null) {
-      return list.where((element) => (element.creationDate.isAfter(from) && element.creationDate.isBefore(to))).toList();
+      return list.where((element) => isDateInDateRange(element.creationDate, from, to)).toList();
     }
     return null;
   }
@@ -37,7 +38,7 @@ class AccountingStorage {
   Future<List<Tip>?> getTipsByDateRange(DateTime from, DateTime to) async {
     List<Tip>? list = await getTips();
     if (list != null) {
-      return list.where((element) => (element.creationDate.isAfter(from) && element.creationDate.isBefore(to))).toList();
+      return list.where((element) => isDateInDateRange(element.creationDate, from, to)).toList();
     }
     return null;
   }
@@ -45,7 +46,7 @@ class AccountingStorage {
   Future<List<Prepayment>?> getPrepaymentsByDateRange(DateTime from, DateTime to) async {
     List<Prepayment>? list = await getPrepayments();
     if (list != null) {
-      return list.where((element) => (element.creationDate.isAfter(from) && element.creationDate.isBefore(to))).toList();
+      return list.where((element) => isDateInDateRange(element.creationDate, from, to)).toList();
     }
     return null;
   }
