@@ -89,6 +89,7 @@ class _AccountingState extends State<Accounting> {
   bool _isReportStarted = false;
   bool _showAddActions = false;
   bool _addOrUpdateInProgress = false;
+  bool _reportCreationInProgress = false;
   String _prepaymentsKey = 'prepayments-0';
   String _salesKey = 'sales-0';
   String _tipsKey = 'tips-0';
@@ -126,18 +127,18 @@ class _AccountingState extends State<Accounting> {
   }
 
   void createReport() {
-    appToast.init(context);
     setState(() {
-      _addOrUpdateInProgress = true;
+      _reportCreationInProgress = true;
     });
+    Navigator.of(context).pop();
+    appToast.init(context);
     accountingState.addAndSyncReport(DateTime.parse(reportCrationDateController.text))
     .then((_) => {
       setState(() {
         _isReportStarted = true;
-        _addOrUpdateInProgress = false;
+        _reportCreationInProgress = false;
       }),
       setReportData(),
-      Navigator.of(context).pop()
     });
   }
 
@@ -411,13 +412,7 @@ class _AccountingState extends State<Accounting> {
         ),
         TextButton(
           onPressed: createReport,
-          child: _addOrUpdateInProgress 
-          ? 
-          const CircularProgressIndicator(
-            color: AppColors.primary,
-          )
-          :
-          const Text(AppStrings.start)
+          child: const Text(AppStrings.start)
         )
       ]
     );
@@ -444,14 +439,19 @@ class _AccountingState extends State<Accounting> {
 
   Future<void> archivateReportAction() async {
     appToast.init(context);
-
-    await accountingState.archivateCurrentReport();
-    await setReportData();
-    calcCommonSalary();
     setState(() {
-      _isReportStarted = false;
-      Navigator.of(context).pop();
+      _reportCreationInProgress = true;
     });
+    bool isArhivated = await accountingState.archivateCurrentReport();
+    if (isArhivated) {
+      await setReportData();
+      calcCommonSalary();
+      setState(() {
+        _isReportStarted = false;
+        _reportCreationInProgress = false;
+        Navigator.of(context).pop();
+      });
+    }
   }
 
   Widget archiveAndStats() {
@@ -666,7 +666,14 @@ class _AccountingState extends State<Accounting> {
       )
       :
       Center(
-        child: Padding(
+        child: _reportCreationInProgress
+        ?
+        const CircularProgressIndicator(
+          backgroundColor: AppColors.primary,
+          color: Colors.white,
+        )
+        : 
+        Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,

@@ -120,6 +120,7 @@ class AppStrings {
   static const String tipsNotFound = 'Чаевые не найдены';
   static const String prepaymentsNotFound = 'Авансы не найдены';
   static const String dataNotFound = 'Данные не найдены';
+  static const String cannotArchivateUnsyncReport = 'Нельзя архивировать не синхронизированный отчет';
   static const String allUnsycDataWillBeRemoved = 'Все несинхронизированные данные будут утеряны';
 
   static const String curreReportData = 'Текущий отчет';

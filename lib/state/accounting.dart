@@ -143,6 +143,8 @@ class AccountingState {
               totalAmount -= (userState.user?.salaryInfo?.plan ?? 0);
             }
           }
+        } else {
+          totalAmount += item.total;
         }
 
         return RecentAction(
@@ -537,7 +539,11 @@ class AccountingState {
     }
   }
 
-  Future<void> archivateCurrentReport() async {
+  Future<bool> archivateCurrentReport() async {
+    if (_currentAccountingId == null) {
+      appToast.showErrorToast(AppStrings.cannotArchivateUnsyncReport);
+      return false;
+    }
     bool hasConnection = await InternetConnectionChecker().hasConnection;
     try {
       await storage.removeAll();
@@ -548,6 +554,7 @@ class AccountingState {
           Icons.cloud_done_rounded,
           AppStrings.reportArchivated
         );
+        return true;
       } else {
         SynchronizationData syncPayload = SynchronizationData(
           type: SynchronizationDataType.report,
@@ -562,6 +569,7 @@ class AccountingState {
           Icons.cloud_off_rounded,
           '${AppStrings.couldNotSyncData}: ${AppStrings.noInternetConnection}'
         );
+        return true;
       }
     } on DioException catch (err) {
       SynchronizationData syncPayload = SynchronizationData(
@@ -577,6 +585,7 @@ class AccountingState {
         Icons.cloud_off_rounded,
         '${AppStrings.couldNotSyncData}: ${err.message.toString()}'
       );
+      return true;
     } finally {
       _currentAccountingCreationDate = null;
       _currentAccountingId = null;
