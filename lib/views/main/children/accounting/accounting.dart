@@ -332,6 +332,7 @@ class _AccountingState extends State<Accounting> {
             setState(() {
               _sales = result;
               updateSalesKey();
+              calcCommonSalary();
             });
           }
         }
@@ -451,6 +452,43 @@ class _AccountingState extends State<Accounting> {
       _isReportStarted = false;
       Navigator.of(context).pop();
     });
+  }
+
+  Widget archiveAndStats() {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.width / 2.5,
+            child: ButtonBox(
+              onPressed: navigateToArchive,
+              child: const Column(
+                children: [
+                  Icon(Icons.archive_outlined, size: 30),
+                  SizedBox(height: 10),
+                  Text(AppStrings.archive)
+                ],
+              ),
+            ),
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width / 2.5,
+            child: ButtonBox(
+              onPressed: navigateToStatistics,
+              child: const Column(
+                children: [
+                  Icon(Icons.donut_large_rounded, size: 30),
+                  SizedBox(height: 10),
+                  Text(AppStrings.statistics)
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -593,40 +631,7 @@ class _AccountingState extends State<Accounting> {
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width / 2.5,
-                        child: ButtonBox(
-                          onPressed: navigateToArchive,
-                          child: const Column(
-                            children: [
-                              Icon(Icons.archive_outlined, size: 30),
-                              SizedBox(height: 10),
-                              Text(AppStrings.archive)
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width / 2.5,
-                        child: ButtonBox(
-                          onPressed: navigateToStatistics,
-                          child: const Column(
-                            children: [
-                              Icon(Icons.donut_large_rounded, size: 30),
-                              SizedBox(height: 10),
-                              Text(AppStrings.statistics)
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                archiveAndStats(),
                 const SizedBox(height: 20),
                 Container(
                   key: ValueKey(_salesKey),
@@ -663,13 +668,20 @@ class _AccountingState extends State<Accounting> {
       Center(
         child: Padding(
           padding: const EdgeInsets.all(20),
-          child: ButtonBox(
-            onPressed: showStartReportConditions,
-            child: const Text(AppStrings.startNewReport),
-          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              archiveAndStats(),
+              const SizedBox(height: 20),
+              ButtonBox(
+                onPressed: showStartReportConditions,
+                child: const Text(AppStrings.startNewReport),
+              ),
+            ],
+          )
         ),
-      )
-      ,
+      ),
     );
   }
 }
